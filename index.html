@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطباق الإيجابي والسلبي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --gold: #d4a843; --gold-l: #f0d78c; --gold-d: #b8860b;
+            --deep: #0a1628; --navy: #121e33; --card-bg: #162032;
+            --teal: #0d9488; --teal-l: #14b8a6;
+            --purple: #7c3aed; --purple-l: #a78bfa;
+            --rose: #e11d48; --rose-l: #fda4af;
+            --green: #22c55e; --red: #ef4444;
+            --text: #e2e8f0; --text-dim: #94a3b8; --text-dark: #475569;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--deep);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--deep); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--gold), var(--teal)); border-radius: 10px; }
+
+        /* PARTICLES */
+        .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .particle { position: absolute; border-radius: 50%; animation: floatP linear infinite; opacity: 0; }
+        @keyframes floatP {
+            0% { transform: translateY(100vh) rotate(0); opacity: 0; }
+            10% { opacity: 1; } 90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+
+        /* LOADER */
+        .loader-screen {
+            position: fixed; inset: 0; background: var(--deep);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; transition: opacity 0.8s, visibility 0.8s;
+        }
+        .loader-screen.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-box { text-align: center; }
+        .loader-ring {
+            width: 80px; height: 80px; margin: 0 auto 20px;
+            border: 4px solid transparent; border-top-color: var(--gold); border-right-color: var(--teal);            border-radius: 50%; animation: spinL 1s linear infinite; position: relative;
+        }
+        .loader-ring::before {
+            content: ''; position: absolute; inset: 8px;
+            border: 4px solid transparent; border-bottom-color: var(--purple); border-left-color: var(--rose);
+            border-radius: 50%; animation: spinL 0.6s linear infinite reverse;
+        }
+        @keyframes spinL { to { transform: rotate(360deg); } }
+        .loader-txt { font-family: 'Aref Ruqaa', serif; font-size: 1.5rem; color: var(--gold); animation: pulseT 1.5s ease-in-out infinite; }
+        @keyframes pulseT { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed; top: 0; right: 0; left: 0; z-index: 1000;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.4s; background: transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(10,22,40,0.97); backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4); padding: 10px 40px;
+        }
+        .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 1.5rem; color: var(--gold); text-decoration: none; }
+        .nav-logo::after { content: ' ✦'; display: inline-block; animation: rotS 3s linear infinite; }
+        @keyframes rotS { to { transform: rotate(360deg); } }
+        .nav-links { display: flex; gap: 8px; list-style: none; flex-wrap: wrap; justify-content: center; }
+        .nav-links a {
+            color: #cbd5e1; text-decoration: none; padding: 8px 18px; border-radius: 25px;
+            font-size: 0.9rem; font-weight: 600; transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .nav-links a::before {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 100%;
+            background: linear-gradient(135deg, var(--gold), var(--teal)); border-radius: 25px; transition: width 0.3s; z-index: -1;
+        }
+        .nav-links a:hover { color: var(--deep); }
+        .nav-links a:hover::before { width: 100%; }
+        .nav-links a.active-link { color: var(--deep); }
+        .nav-links a.active-link::before { width: 100%; }
+        .menu-btn { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; }
+        .menu-btn span { width: 28px; height: 3px; background: var(--gold); border-radius: 3px; transition: 0.3s; }
+        .menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px,6px); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; }
+        .menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(7px,-6px); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;            background:
+                radial-gradient(ellipse at 20% 50%, rgba(212,168,67,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(13,148,136,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 50%);
+        }
+        .geo { position: absolute; border: 1px solid rgba(212,168,67,0.08); animation: geoF 20s ease-in-out infinite; }
+        .geo:nth-child(2) { width:300px; height:300px; top:10%; right:-50px; border-radius:30% 70% 70% 30%/30% 30% 70% 70%; }
+        .geo:nth-child(3) { width:200px; height:200px; bottom:15%; left:5%; border-radius:50%; animation-delay:-5s; border-color:rgba(13,148,136,0.08); }
+        .geo:nth-child(4) { width:150px; height:150px; top:20%; left:15%; transform:rotate(45deg); animation-delay:-10s; border-color:rgba(124,58,237,0.08); }
+        @keyframes geoF { 0%,100%{transform:rotate(0) scale(1)} 50%{transform:rotate(-3deg) scale(0.95)} }
+        .hero-content { text-align: center; z-index: 2; padding: 0 20px; max-width: 800px; }
+        .hero-badge {
+            display: inline-block; padding: 8px 25px; background: rgba(212,168,67,0.1);
+            border: 1px solid rgba(212,168,67,0.3); border-radius: 50px;
+            font-size: 0.9rem; color: var(--gold-l); margin-bottom: 30px;
+            animation: fadeD 1s ease 0.5s both;
+        }
+        .hero-title {
+            font-family: 'Aref Ruqaa', serif; font-size: clamp(2.5rem,7vw,5rem);
+            font-weight: 700; line-height: 1.3; margin-bottom: 10px; animation: fadeU 1s ease 0.8s both;
+        }
+        .hero-title .g { color: var(--gold); }
+        .hero-title .t { color: var(--teal-l); }
+        .hero-title .p { color: var(--purple-l); }
+        .hero-sub {
+            font-family: 'Amiri', serif; font-size: clamp(1.1rem,3vw,1.5rem);
+            color: #94a3b8; margin: 20px auto 40px; animation: fadeU 1s ease 1.2s both;
+        }
+        .hero-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; animation: fadeU 1s ease 1.5s both; }
+        .btn {
+            padding: 14px 35px; border-radius: 50px; font-family: 'Tajawal', sans-serif;
+            font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer;
+            transition: all 0.4s; border: none; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-g { background: linear-gradient(135deg, var(--gold), var(--gold-d)); color: var(--deep); box-shadow: 0 4px 25px rgba(212,168,67,0.3); }
+        .btn-g:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(212,168,67,0.5); }
+        .btn-t { background: transparent; color: var(--teal-l); border: 2px solid var(--teal); }
+        .btn-t:hover { background: var(--teal); color: #fff; transform: translateY(-3px); }
+        .btn-p { background: linear-gradient(135deg, var(--purple), #5b21b6); color: #fff; box-shadow: 0 4px 25px rgba(124,58,237,0.3); }
+        .btn-p:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(124,58,237,0.5); }
+        .scroll-ind { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bncD 2s ease-in-out infinite; z-index: 2; }
+        .scroll-ind .ms { width:26px; height:42px; border:2px solid rgba(212,168,67,0.4); border-radius:15px; position:relative; }
+        .scroll-ind .ms::before { content:''; position:absolute; top:8px; left:50%; transform:translateX(-50%); width:4px; height:10px; background:var(--gold); border-radius:4px; animation: sDot 2s ease-in-out infinite; }
+        @keyframes sDot { 0%,100%{top:8px;opacity:1} 50%{top:22px;opacity:.3} }
+        @keyframes bncD { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(10px)} }
+        @keyframes fadeU { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeD { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+
+        /* SECTIONS */
+        .sec { padding: 80px 30px; position: relative; z-index: 1; }        .sec-inner { max-width: 1100px; margin: 0 auto; }
+        .sec-head { text-align: center; margin-bottom: 50px; }
+        .sec-icon {
+            width: 70px; height: 70px; margin: 0 auto 15px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; animation: iconP 3s ease-in-out infinite;
+        }
+        @keyframes iconP { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+        .sec-num { display:inline-block; padding:5px 18px; border-radius:20px; font-size:0.85rem; font-weight:700; letter-spacing:2px; margin-bottom:12px; }
+        .sec-ttl { font-family:'Aref Ruqaa',serif; font-size:clamp(1.6rem,4vw,2.5rem); font-weight:700; margin-bottom:10px; }
+        .sec-desc { font-size:1rem; color:#94a3b8; max-width:600px; margin:0 auto; }
+        .sec-div { width:80px; height:4px; margin:15px auto 0; border-radius:4px; }
+
+        /* ===== EXAMPLE TABLES ===== */
+        .example-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .example-table thead th {
+            padding: 16px 20px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .example-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .example-table tbody tr:last-child { border-bottom: none; }
+        .example-table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .example-table td {
+            padding: 18px 20px;
+            vertical-align: middle;
+        }
+        .example-table .row-num {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.1rem;            width: 50px;
+            opacity: 0.5;
+        }
+        .example-table .verse-cell {
+            font-family: 'Amiri', serif;
+            font-size: 1.25rem;
+            line-height: 2;
+            text-align: center;
+        }
+        .example-table .source-cell {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Highlight styles */
+        .hl-g { background: rgba(212,168,67,0.2); color: var(--gold-l); padding: 3px 10px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(212,168,67,0.2); }
+        .hl-t { background: rgba(13,148,136,0.2); color: var(--teal-l); padding: 3px 10px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(13,148,136,0.2); }
+        .hl-p { background: rgba(225,29,72,0.2); color: var(--rose-l); padding: 3px 10px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(225,29,72,0.2); }
+
+        /* Section 1 Gold */
+        #quran { background: radial-gradient(ellipse at 30% 0%, rgba(212,168,67,0.04) 0%, transparent 60%); }
+        #quran .sec-icon { background: rgba(212,168,67,0.1); border: 1px solid rgba(212,168,67,0.2); color: var(--gold); }
+        #quran .sec-num { background: rgba(212,168,67,0.1); color: var(--gold); border: 1px solid rgba(212,168,67,0.2); }
+        #quran .sec-ttl { color: var(--gold-l); }
+        #quran .sec-div { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        #quran thead th { background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05)); color: var(--gold-l); }
+
+        /* Section 2 Teal */
+        #poetry { background: radial-gradient(ellipse at 70% 0%, rgba(13,148,136,0.04) 0%, transparent 60%); }
+        #poetry .sec-icon { background: rgba(13,148,136,0.1); border: 1px solid rgba(13,148,136,0.2); color: var(--teal-l); }
+        #poetry .sec-num { background: rgba(13,148,136,0.1); color: var(--teal-l); border: 1px solid rgba(13,148,136,0.2); }
+        #poetry .sec-ttl { color: var(--teal-l); }
+        #poetry .sec-div { background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+        #poetry thead th { background: linear-gradient(135deg, rgba(13,148,136,0.15), rgba(13,148,136,0.05)); color: var(--teal-l); }
+
+        /* Section 3 Purple */
+        #neg { background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.04) 0%, transparent 60%); }
+        #neg .sec-icon { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); color: var(--purple-l); }
+        #neg .sec-num { background: rgba(124,58,237,0.1); color: var(--purple-l); border: 1px solid rgba(124,58,237,0.2); }
+        #neg .sec-ttl { color: var(--purple-l); }
+        #neg .sec-div { background: linear-gradient(90deg, transparent, var(--purple), var(--rose), transparent); }
+        #neg thead th { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(225,29,72,0.05)); color: var(--purple-l); }
+
+        /* SECTION 4: QUIZ */
+        #quiz-sec { background: radial-gradient(ellipse at 50% 30%, rgba(212,168,67,0.04) 0%, transparent 60%); }
+        #quiz-sec .sec-icon { background: rgba(212,168,67,0.1); border: 1px solid rgba(212,168,67,0.2); color: var(--gold); }
+        #quiz-sec .sec-num { background: rgba(212,168,67,0.1); color: var(--gold); border: 1px solid rgba(212,168,67,0.2); }
+        #quiz-sec .sec-ttl { color: var(--gold-l); }
+        #quiz-sec .sec-div { background: linear-gradient(90deg, transparent, var(--gold), var(--teal), transparent); }
+        .quiz-container {
+            max-width: 800px; margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .quiz-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, rgba(212,168,67,0.1), rgba(13,148,136,0.1));
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .quiz-progress-text { font-weight: 700; color: var(--gold-l); font-size: 1.1rem; }
+        .quiz-progress-bar {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.05);
+        }
+        .quiz-progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--gold), var(--teal));
+            border-radius: 3px; transition: width 0.5s ease;
+        }
+        .quiz-body { padding: 30px; min-height: 350px; display: flex; flex-direction: column; justify-content: center; }
+
+        .quiz-question {
+            font-family: 'Amiri', serif;
+            font-size: 1.4rem;
+            line-height: 2;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .quiz-question .q-hl { color: var(--gold-l); font-weight: 700; }
+
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .quiz-opt {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;            color: var(--text);
+        }
+        .quiz-opt:hover { border-color: var(--gold); background: rgba(212,168,67,0.05); }
+        .quiz-opt.correct { border-color: var(--green); background: rgba(34,197,94,0.1); color: var(--green); }
+        .quiz-opt.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red); }
+        .quiz-opt.disabled { pointer-events: none; opacity: 0.5; }
+        .quiz-opt.selected-correct { border-color: var(--green); background: rgba(34,197,94,0.15); color: var(--green); }
+        .quiz-opt.selected-wrong { border-color: var(--red); background: rgba(239,68,68,0.15); color: var(--red); }
+
+        .quiz-next {
+            margin-top: 25px; text-align: center;
+        }
+        .quiz-next .btn { display: none; }
+
+        /* Quiz Start */
+        .quiz-start {
+            text-align: center; padding: 40px 30px;
+        }
+        .quiz-start-icon { font-size: 4rem; margin-bottom: 20px; }
+        .quiz-start h3 { font-family: 'Aref Ruqaa', serif; font-size: 1.8rem; color: var(--gold-l); margin-bottom: 10px; }
+        .quiz-start p { color: var(--text-dim); margin-bottom: 30px; font-size: 1.05rem; }
+        .quiz-start-info {
+            display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; flex-wrap: wrap;
+        }
+        .quiz-start-info span {
+            display: flex; align-items: center; gap: 6px; color: var(--text-dim); font-size: 0.95rem;
+        }
+
+        /* Quiz Results */
+        .quiz-results {
+            text-align: center; padding: 40px 30px;
+        }
+        .results-circle {
+            width: 180px; height: 180px; margin: 0 auto 25px; position: relative;
+        }
+        .results-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .results-circle .bg-circle { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 10; }
+        .results-circle .fg-circle {
+            fill: none; stroke-width: 10; stroke-linecap: round;
+            transition: stroke-dashoffset 1.5s ease;
+        }
+        .results-percent {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 2.5rem; font-weight: 900;
+        }
+        .results-title { font-family: 'Aref Ruqaa', serif; font-size: 1.8rem; margin-bottom: 10px; }
+        .results-subtitle { color: var(--text-dim); margin-bottom: 30px; font-size: 1.05rem; }
+        .results-details {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px;
+        }        .results-detail {
+            padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .results-detail .rd-num { font-size: 1.5rem; font-weight: 800; }
+        .results-detail .rd-label { font-size: 0.85rem; color: var(--text-dim); }
+        .rd-correct .rd-num { color: var(--green); }
+        .rd-wrong .rd-num { color: var(--red); }
+        .rd-total .rd-num { color: var(--gold-l); }
+
+        .results-review {
+            margin-top: 30px; text-align: right;
+        }
+        .results-review h4 {
+            font-family: 'Aref Ruqaa', serif; font-size: 1.3rem; color: var(--gold-l);
+            margin-bottom: 15px; text-align: center;
+        }
+        .review-item {
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .review-item.rev-correct { background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.15); }
+        .review-item.rev-wrong { background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.15); }
+        .review-icon { font-size: 1.3rem; flex-shrink: 0; }
+        .review-text { font-family: 'Amiri', serif; font-size: 1.05rem; line-height: 1.8; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .fade-in.vis { opacity: 1; transform: translateY(0); }
+
+        /* ===== ORNAMENT ===== */
+        .ornament { text-align: center; margin: 30px 0; font-size: 1.2rem; color: rgba(212,168,67,0.15); letter-spacing: 15px; }
+
+        /* ===== FOOTER ===== */
+        .footer { padding: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; }
+        .footer p { color: #64748b; font-size: 0.9rem; }
+        .footer .f-logo { font-family:'Aref Ruqaa',serif; font-size:1.3rem; color:var(--gold); margin-bottom:8px; }
+
+        /* BACK TO TOP */
+        .back-top {
+            position: fixed; bottom: 30px; left: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--gold), var(--teal)); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: var(--deep); cursor: pointer; z-index: 999;
+            opacity: 0; transform: translateY(20px); transition: all 0.4s;
+            box-shadow: 0 4px 20px rgba(212,168,67,0.3); border: none;
+        }
+        .back-top.show { opacity: 1; transform: translateY(0); }
+        .back-top:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(212,168,67,0.5); }
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+                background: rgba(10,22,40,0.98); backdrop-filter: blur(20px);
+                flex-direction: column; padding: 80px 30px 30px; gap: 5px;
+                transition: right 0.4s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+            }
+            .nav-links.open { right: 0; }
+            .menu-btn { display: flex; }
+            .sec { padding: 50px 15px; }
+            .example-table td, .example-table thead th { padding: 12px 10px; font-size: 0.9rem; }
+            .example-table .verse-cell { font-size: 1.05rem; }
+            .quiz-options { grid-template-columns: 1fr; }
+            .results-details { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .hero-title { font-size: clamp(2rem, 8vw, 3.5rem); }
+            .quiz-header { flex-direction: column; gap: 8px; }
+        }
+
+        /* Table scroll for mobile */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+        }
+
+        /* Glow */
+        .glow { animation: glowP 2s ease-in-out infinite; }
+        @keyframes glowP { 0%,100%{text-shadow:0 0 10px rgba(212,168,67,0.3)} 50%{text-shadow:0 0 20px rgba(212,168,67,0.6)} }
+
+        /* Quiz question type badge */
+        .q-type {
+            display: inline-block; padding: 3px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700; margin-bottom: 15px;
+        }
+        .q-type.type-g { background: rgba(212,168,67,0.1); color: var(--gold-l); }
+        .q-type.type-t { background: rgba(13,148,136,0.1); color: var(--teal-l); }
+        .q-type.type-p { background: rgba(124,58,237,0.1); color: var(--purple-l); }
+
+        /* Confetti */
+        .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px; top: -10px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }    </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader-screen" id="loader">
+    <div class="loader-box">
+        <div class="loader-ring"></div>
+        <div class="loader-txt">الطباق</div>
+    </div>
+</div>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">البلاغة العربية</a>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#quran">🕌 الآيات القرآنية</a></li>
+        <li><a href="#poetry">📝 الشعر والأقوال</a></li>
+        <li><a href="#neg">🔮 الطباق السلبي</a></li>
+        <li><a href="#quiz-sec">🏆 الاختبار</a></li>
+    </ul>
+    <div class="menu-btn" id="menuBtn" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="geo"></div><div class="geo"></div><div class="geo"></div>
+    <div class="hero-content">
+        <div class="hero-badge">📜 علم البديع في البلاغة العربية</div>
+        <h1 class="hero-title">
+            <span class="g glow">الطباق</span><br>
+            <span class="t">الإيجابي</span>
+            <span style="color:#64748b"> و </span>
+            <span class="p">السلبي</span>
+        </h1>
+        <p class="hero-sub">امثلة حول موضوع الطباق السلب والايجاب مع الاختبار </p>
+        <div class="hero-btns">
+            <a href="#quran" class="btn btn-g">📖 استكشف الأمثلة</a>
+            <a href="#quiz-sec" class="btn btn-p">🏆 ابدأ الاختبار</a>
+        </div>
+    </div>
+    <div class="scroll-ind"><div class="ms"></div></div>
+</section>
+<!-- ========== SECTION 1: QURAN ========== -->
+<section class="sec" id="quran">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div class="sec-icon">🕌</div>
+            <div class="sec-num">القسم الأول</div>
+            <h2 class="sec-ttl">الطباق الإيجابي من الآيات القرآنية</h2>
+            <p class="sec-desc">اثنا عشر مثالاً من كتاب الله العزيز</p>
+            <div class="sec-div"></div>
+        </div>
+
+        <div class="table-wrapper fade-in">
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px">#</th>
+                        <th>الآية الكريمة</th>
+                        <th style="width:180px">المصدر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="row-num">١</td><td class="verse-cell">﴿ هُوَ <span class="hl-g">الْأَوَّلُ</span> وَ<span class="hl-g">الْآخِرُ</span> وَ<span class="hl-g">الظَّاهِرُ</span> وَ<span class="hl-g">الْبَاطِنُ</span> ﴾</td><td class="source-cell">سورة الحديد: ٣</td></tr>
+                    <tr><td class="row-num">٢</td><td class="verse-cell">﴿ لَكَ <span class="hl-g">يَوْمٌ</span> وَعَلَيْكَ <span class="hl-g">يَوْمٌ</span> ﴾</td><td class="source-cell">حديث نبوي شريف</td></tr>
+                    <tr><td class="row-num">٣</td><td class="verse-cell">﴿ وَهُوَ الَّذِي <span class="hl-g">أَضْحَكَ</span> وَأَبْكَىٰ ﴾</td><td class="source-cell">سورة النجم: ٤٣</td></tr>
+                    <tr><td class="row-num">٤</td><td class="verse-cell">﴿ فَأُولَٰئِكَ يُبَدِّلُ اللَّهُ <span class="hl-g">سَيِّئَاتِهِمْ</span> <span class="hl-g">حَسَنَاتٍ</span> ﴾</td><td class="source-cell">سورة الفرقان: ٧٠</td></tr>
+                    <tr><td class="row-num">٥</td><td class="verse-cell">﴿ لَهَا مَا <span class="hl-g">كَسَبَتْ</span> وَعَلَيْهَا مَا <span class="hl-g">اكْتَسَبَتْ</span> ﴾</td><td class="source-cell">سورة البقرة: ٢٨٦</td></tr>
+                    <tr><td class="row-num">٦</td><td class="verse-cell">﴿ وَمَن <span class="hl-g">يُضْلِلِ</span> اللَّهُ فَمَا لَهُ مِنْ <span class="hl-g">هَادٍ</span> ﴾</td><td class="source-cell">سورة الرعد: ٣٣</td></tr>
+                    <tr><td class="row-num">٧</td><td class="verse-cell">﴿ وَتَحْسَبُهُمْ <span class="hl-g">أَيْقَاظًا</span> وَهُمْ <span class="hl-g">رُقُودٌ</span> ﴾</td><td class="source-cell">سورة الكهف: ١٨</td></tr>
+                    <tr><td class="row-num">٨</td><td class="verse-cell">﴿ إِنَّ <span class="hl-g">الْأَبْرَارَ</span> لَفِي <span class="hl-g">نَعِيمٍ</span> وَإِنَّ <span class="hl-g">الْفُجَّارَ</span> لَفِي <span class="hl-g">جَحِيمٍ</span> ﴾</td><td class="source-cell">سورة الانفطار: ١٣-١٤</td></tr>
+                    <tr><td class="row-num">٩</td><td class="verse-cell">﴿ أَوَ مَن كَانَ <span class="hl-g">مَيْتًا</span> فَأَحْيَيْنَاهُ ﴾</td><td class="source-cell">سورة الأنعام: ١٢٢</td></tr>
+                    <tr><td class="row-num">١٠</td><td class="verse-cell">﴿ يُخْرِجُ <span class="hl-g">الْحَيَّ</span> مِنَ <span class="hl-g">الْمَيِّتِ</span> وَيُخْرِجُ <span class="hl-g">الْمَيِّتَ</span> مِنَ <span class="hl-g">الْحَيِّ</span> ﴾</td><td class="source-cell">سورة الروم: ١٩</td></tr>
+                    <tr><td class="row-num">١١</td><td class="verse-cell">﴿ وَلَهُنَّ <span class="hl-g">مِثْلُ</span> الَّذِي <span class="hl-g">عَلَيْهِنَّ</span> بِالْمَعْرُوفِ ﴾</td><td class="source-cell">سورة البقرة: ٢٢٨</td></tr>
+                    <tr><td class="row-num">١٢</td><td class="verse-cell">﴿ ثُمَّ لَا <span class="hl-g">يَمُوتُ</span> فِيهَا وَلَا <span class="hl-g">يَحْيَا</span> ﴾</td><td class="source-cell">سورة الأعلى: ١٣</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div class="ornament">✦ ✦ ✦ ✦ ✦</div>
+
+<!-- ========== SECTION 2: POETRY ========== -->
+<section class="sec" id="poetry">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div class="sec-icon">📝</div>
+            <div class="sec-num">القسم الثاني</div>
+            <h2 class="sec-ttl">الطباق الإيجابي من الشعر والأقوال</h2>
+            <p class="sec-desc">ثلاثة أمثلة من الشعر العربي والحكم</p>
+            <div class="sec-div"></div>        </div>
+
+        <div class="table-wrapper fade-in">
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px">#</th>
+                        <th>النص</th>
+                        <th style="width:180px">المصدر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="row-num">١</td><td class="verse-cell"><span class="hl-t">ضَحِكَ</span> الْمَشِيبُ بِرَأْسِهِ فَ<span class="hl-t">بَكَى</span></td><td class="source-cell">شعر عربي</td></tr>
+                    <tr><td class="row-num">٢</td><td class="verse-cell">مِكْرٌ مِفَرٌّ <span class="hl-t">مُقْبِلٌ</span> <span class="hl-t">مُدْبِرٌ</span> مَعًا</td><td class="source-cell">شعر عربي</td></tr>
+                    <tr><td class="row-num">٣</td><td class="verse-cell">خَيْرُ الْمَالِ عَيْنُ <span class="hl-t">النَّائِمِ</span> وَالْعَيْنُ <span class="hl-t">السَّاهِرَةُ</span></td><td class="source-cell">قول عربي</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div class="ornament">✦ ✦ ✦ ✦ ✦</div>
+
+<!-- ========== SECTION 3: NEGATIVE ========== -->
+<section class="sec" id="neg">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div class="sec-icon">🔮</div>
+            <div class="sec-num">القسم الثالث</div>
+            <h2 class="sec-ttl">الطباق السلبي (آيات وأقوال)</h2>
+            <p class="sec-desc">سبعة أمثلة حيث يُنفى المعنى مع ذكر اللفظ</p>
+            <div class="sec-div"></div>
+        </div>
+
+        <div class="table-wrapper fade-in">
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px">#</th>
+                        <th>النص</th>
+                        <th style="width:180px">المصدر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="row-num">١</td><td class="verse-cell">﴿ هَلْ <span class="hl-p">يَسْتَوِي</span> الَّذِينَ يَعْلَمُونَ وَالَّذِينَ <span class="hl-p">لَا يَعْلَمُونَ</span> ﴾</td><td class="source-cell">سورة الزمر: ٩</td></tr>
+                    <tr><td class="row-num">٢</td><td class="verse-cell">﴿ <span class="hl-p">يَسْتَخْفُونَ</span> مِنَ النَّاسِ وَلَا <span class="hl-p">يَسْتَخْفُونَ</span> مِنَ اللَّهِ ﴾</td><td class="source-cell">سورة النساء: ١٠٨</td></tr>
+                    <tr><td class="row-num">٣</td><td class="verse-cell">﴿ وَيُنْكِرُونَ عَلَى النَّاسِ قَوْلًا وَلَا <span class="hl-p">يُنْكِرُونَ</span> ﴾</td><td class="source-cell">سورة النساء: ١٠٨</td></tr>
+                    <tr><td class="row-num">٤</td><td class="verse-cell">﴿ فَلَا <span class="hl-p">تَخْشَوُا</span> النَّاسَ <span class="hl-p">وَاخْشَوْنِ</span> ﴾</td><td class="source-cell">سورة المائدة: ٤٤</td></tr>
+                    <tr><td class="row-num">٥</td><td class="verse-cell"><span class="hl-p">جَزِعْتُ</span> وَلَمْ <span class="hl-p">أَجْزَعْ</span> مِنَ الْبَيْنِ جَزْعَانِ</td><td class="source-cell">شعر عربي</td></tr>
+                    <tr><td class="row-num">٦</td><td class="verse-cell">يَقْبِضُ لِي مِنْ حِينِ <span class="hl-p">لَا أَعْلَمُ</span> النَّوَى ﴿٢٠١٩﴾ وَيَسْرِي إِلَيَّ الشَّوْقُ مِنْ حَيْثُ <span class="hl-p">أَعْلَمُ</span></td><td class="source-cell">شعر عربي</td></tr>                    <tr><td class="row-num">٧</td><td class="verse-cell">عَلَى أَنِّي رَاضٍ بِأَنْ أُخْرِجَ الْهَوَى ﴿٢٠١٩﴾ وَأُخْرِجَ مِنْهُ <span class="hl-p">لَا أَهْلًا</span> وَلَا <span class="hl-p">وَلِيًّا</span></td><td class="source-cell">شعر عربي</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div class="ornament">✦ ✦ ✦ ✦ ✦</div>
+
+<!-- ========== SECTION 4: QUIZ ========== -->
+<section class="sec" id="quiz-sec">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div class="sec-icon">🏆</div>
+            <div class="sec-num">القسم الرابع</div>
+            <h2 class="sec-ttl">اختبار شامل: هل أتقنت الطباق؟</h2>
+            <p class="sec-desc">اختبر معلوماتك في جميع أمثلة الطباق الإيجابي والسلبي</p>
+            <div class="sec-div"></div>
+        </div>
+
+        <div class="quiz-container fade-in" id="quizContainer">
+            <!-- Quiz Start Screen -->
+            <div id="quizStart" class="quiz-start">
+                <div class="quiz-start-icon">🎯</div>
+                <h3>اختبار الطباق الشامل</h3>
+                <p>اختبر معلوماتك في 22 سؤالاً تغطي جميع الأقسام</p>
+                <div class="quiz-start-info">
+                    <span>📊 عدد الأسئلة: <strong>22</strong></span>
+                    <span>📖 الأقسام: <strong>3</strong></span>
+                    <span>⏱️ بدون وقت محدد</span>
+                </div>
+                <button class="btn btn-g" onclick="startQuiz()">🚀 ابدأ الاختبار الآن</button>
+            </div>
+
+            <!-- Quiz Question Screen -->
+            <div id="quizQuestion" style="display:none;">
+                <div class="quiz-header">
+                    <span class="quiz-progress-text" id="progressText">السؤال 1 من 22</span>
+                    <span style="color:var(--gold-l);font-weight:700;" id="scoreText">النقاط: 0</span>
+                </div>
+                <div class="quiz-progress-bar">
+                    <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+                <div class="quiz-body">
+                    <div class="q-type" id="qType"></div>
+                    <div class="quiz-question" id="quizQuestionText"></div>
+                    <div class="quiz-options" id="quizOptions"></div>
+                    <div class="quiz-next">
+                        <button class="btn btn-g" id="nextBtn" onclick="nextQuestion()" style="display:none;">السؤال التالي ←</button>
+                    </div>                </div>
+            </div>
+
+            <!-- Quiz Results Screen -->
+            <div id="quizResults" style="display:none;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="f-logo">✦ البلاغة العربية ✦</div>
+    <p>الطباق الإيجابي والسلبي — رحلة في جمال اللغة العربية</p>
+    <p style="margin-top:10px; color:#475569;">تم بحمدهِ تعالى</p>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- CONFETTI CONTAINER -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+    // ===== LOADER =====
+    window.addEventListener('load', () => {
+        setTimeout(() => { document.getElementById('loader').classList.add('hide'); }, 1500);
+    });
+
+    // ===== PARTICLES =====
+    const particlesContainer = document.getElementById('particles');
+    const pColors = ['rgba(212,168,67,0.3)','rgba(13,148,136,0.3)','rgba(124,58,237,0.3)','rgba(225,29,72,0.2)'];
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 6 + 2;
+        p.style.width = size + 'px'; p.style.height = size + 'px';
+        p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
+        p.style.right = Math.random() * 100 + '%';
+        p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        particlesContainer.appendChild(p);
+    }
+
+    // ===== NAVBAR =====
+    const navbar = document.getElementById('navbar');
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 80);
+        backTop.classList.toggle('show', window.scrollY > 500);
+    });
+    function toggleMenu() {
+        document.getElementById('menuBtn').classList.toggle('active');
+        document.getElementById('navLinks').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            document.getElementById('menuBtn').classList.remove('active');
+            document.getElementById('navLinks').classList.remove('open');
+        });
+    });
+
+    // ===== SCROLL ANIMATIONS =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('vis'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ===== CONFETTI =====
+    function launchConfetti() {
+        const container = document.getElementById('confettiContainer');
+        const colors = ['#d4a843','#14b8a6','#7c3aed','#e11d48','#22c55e','#f59e0b','#3b82f6'];
+        for (let i = 0; i < 60; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.right = Math.random() * 100 + '%';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.width = (Math.random() * 10 + 5) + 'px';
+            piece.style.height = (Math.random() * 10 + 5) + 'px';
+            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            piece.style.animationDelay = (Math.random() * 1) + 's';
+            container.appendChild(piece);
+        }
+        setTimeout(() => { container.innerHTML = ''; }, 4000);
+    }
+
+    // ===== QUIZ SYSTEM =====
+    const quizData = [
+        // Section 1: Quran - Identify antithesis
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما الطباق في قوله تعالى: ﴿ هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ ﴾؟',
+            options: ['الأول والآخر', 'الظاهر والباطن', 'كلاهما صحيح', 'لا يوجد طباق'],
+            correct: 2
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'حدّد الطباق في: ﴿ وَهُوَ الَّذِي أَضْحَكَ وَأَبْكَىٰ ﴾',
+            options: ['هو وأضحك', 'أضحك وأبكى', 'الذي وأضحك', 'لا يوجد طباق'],            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما الطباق في: ﴿ فَأُولَٰئِكَ يُبَدِّلُ اللَّهُ سَيِّئَاتِهِمْ حَسَنَاتٍ ﴾؟',
+            options: ['أولئك وبدل', 'سيئاتهم وحسنات', 'الله وسيئات', 'يبدل وحسنات'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'حدّد الطباق في: ﴿ وَتَحْسَبُهُمْ أَيْقَاظًا وَهُمْ رُقُودٌ ﴾',
+            options: ['تحسبهم وهم', 'أيقاظًا ورقود', 'تحسبهم وأيقاظًا', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما الطباق في: ﴿ يُخْرِجُ الْحَيَّ مِنَ الْمَيِّتِ وَيُخْرِجُ الْمَيِّتَ مِنَ الْحَيِّ ﴾؟',
+            options: ['يخرج ويخرج', 'الحي والميت', 'من ومن', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'حدّد الطباق في: ﴿ إِنَّ الْأَبْرَارَ لَفِي نَعِيمٍ وَإِنَّ الْفُجَّارَ لَفِي جَحِيمٍ ﴾',
+            options: ['أبرار ونعيم / فجار وجحيم', 'إن وإن', 'في وفي', 'نعيم وجحيم فقط'],
+            correct: 0
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما الطباق في: ﴿ ثُمَّ لَا يَمُوتُ فِيهَا وَلَا يَحْيَا ﴾؟',
+            options: ['لا ولا', 'يموت ويحيا', 'فيها ولا', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'حدّد الطباق في: ﴿ أَوَ مَن كَانَ مَيْتًا فَأَحْيَيْنَاهُ ﴾',
+            options: ['كان وأحييناه', 'ميتًا فأحييناه', 'من كان', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما نوع الطباق في قوله تعالى: ﴿ وَلَهُنَّ مِثْلُ الَّذِي عَلَيْهِنَّ بِالْمَعْرُوفِ ﴾؟',
+            options: ['طباق سلبي', 'طباق إيجابي (مثل / عليهن)', 'لا يوجد طباق', 'طباق بالنفي'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'حدّد الطباق في: ﴿ وَمَن يُضْلِلِ اللَّهُ فَمَا لَهُ مِنْ هَادٍ ﴾',
+            options: ['الله ومن', 'يضلل وهاد', 'يضلل وله', 'لا يوجد طباق'],
+            correct: 1
+        },        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'ما الطباق في: ﴿ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ﴾؟',
+            options: ['لها وعليها', 'كسبت واكتسبت', 'كلاهما صحيح', 'لا يوجد طباق'],
+            correct: 2
+        },
+        {
+            type: 'إيجابي - آيات', typeClass: 'type-g',
+            question: 'أيّ آية تحتوي على طباق بين (أضحك وأبكى)؟',
+            options: ['سورة الحديد', 'سورة النجم', 'سورة الروم', 'سورة الكهف'],
+            correct: 1
+        },
+
+        // Section 2: Poetry
+        {
+            type: 'إيجابي - شعر', typeClass: 'type-t',
+            question: 'ما الطباق في: « ضَحِكَ الْمَشِيبُ بِرَأْسِهِ فَبَكَى »؟',
+            options: ['المشيب والرأس', 'ضحك وبكى', 'برأسه وبكى', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - شعر', typeClass: 'type-t',
+            question: 'حدّد الطباق في: « مِكْرٌ مِفَرٌّ مُقْبِلٌ مُدْبِرٌ مَعًا »',
+            options: ['مكر ومفر', 'مقبل ومدبر', 'مكرًا ومدبرًا', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - شعر', typeClass: 'type-t',
+            question: 'ما الطباق في: « خَيْرُ الْمَالِ عَيْنُ النَّائِمِ وَالْعَيْنُ السَّاهِرَةُ »؟',
+            options: ['خير والمال', 'النائم والساهرة', 'عين وعين', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'إيجابي - شعر', typeClass: 'type-t',
+            question: 'أيّ نوع طباق في: « ضحك المشيب برأسه فبكى »؟',
+            options: ['طباق سلبي', 'طباق إيجابي (إثبات)', 'لا يوجد طباق', 'طباق بالنفي'],
+            correct: 1
+        },
+
+        // Section 3: Negative
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'ما الطباق السلبي في: ﴿ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ ﴾؟',
+            options: ['يستوي ويعلمون', 'يعلمون ولا يعلمون', 'هل والذين', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'حدّد الطباق السلبي في: ﴿ يَسْتَخْفُونَ مِنَ النَّاسِ وَلَا يَسْتَخْفُونَ مِنَ اللَّهِ ﴾',
+            options: ['الناس والله', 'يستخفون ولا يستخفون', 'من ومن', 'لا يوجد طباق'],            correct: 1
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'ما الطباق في: ﴿ فَلَا تَخْشَوُا النَّاسَ وَاخْشَوْنِ ﴾؟',
+            options: ['الناس والله', 'تخشوا واخشون', 'فلا وواخشون', 'لا يوجد طباق'],
+            correct: 1
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'ما نوع الطباق في: ﴿ يَسْتَخْفُونَ مِنَ النَّاسِ وَلَا يَسْتَخْفُونَ مِنَ اللَّهِ ﴾؟',
+            options: ['طباق إيجابي', 'طباق سلبي (إثبات ونفي)', 'لا يوجد طباق', 'طباق في المعنى فقط'],
+            correct: 1
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'حدّد الطباق في: « جَزِعْتُ وَلَمْ أَجْزَعْ مِنَ الْبَيْنِ جَزْعَانِ »',
+            options: ['جزعت ولم أجزع', 'البيت والجزعان', 'من والبين', 'لا يوجد طباق'],
+            correct: 0
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'ما الطباق السلبي في: « من حين لا أعلم النوى ... من حيث أعلم »؟',
+            options: ['لا أعلم وأعلم', 'القبض والشوق', 'النوى والشوق', 'لا يوجد طباق'],
+            correct: 0
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'حدّد الطباق في: « لا أهلًا ولا وليًّا »',
+            options: ['أهلًا ووليًّا', 'لا ولا', 'أخرج وأخرج', 'لا يوجد طباق'],
+            correct: 0
+        },
+        {
+            type: 'سلبي', typeClass: 'type-p',
+            question: 'أيّ نوع طباق في: ﴿ وَيُنْكِرُونَ عَلَى النَّاسِ قَوْلًا وَلَا يُنْكِرُونَ ﴾؟',
+            options: ['إيجابي', 'سلبي (يثبتون ثم ينفون)', 'لا يوجد', 'طباق في اللفظ فقط'],
+            correct: 1
+        }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let answered = false;
+    let results = [];
+
+    function startQuiz() {
+        currentQ = 0;
+        score = 0;
+        results = [];
+        document.getElementById('quizStart').style.display = 'none';        document.getElementById('quizResults').style.display = 'none';
+        document.getElementById('quizQuestion').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        answered = false;
+        const q = quizData[currentQ];
+        const total = quizData.length;
+
+        document.getElementById('progressText').textContent = `السؤال ${currentQ + 1} من ${total}`;
+        document.getElementById('scoreText').textContent = `النقاط: ${score}`;
+        document.getElementById('progressFill').style.width = ((currentQ) / total * 100) + '%';
+
+        const qType = document.getElementById('qType');
+        qType.textContent = q.type;
+        qType.className = 'q-type ' + q.typeClass;
+
+        document.getElementById('quizQuestionText').innerHTML = q.question;
+
+        const optionsDiv = document.getElementById('quizOptions');
+        optionsDiv.innerHTML = '';
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('div');
+            btn.className = 'quiz-opt';
+            btn.textContent = opt;
+            btn.onclick = () => selectAnswer(i, btn);
+            optionsDiv.appendChild(btn);
+        });
+
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function selectAnswer(index, btn) {
+        if (answered) return;
+        answered = true;
+
+        const q = quizData[currentQ];
+        const options = document.querySelectorAll('.quiz-opt');
+
+        options.forEach((opt, i) => {
+            if (i === q.correct) {
+                opt.classList.add('correct');
+            } else if (i === index && i !== q.correct) {
+                opt.classList.add('wrong');
+            }
+            if (i !== index && i !== q.correct) {
+                opt.classList.add('disabled');
+            }
+        });
+        if (index === q.correct) {
+            score++;
+            btn.classList.add('selected-correct');
+        } else {
+            btn.classList.add('selected-wrong');
+        }
+
+        results.push({
+            question: q.question,
+            correct: index === q.correct,
+            userAnswer: q.options[index],
+            correctAnswer: q.options[q.correct]
+        });
+
+        document.getElementById('scoreText').textContent = `النقاط: ${score}`;
+
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentQ < quizData.length - 1) {
+            nextBtn.textContent = 'السؤال التالي ←';
+        } else {
+            nextBtn.textContent = '🏆 عرض النتائج';
+        }
+        nextBtn.style.display = 'inline-flex';
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if (currentQ < quizData.length) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quizQuestion').style.display = 'none';
+        const resultsDiv = document.getElementById('quizResults');
+        resultsDiv.style.display = 'block';
+
+        const total = quizData.length;
+        const percent = Math.round((score / total) * 100);
+        const wrong = total - score;
+
+        let grade, gradeColor, emoji;
+        if (percent >= 90) { grade = 'ممتاز! 🌟'; gradeColor = 'var(--gold)'; emoji = '🏆'; launchConfetti(); }
+        else if (percent >= 75) { grade = 'جيد جدًا! 👏'; gradeColor = 'var(--teal)'; emoji = '🥈'; }
+        else if (percent >= 60) { grade = 'جيد 👍'; gradeColor = 'var(--purple-l)'; emoji = '📚'; }
+        else if (percent >= 40) { grade = 'تحتاج مراجعة 📖'; gradeColor = 'var(--orange-l)'; emoji = '✨'; }
+        else { grade = 'حاول مرة أخرى ✨'; gradeColor = 'var(--rose)'; emoji = '📝'; }
+        const circumference = 2 * Math.PI * 75;
+        const offset = circumference - (percent / 100) * circumference;
+
+        let reviewHTML = '';
+        results.forEach((r, i) => {
+            const cls = r.correct ? 'rev-correct' : 'rev-wrong';
+            const icon = r.correct ? '✅' : '❌';
+            reviewHTML += `
+                <div class="review-item ${cls}">
+                    <span class="review-icon">${icon}</span>
+                    <div class="review-text">
+                        <div style="font-size:0.85rem;color:var(--text-dim);margin-bottom:4px;">سؤال ${i + 1}</div>
+                        ${r.question.replace(/﴿|﴾/g, '')}
+                        ${!r.correct ? `<div style="font-size:0.85rem;color:var(--green);margin-top:4px;">✓ الإجابة الصحيحة: ${r.correctAnswer}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        resultsDiv.innerHTML = `
+            <div class="quiz-results">
+                <div class="results-circle">
+                    <svg viewBox="0 0 160 160">
+                        <circle class="bg-circle" cx="80" cy="80" r="75"/>
+                        <circle class="fg-circle" cx="80" cy="80" r="75"
+                            stroke="${gradeColor}"
+                            stroke-dasharray="${circumference}"
+                            stroke-dashoffset="${circumference}"
+                            id="resultCircle"/>
+                    </svg>
+                    <div class="results-percent" style="color:${gradeColor}">${percent}%</div>
+                </div>
+                <h2 class="results-title">${emoji} ${grade}</h2>
+                <p class="results-subtitle">لقد أجبت على ${score} من ${total} سؤال بشكل صحيح</p>
+
+                <div class="results-details">
+                    <div class="results-detail rd-correct">
+                        <div class="rd-num">${score}</div>
+                        <div class="rd-label">إجابة صحيحة</div>
+                    </div>
+                    <div class="results-detail rd-wrong">
+                        <div class="rd-num">${wrong}</div>
+                        <div class="rd-label">إجابة خاطئة</div>
+                    </div>
+                    <div class="results-detail rd-total">
+                        <div class="rd-num">${total}</div>
+                        <div class="rd-label">إجمالي الأسئلة</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;">
+                    <button class="btn btn-g" onclick="startQuiz()">🔄 إعادة الاختبار</button>
+                    <button class="btn btn-t" onclick="document.getElementById('quizResults').style.display='none';document.getElementById('quizStart').style.display='block';">↩️ العودة للبداية</button>
+                </div>
+
+                <div class="results-review">
+                    <h4>📋 مراجعة الإجابات</h4>
+                    ${reviewHTML}
+                </div>
+            </div>
+        `;
+
+        // Animate circle
+        setTimeout(() => {
+            document.getElementById('resultCircle').style.strokeDashoffset = offset;
+        }, 300);
+    }
+</script>
+</body>
+</html>
