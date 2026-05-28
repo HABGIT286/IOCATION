@@ -47,8 +47,7 @@
         .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none!important; }
         
         .input-field { width:100%; padding:16px 20px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); border-radius:16px; color:#fff; font-family:'Tajawal',sans-serif; font-size:1.1em; outline:none; transition:var(--transition); }
-        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }        
-        .screen { display:none; animation:fadeIn 0.5s ease; }
+        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }                .screen { display:none; animation:fadeIn 0.5s ease; }
         .screen.active { display:block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
         
@@ -97,8 +96,7 @@
         .toast.warning { background:rgba(255,165,0,0.15); color:#ffa500; }
         .toast.error { background:rgba(255,68,68,0.15); color:#ff4444; }
         @keyframes slideDown { from{transform:translateY(-20px); opacity:0} to{transform:translateY(0); opacity:1} }        
-        .wheel-container { position:relative; width:320px; height:320px; margin:20px auto; }
-        .wheel { width:100%; height:100%; border-radius:50%; position:relative; transition:transform 4.8s cubic-bezier(0.22,1,0.36,1); border:4px solid rgba(255,255,255,0.3); box-shadow:0 0 50px rgba(123,47,247,0.5), inset 0 0 60px rgba(0,0,0,0.4); cursor:pointer; }
+        .wheel-container { position:relative; width:320px; height:320px; margin:20px auto; }        .wheel { width:100%; height:100%; border-radius:50%; position:relative; transition:transform 4.8s cubic-bezier(0.22,1,0.36,1); border:4px solid rgba(255,255,255,0.3); box-shadow:0 0 50px rgba(123,47,247,0.5), inset 0 0 60px rgba(0,0,0,0.4); cursor:pointer; }
         .wheel canvas { width:100%; height:100%; border-radius:50%; }
         .wheel-pointer { position:absolute; top:-22px; left:50%; transform:translateX(-50%); width:48px; height:58px; z-index:10; filter:drop-shadow(0 0 15px rgba(255,0,110,0.9)); }
         .wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:75px; height:75px; border-radius:50%; background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink),var(--neon-gold)); z-index:5; display:flex; align-items:center; justify-content:center; font-size:1.8em; font-weight:900; cursor:pointer; box-shadow:0 0 45px rgba(123,47,247,0.7); animation:pulse 2.5s ease infinite; border:3px solid rgba(255,255,255,0.3); }
@@ -145,9 +143,9 @@
                 <p>نظام لعبة الحروف المتكامل - Supabase</p>
             </div>
             <div class="glass-card" style="max-width:500px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:25px;">                    <i class="fas fa-fingerprint" style="font-size:4em; color:var(--neon-purple); margin-bottom:15px;"></i>
-                    <div style="font-size:0.95em; color:rgba(255,255,255,0.7); margin-bottom:10px;">بصمة جهازك:</div>
-                    <div id="deviceFingerprintDisplay" class="device-code" style="display:inline-block;">جاري التحميل...</div>
+                <div style="text-align:center; margin-bottom:25px;">
+                    <i class="fas fa-fingerprint" style="font-size:4em; color:var(--neon-purple); margin-bottom:15px;"></i>
+                    <div style="font-size:0.95em; color:rgba(255,255,255,0.7); margin-bottom:10px;">بصمة جهازك:</div>                    <div id="deviceFingerprintDisplay" class="device-code" style="display:inline-block;">جاري التحميل...</div>
                 </div>
                 <div style="margin-bottom:20px;">
                     <label style="display:block; margin-bottom:8px; color:rgba(255,255,255,0.8);">الاسم:</label>
@@ -194,9 +192,9 @@
             </div>
 
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">
-                <div class="glass-card">                    <h3 class="section-title"><i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة</h3>
-                    <div style="margin-bottom:20px;">
-                        <label style="display:block; margin-bottom:10px; color:rgba(255,255,255,0.8);">عدد اللاعبين المسموح:</label>
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة</h3>
+                    <div style="margin-bottom:20px;">                        <label style="display:block; margin-bottom:10px; color:rgba(255,255,255,0.8);">عدد اللاعبين المسموح:</label>
                         <div style="display:flex; align-items:center; gap:15px; justify-content:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:14px;">
                             <button class="btn btn-secondary" style="min-width:50px; padding:10px;" onclick="adjustMaxPlayers(-1)">-</button>
                             <span id="maxPlayersDisplay" style="font-size:2.2em; font-weight:900; color:var(--neon-green);">2</span>
@@ -243,9 +241,9 @@
             </div>
 
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">
-                <!-- قسم العجلة والانتظار -->                <div class="glass-card">
-                    <h3 class="section-title"><i class="fas fa-hourglass-half" style="color:var(--neon-gold);"></i> حالة اللعب</h3>
-                    <div id="waitingArea" style="text-align:center; padding:20px 0;">
+                <!-- قسم العجلة والانتظار -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-hourglass-half" style="color:var(--neon-gold);"></i> حالة اللعب</h3>                    <div id="waitingArea" style="text-align:center; padding:20px 0;">
                         <div class="wheel-container">
                             <div class="wheel-pointer">
                                 <svg viewBox="0 0 40 50" fill="none"><path d="M20 50L5 15C5 7 11 0 20 0C29 0 35 7 35 15L20 50Z" fill="url(#pg)" stroke="rgba(255,255,255,0.3)"/><defs><linearGradient id="pg" x1="20" y1="0" x2="20" y2="50"><stop offset="0%" stop-color="#ff006e"/><stop offset="100%" stop-color="#7b2ff7"/></linearGradient></defs></svg>
@@ -292,9 +290,9 @@
                     </div>
                     <div>
                         <div class="cat-progress" id="catProgress"></div>
-                        <div id="gameInputArea" style="margin-top:15px;"></div>                        <div style="display:flex; gap:10px; margin-top:15px;">
-                            <button class="btn btn-primary" onclick="submitAnswer()" style="flex:1;"><i class="fas fa-paper-plane"></i> إرسال</button>
-                            <button class="btn btn-danger" onclick="skipAnswer()" style="flex:0.4;"><i class="fas fa-forward"></i> تخطي</button>
+                        <div id="gameInputArea" style="margin-top:15px;"></div>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button class="btn btn-primary" onclick="submitAnswer()" style="flex:1;"><i class="fas fa-paper-plane"></i> إرسال</button>                            <button class="btn btn-danger" onclick="skipAnswer()" style="flex:0.4;"><i class="fas fa-forward"></i> تخطي</button>
                         </div>
                     </div>
                 </div>
@@ -341,9 +339,9 @@
         };
 
         const CATEGORIES = [
-            {id:'name', label:'اسم إنسان', icon:'👤'},            {id:'animal', label:'اسم حيوان', icon:'🐾'},
-            {id:'plant', label:'اسم نبات', icon:'🌿'},
-            {id:'country', label:'اسم دولة', icon:'🌍'},
+            {id:'name', label:'اسم إنسان', icon:'👤'},
+            {id:'animal', label:'اسم حيوان', icon:'🐾'},
+            {id:'plant', label:'اسم نبات', icon:'🌿'},            {id:'country', label:'اسم دولة', icon:'🌍'},
             {id:'object', label:'اسم جماد', icon:'📦'}
         ];
         const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
@@ -358,7 +356,9 @@
                 localStorage.setItem('game_device_id', deviceId);
                 
                 document.getElementById('deviceFingerprintDisplay').textContent = deviceId.substring(0, 12) + '...';
-                document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
+                if(document.getElementById('playerDeviceCode')) {
+                    document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
+                }
                 
                 console.log('Device Fingerprint:', fingerprintHash);
                 console.log('Device ID:', deviceId);
@@ -371,9 +371,37 @@
 
         // ===== Initialize Supabase =====
         function initSupabase() {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase connected');
-            return true;
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase client created');
+                verifySupabaseConnection();
+                return true;
+            } catch (e) {
+                console.error('❌ Failed to init Supabase:', e);
+                return false;
+            }
+        }
+
+        // ===== Verify Supabase Connection =====
+        async function verifySupabaseConnection() {
+            if (!supabase) return false;
+            
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .select('id')
+                    .limit(1);                
+                if (error) {
+                    console.error('❌ Supabase Error:', error.message);
+                    showToast('⚠️ مشكلة في الاتصال بقاعدة البيانات', 'warning');
+                    return false;
+                }
+                console.log('✅ Supabase Connected Successfully');
+                return true;
+            } catch (e) {
+                console.error('Exception:', e);
+                return false;
+            }
         }
 
         // ===== Toast Notifications =====
@@ -390,126 +418,98 @@
         async function handleLogin() {
             const name = document.getElementById('loginName').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
-                        if (!name || !pass) return showToast('أدخل الاسم وكلمة المرور', 'warning');
+            
+            if (!name || !pass) {
+                showToast('أدخل الاسم وكلمة المرور', 'warning');
+                return;
+            }
             
             await initDeviceFingerprint();
             initSupabase();
             
+            // وضع الاختبار المحلي إذا فشل Supabase
+            const isSupabaseReady = supabase !== undefined;
+            
             if (pass === 'TRX') {
-                await loginAsAdmin(name);
-            } else {
-                await loginAsPlayer(name);
-            }
-        }
-
-        async function loginAsAdmin(name) {
-            try {
-                // Check if admin already exists
-                const { data: existingAdmin } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('device_id', deviceId)
-                    .eq('role', 'admin')
-                    .single();
-                
-                if (existingAdmin) {
-                    // Check session limit (max 2)
-                    const { data: onlineAdmins } = await supabase
-                        .from('users')
-                        .select('*')
-                        .eq('role', 'admin')
-                        .eq('is_online', true);
-                    
-                    const sameDevice = onlineAdmins?.find(a => a.device_id === deviceId);
-                    if (!sameDevice && onlineAdmins.length >= 2) {
-                        return showToast('❌ المسؤول يمكنه الدخول من جهازين فقط', 'error');
-                    }
-                    
-                    currentUser = existingAdmin;
-                    await supabase.from('users').update({ 
-                        is_online: true, 
-                        last_seen: new Date().toISOString() 
-                    }).eq('id', existingAdmin.id);
-                } else {
-                    // Create new admin
-                    const { data, error } = await supabase
-                        .from('users')
-                        .insert({
+                // مسؤول
+                currentUser = {
+                    id: 'admin_' + deviceId,
+                    name: name,
+                    role: 'admin',
+                    device_id: deviceId,
+                    is_online: true,
+                    total_score: 9999
+                };                
+                // محاولة الحفظ في Supabase
+                if (isSupabaseReady) {
+                    try {
+                        await supabase.from('users').upsert({
                             device_id: deviceId,
                             name: name,
                             role: 'admin',
                             is_online: true,
-                            last_seen: new Date().toISOString()                        })
-                        .select()
-                        .single();
-                    
-                    if (error) throw error;
-                    currentUser = data;
+                            last_seen: new Date().toISOString()
+                        }, { onConflict: 'device_id' });
+                    } catch(e) {
+                        console.warn('فشل الحفظ في Supabase، باستخدام المحلي', e);
+                    }
                 }
                 
-                showToast('🛡️ تم الدخول كمسؤول', 'success');
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showToast('🛡️ تم الدخول كمسؤول: ' + name, 'success');
                 showScreen('adminPanel');
                 loadAdminData();
-                subscribeToUpdates();
-            } catch (error) {
-                console.error('Admin login error:', error);
-                showToast('خطأ في تسجيل الدخول', 'error');
-            }
-        }
-
-        async function loginAsPlayer(name) {
-            try {
-                // Check if user exists
-                const { data: existingUser } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('device_id', deviceId)
-                    .eq('role', 'player')
-                    .single();
                 
-                if (existingUser) {
-                    if (existingUser.role === 'banned') {
-                        return showToast('🚫 تم حظر هذا الجهاز من اللعب', 'error');
-                    }
-                    if (existingUser.role === 'suspended') {
-                        showToast('⚠️ حسابك معلق - يمكنك المشاهدة فقط', 'warning');
-                    }
-                    currentUser = existingUser;
-                    await supabase.from('users').update({ 
-                        is_online: true, 
-                        last_seen: new Date().toISOString() 
-                    }).eq('id', existingUser.id);
-                } else {
-                    // New player registration
-                    const { data, error } = await supabase
-                        .from('users')
-                        .insert({
-                            device_id: deviceId,
-                            name: name,
+            } else {
+                // لاعب
+                currentUser = {
+                    id: deviceId,
+                    name: name,
+                    role: 'player',
+                    device_id: deviceId,
+                    total_score: 0,
+                    games_played: 0,
+                    warnings: 0,
+                    is_online: true
+                };
+                
+                if (isSupabaseReady) {
+                    try {
+                        // تحقق إذا كان المستخدم محظوراً
+                        const { data: existing } = await supabase
+                            .from('users')
+                            .select('role')
+                            .eq('device_id', deviceId)
+                            .single();
+                        
+                        if (existing?.role === 'banned') {
+                            return showToast('🚫 هذا الجهاز محظور من اللعب', 'error');
+                        }
+                        
+                        // حفظ أو تحديث
+                        await supabase.from('users').upsert({
+                            device_id: deviceId,                            name: name,
                             role: 'player',
                             is_online: true,
-                            last_seen: new Date().toISOString()                        })
-                        .select()
-                        .single();
-                    
-                    if (error) throw error;
-                    currentUser = data;
+                            last_seen: new Date().toISOString()
+                        }, { onConflict: 'device_id' });
+                        
+                        // حفظ البصمة
+                        await supabase.from('device_fingerprints').insert({
+                            user_id: currentUser.id,
+                            fingerprint_hash: fingerprintHash,
+                            device_info: navigator.userAgent
+                        }).catch(() => {}); // تجاهل الخطأ إذا كان مكرراً
+                        
+                    } catch(e) {
+                        console.warn('فشل الاتصال بـ Supabase، وضع محلي', e);
+                    }
                 }
                 
-                // Save device fingerprint
-                await supabase.from('device_fingerprints').insert({
-                    user_id: currentUser.id,
-                    fingerprint_hash: fingerprintHash,
-                    device_info: navigator.userAgent
-                });
-                
-                showToast(`مرحباً ${currentUser.name} 🎮`, 'success');
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showToast('🎮 مرحباً ' + name, 'success');
                 showScreen('playerPanel');
-                subscribeToUpdates();
                 renderPlayerInterface();
-            } catch (error) {
-                console.error('Player login error:', error);
-                showToast('خطأ في التسجيل', 'error');
             }
         }
 
@@ -519,74 +519,60 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // ===== Real-time Subscriptions =====
-        function subscribeToUpdates() {
-            if (!supabase) return;
-            
-            // Subscribe to user updates
-            gameSubscription = supabase
-                .channel('game_updates')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, payload => {
-                    console.log('User update:', payload);
-                    if (currentUser?.role === 'admin') loadAdminData();
-                    else renderLeaderboard();
-                })
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'game_rounds' }, payload => {
-                    console.log('Round update:', payload);
-                    if (currentUser?.role === 'player') renderGame();
-                })
-                .subscribe();
-            
-            // Subscribe to chat messages            chatSubscription = supabase
-                .channel('chat_updates')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
-                    renderChat();
-                })
-                .subscribe();
-        }
-
         // ===== Admin Panel Functions =====
         async function loadAdminData() {
-            if (!supabase) return;
+            if (!supabase) {
+                // وضع محلي للعرض
+                document.getElementById('statActiveUsers').textContent = '1';
+                document.getElementById('statTotalPlayers').textContent = '0';
+                document.getElementById('statTotalRounds').textContent = '0';
+                document.getElementById('statBannedUsers').textContent = '0';
+                return;
+            }
             
-            // Load statistics
-            const { count: activeCount } = await supabase
-                .from('users')
-                .select('*', { count: 'exact', head: true })
-                .eq('is_online', true)
-                .eq('role', 'player');
-            
-            const { count: totalPlayers } = await supabase
-                .from('users')
-                .select('*', { count: 'exact', head: true })
-                .eq('role', 'player');
-            
-            const { count: roundsCount } = await supabase
-                .from('game_rounds')
-                .select('*', { count: 'exact', head: true });
-            
-            const { count: bannedCount } = await supabase
-                .from('users')
-                .select('*', { count: 'exact', head: true })
-                .eq('role', 'banned');
-            
-            document.getElementById('statActiveUsers').textContent = activeCount || 0;
-            document.getElementById('statTotalPlayers').textContent = totalPlayers || 0;
-            document.getElementById('statTotalRounds').textContent = roundsCount || 0;
-            document.getElementById('statBannedUsers').textContent = bannedCount || 0;
-            
-            // Load players list
-            const { data: players } = await supabase
-                .from('users')
-                .select('*')
-                .eq('role', 'player')
-                .order('total_score', { ascending: false });
-            
-            renderAdminPlayerList(players || []);
+            try {
+                // Load statistics
+                const { count: activeCount } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_online', true)
+                    .eq('role', 'player');
+                                const { count: totalPlayers } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'player');
+                
+                const { count: roundsCount } = await supabase
+                    .from('game_rounds')
+                    .select('*', { count: 'exact', head: true });
+                
+                const { count: bannedCount } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'banned');
+                
+                document.getElementById('statActiveUsers').textContent = activeCount || 0;
+                document.getElementById('statTotalPlayers').textContent = totalPlayers || 0;
+                document.getElementById('statTotalRounds').textContent = roundsCount || 0;
+                document.getElementById('statBannedUsers').textContent = bannedCount || 0;
+                
+                // Load players list
+                const { data: players } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('role', 'player')
+                    .order('total_score', { ascending: false });
+                
+                renderAdminPlayerList(players || []);
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
         }
 
         function renderAdminPlayerList(players) {
-            const list = document.getElementById('adminPlayerList');            list.innerHTML = '';
+            const list = document.getElementById('adminPlayerList');
+            if (!list) return;
+            list.innerHTML = '';
             
             players.forEach(p => {
                 const div = document.createElement('div');
@@ -600,9 +586,7 @@
                     <div style="display:flex; gap:8px;">
                         <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="issueWarning('${p.id}')">⚠️ تحذير</button>
                         <button class="btn ${p.role==='banned'?'btn-success':'btn-danger'}" style="padding:6px 12px; font-size:0.85em;" onclick="toggleBan('${p.id}', ${p.role!=='banned'})">${p.role==='banned'?'فك الحظر':'حظر'}</button>
-                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="toggleSuspend('${p.id}', ${p.role!=='suspended'})">${p.role==='suspended'?'تفعيل':'تعليق'}</button>
-                    </div>
-                `;
+                    </div>                `;
                 list.appendChild(div);
             });
         }
@@ -611,133 +595,151 @@
             const reason = prompt('سبب التحذير:');
             if (!reason) return;
             
-            await supabase.from('warnings').insert({
-                user_id: userId,
-                issued_by: currentUser.id,
-                reason: reason
-            });
-            
-            await supabase.rpc('increment_warnings', { user_id: userId });
-            
-            addChat('النظام', `⚠️ تم إصدار تحذير للاعب`, true);
-            showToast('تم إصدار التحذير', 'success');
-            loadAdminData();
+            try {
+                // إضافة التحذير
+                await supabase.from('warnings').insert({
+                    user_id: userId,
+                    issued_by: currentUser?.id,
+                    reason: reason
+                });
+                
+                // زيادة عداد التحذيرات
+                await supabase
+                    .from('users')
+                    .update({ warnings: supabase.raw('warnings + 1') })
+                    .eq('id', userId);
+                
+                addChat('النظام', `⚠️ تم إصدار تحذير للاعب`, true);
+                showToast('✅ تم إصدار التحذير', 'success');
+                loadAdminData();
+            } catch (error) {
+                console.error('Warning error:', error);
+                showToast('❌ فشل إصدار التحذير', 'error');
+            }
         }
 
         async function toggleBan(userId, ban) {
-            await supabase.from('users').update({
-                role: ban ? 'banned' : 'player'
-            }).eq('id', userId);
-            
-            addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب`, true);
-            showToast(ban ? 'تم حظر اللاعب' : 'تم فك الحظر', 'success');
-            loadAdminData();
-        }
-
-        async function toggleSuspend(userId, suspend) {
-            await supabase.from('users').update({                role: suspend ? 'suspended' : 'player'
-            }).eq('id', userId);
-            
-            addChat('النظام', `${suspend?'⏸️ تم تعليق':'▶️ تم تفعيل'} اللاعب`, true);
-            showToast(suspend ? 'تم تعليق اللاعب' : 'تم تفعيل اللاعب', 'success');
-            loadAdminData();
+            try {
+                await supabase.from('users').update({
+                    role: ban ? 'banned' : 'player'
+                }).eq('id', userId);
+                
+                addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب`, true);
+                showToast(ban ? 'تم حظر اللاعب' : 'تم فك الحظر', 'success');
+                loadAdminData();
+            } catch (error) {
+                console.error('Ban error:', error);
+                showToast('❌ فشل العملية', 'error');
+            }
         }
 
         function adjustMaxPlayers(delta) {
             maxPlayers = Math.max(2, Math.min(10, maxPlayers + delta));
-            document.getElementById('maxPlayersDisplay').textContent = maxPlayers;
-            showToast(`تم تحديد عدد اللاعبين: ${maxPlayers}`, 'success');
+            document.getElementById('maxPlayersDisplay').textContent = maxPlayers;            showToast(`تم تحديد عدد اللاعبين: ${maxPlayers}`, 'success');
         }
 
         async function spinWheel() {
             showToast('جاري تدوير العجلة...', 'info');
-            // Wheel logic will be implemented
         }
 
         async function startGame() {
             showToast('بدأت اللعبة!', 'success');
-            // Game start logic
         }
 
         // ===== Player Interface Functions =====
         async function renderPlayerInterface() {
             if (!currentUser) return;
             
-            document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
+            const playerDeviceCode = document.getElementById('playerDeviceCode');
+            if(playerDeviceCode) {
+                playerDeviceCode.textContent = deviceId.substring(0, 12) + '...';
+            }
             
             // Personal stats
             const personalStats = document.getElementById('personalStats');
-            personalStats.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${currentUser.total_score || 0}</div>
-                    <div class="stat-label">إجمالي النقاط</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${currentUser.games_played || 0}</div>
-                    <div class="stat-label">عدد الجولات</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${currentUser.warnings || 0}</div>
-                    <div class="stat-label">التحذيرات</div>
-                </div>
-            `;
+            if(personalStats) {
+                personalStats.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${currentUser.total_score || 0}</div>
+                        <div class="stat-label">إجمالي النقاط</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${currentUser.games_played || 0}</div>
+                        <div class="stat-label">عدد الجولات</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${currentUser.warnings || 0}</div>
+                        <div class="stat-label">التحذيرات</div>
+                    </div>
+                `;
+            }
             
             await renderLeaderboard();
             renderChat();
         }
+
         async function renderLeaderboard() {
             if (!supabase) return;
             
-            const { data: leaders } = await supabase
-                .from('users')
-                .select('name, total_score, games_played')
-                .eq('role', 'player')
-                .order('total_score', { ascending: false })
-                .limit(10);
-            
-            const list = document.getElementById('leaderboard');
-            list.innerHTML = '';
-            
-            (leaders || []).forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = 'lb-item';
-                div.innerHTML = `
-                    <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-                    <div class="lb-info">
-                        <div class="lb-name">${p.name} ${p.name===currentUser.name?'(أنت)':''}</div>
-                        <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played || 0} جولات</div>
-                    </div>
-                    <div class="lb-score">${p.total_score || 0}</div>
-                `;
-                list.appendChild(div);
-            });
+            try {
+                const { data: leaders } = await supabase
+                    .from('users')
+                    .select('name, total_score, games_played')                    .eq('role', 'player')
+                    .order('total_score', { ascending: false })
+                    .limit(10);
+                
+                const list = document.getElementById('leaderboard');
+                if (!list) return;
+                list.innerHTML = '';
+                
+                (leaders || []).forEach((p, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'lb-item';
+                    div.innerHTML = `
+                        <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+                        <div class="lb-info">
+                            <div class="lb-name">${p.name} ${p.name===currentUser.name?'(أنت)':''}</div>
+                            <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played || 0} جولات</div>
+                        </div>
+                        <div class="lb-score">${p.total_score || 0}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Leaderboard error:', error);
+            }
         }
 
         async function renderChat() {
             if (!supabase) return;
             
-            const { data: messages } = await supabase
-                .from('chat_messages')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-            
-            const box = document.getElementById('playerChat');
-            box.innerHTML = '';
-            
-            (messages || []).reverse().forEach(msg => {
-                const div = document.createElement('div');
-                div.className = 'chat-msg' + (msg.sender_id === currentUser?.id ? ' self' : '');
-                div.innerHTML = `
-                    <div class="sender">${msg.is_system?'🤖 ':''}${msg.sender_name}</div>
-                    <div class="text">${msg.message}</div>
-                    <div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">
-                        ${new Date(msg.created_at).toLocaleTimeString('ar-SA')}
-                    </div>                `;
-                box.appendChild(div);
-            });
-            
-            box.scrollTop = box.scrollHeight;
+            try {
+                const { data: messages } = await supabase
+                    .from('chat_messages')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+                
+                const box = document.getElementById('playerChat');
+                if (!box) return;
+                box.innerHTML = '';
+                
+                (messages || []).reverse().forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = 'chat-msg' + (msg.sender_id === currentUser?.id ? ' self' : '');
+                    div.innerHTML = `
+                        <div class="sender">${msg.is_system?'🤖 ':''}${msg.sender_name}</div>
+                        <div class="text">${msg.message}</div>
+                        <div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">
+                            ${new Date(msg.created_at).toLocaleTimeString('ar-SA')}
+                        </div>
+                    `;                    box.appendChild(div);
+                });
+                
+                box.scrollTop = box.scrollHeight;
+            } catch (error) {
+                console.error('Chat error:', error);
+            }
         }
 
         async function sendChat(role) {
@@ -745,24 +747,32 @@
             const val = input.value.trim();
             if (!val || !supabase) return;
             
-            await supabase.from('chat_messages').insert({
-                sender_id: currentUser.id,
-                sender_name: currentUser.name,
-                message: val,
-                is_system: false
-            });
-            
-            input.value = '';
+            try {
+                await supabase.from('chat_messages').insert({
+                    sender_id: currentUser.id,
+                    sender_name: currentUser.name,
+                    message: val,
+                    is_system: false
+                });
+                
+                input.value = '';
+            } catch (error) {
+                console.error('Send chat error:', error);
+            }
         }
 
         async function addChat(sender, msg, system=false) {
             if (!supabase) return;
-            await supabase.from('chat_messages').insert({
-                sender_id: currentUser?.id,
-                sender_name: sender,
-                message: msg,
-                is_system: system
-            });
+            try {
+                await supabase.from('chat_messages').insert({
+                    sender_id: currentUser?.id,
+                    sender_name: sender,
+                    message: msg,
+                    is_system: system
+                });
+            } catch (error) {
+                console.error('Add chat error:', error);
+            }
         }
 
         function renderGame() {
@@ -770,19 +780,23 @@
         }
 
         function submitAnswer() {
-            // Answer submission logic
+            showToast('جاري تطوير هذه الميزة', 'info');
         }
-
         function skipAnswer() {
-            // Skip answer logic
+            showToast('جاري تطوير هذه الميزة', 'info');
         }
 
         // ===== Cleanup on Exit =====
         window.addEventListener('beforeunload', async () => {
             if (currentUser && supabase) {
-                await supabase.from('users').update({
-                    is_online: false,
-                    last_seen: new Date().toISOString()                }).eq('id', currentUser.id);
+                try {
+                    await supabase.from('users').update({
+                        is_online: false,
+                        last_seen: new Date().toISOString()
+                    }).eq('id', currentUser.id);
+                } catch(e) {
+                    console.warn('Failed to update online status', e);
+                }
             }
         });
 
