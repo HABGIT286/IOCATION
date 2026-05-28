@@ -1312,49 +1312,68 @@
         }
 
         // ===== Login Handler =====
-        async function handleLogin() {
-            const name = document.getElementById('loginName').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value.trim();
-            const btn = document.getElementById('loginBtn');
+// ===== Login Handler =====
+async function handleLogin() {
+    const name = document.getElementById('loginName').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    const btn = document.getElementById('loginBtn');
 
-            if (!name || !pass) {
-                showToast('أدخل الاسم وكلمة المرور', 'warning');
-                return;
-            }
-            btn.disabled = true;
-            btn.innerHTML = '<div class="spinner" style="width:25px;height:25px;border-width:3px;"></div>';
+    if (!name || !pass) {
+        showToast('أدخل الاسم وكلمة المرور', 'warning');
+        return;
+    }
 
-            await fetchAdminCredentials();
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:25px;height:25px;border-width:3px;"></div>';
 
-            const isAdmin = (name === adminCredentials.username && pass === adminCredentials.password);
+    // بيانات المسؤول
+    const adminUsername = "ONX";
+    const adminPassword = "ONX";
 
-            currentUser = {
-                id: isAdmin ? 'admin_' + deviceId : deviceId,
-                name: name,
-                role: isAdmin ? 'admin' : 'player',
-                device_id: deviceId,
-                is_online: true
-            };
+    // فحص إذا كان مسؤول
+    const isAdmin =
+        name === adminUsername &&
+        pass === adminPassword;
 
-            // Save to Supabase
-            await supabase.from('users').upsert({
-                device_id: deviceId,
-                name: name,
-                role: isAdmin ? 'admin' : 'player',
-                is_online: true,
-                last_seen: new Date().toISOString()
-            }, { onConflict: 'device_id' });
+    currentUser = {
+        id: isAdmin ? 'admin_' + deviceId : deviceId,
+        name: name,
+        password: pass,
+        role: isAdmin ? 'admin' : 'player',
+        device_id: deviceId,
+        is_online: true
+    };
 
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            showToast(isAdmin ? '🛡️ مرحباً المسؤول!' : '🎮 مرحباً ' + name, 'success');
-            
-            setTimeout(() => {
-                showDashboard();
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>دخول إلى النظام</span>';
-            }, 500);
-        }
+    // Save to Supabase
+    await supabase.from('users').upsert({
+        device_id: deviceId,
+        name: name,
+        password: pass,
+        role: isAdmin ? 'admin' : 'player',
+        is_online: true,
+        last_seen: new Date().toISOString()
+    }, { onConflict: 'device_id' });
 
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    showToast(
+        isAdmin
+            ? '🛡️ مرحباً المسؤول!'
+            : '🎮 مرحباً ' + name,
+        'success'
+    );
+    
+    setTimeout(() => {
+        showDashboard();
+
+        btn.disabled = false;
+
+        btn.innerHTML = `
+            <i class="fas fa-sign-in-alt"></i>
+            <span>دخول إلى النظام</span>
+        `;
+    }, 500);
+}
         // ===== Show Dashboard =====
         function showDashboard() {
             document.getElementById('loginScreen').style.display = 'none';
