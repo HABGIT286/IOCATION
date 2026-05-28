@@ -333,7 +333,7 @@
         let gameSubscription = null;
         let chatSubscription = null;
         let maxPlayers = 2;
-        let adminCredentials = { username: '', password: '' };
+        let adminCredentials = { username: 'onx', password: 'ONX' };
         let credentialsLoaded = false;
         
         let gameState = {
@@ -353,356 +353,178 @@
         const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
 
         // ===== Fetch Admin Credentials from Raw File =====
-        // ===== Fetch Admin Credentials from Raw File =====
-async function fetchAdminCredentials() {
-    try {
-        console.log('🔄 جاري جلب بيانات المسؤول من الملف الآمن...');
-        const response = await fetch(ADMIN_CREDENTIALS_URL, { cache: 'no-store' });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const text = await response.text();
-        console.log('📄 محتوى الملف:', text);
-        
-        // Parse the special format with 【S】 and 【P】
-        let username = '';
-        let password = '';
-        
-        // Method 1: Look for 【S】...【S】 and 【P】...【P】
-        const sMatch = text.match(/【S】([^【】]+)【S】/);
-        const pMatch = text.match(/【P】([^【】]+)【P】/);
-        
-        if (sMatch && sMatch[1]) {
-            // Extract just the part before .com if exists
-            const sValue = sMatch[1].trim();
-            username = sValue.split('.')[0].toLowerCase(); // Take "ONX" from "ONX.COM"
-        }
-        
-        if (pMatch && pMatch[1]) {
-            password = pMatch[1].trim(); // "ONX"
-        }
-        
-        // Method 2: Fallback - simple line parsing
-        if (!username || !password) {
-            const lines = text.trim().split('\n');
-            for (const line of lines) {
-                const cleanLine = line.replace(/[【\]]/g, '').trim();
-                if (cleanLine.startsWith('S') || cleanLine.startsWith('s')) {
-                    const value = cleanLine.substring(1).trim();
-                    username = value.split('.')[0].toLowerCase();
-                } else if (cleanLine.startsWith('P') || cleanLine.startsWith('p')) {
-                    password = cleanLine.substring(1).trim();
-                }
-            }
-        }
-        
-        adminCredentials = {
-            username: username || 'admin',
-            password: password || 'TRX'
-        };
-        
-        credentialsLoaded = true;
-        console.log('✅ تم تحميل بيانات المسؤول:', adminCredentials);
-        showToast(`✅ المستخدم: ${adminCredentials.username}`, 'success', 3000);
-        return true;
-        
-    } catch (error) {
-        console.error('❌ فشل جلب بيانات المسؤول:', error);
-        // Fallback credentials
-        adminCredentials = { username: 'onx', password: 'ONX' };
-        credentialsLoaded = true;
-        showToast('⚠️ وضع الطوارئ: onx / ONX', 'warning', 3000);
-        return false;
-    }
-}
-
-        // ===== Initialize Device Fingerprint =====
-        async function initDeviceFingerprint() {
+        async function fetchAdminCredentials() {
+            if (credentialsLoaded) return true;
+            
             try {
-                const fp = await FingerprintJS.load();
-                const result = await fp.get();
-                fingerprintHash = result.visitorId;
-                deviceId = localStorage.getItem('game_device_id') || fingerprintHash;
-                localStorage.setItem('game_device_id', deviceId);
+                console.log('🔄 جاري جلب بيانات المسؤول...');
+                const response = await fetch(ADMIN_CREDENTIALS_URL, { cache: 'no-store' });
                 
-                const displayEl = document.getElementById('deviceFingerprintDisplay');
-                if (displayEl) {
-                    displayEl.textContent = deviceId.substring(0, 12) + '...';
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const text = await response.text();
+                console.log('📄 محتوى الملف:', text);
+                
+                // Parse format: 【S】ONX.COM【S】 and 【P】ONX【P】
+                const sMatch = text.match(/【S】([^【】]+)【S】/);
+                const pMatch = text.match(/【P】([^【】]+)【P】/);
+                
+                if (sMatch && sMatch[1]) {
+                    adminCredentials.username = sMatch[1].trim().split('.')[0].toLowerCase();
                 }
-                const playerCodeEl = document.getElementById('playerDeviceCode');
-                if (playerCodeEl) {
-                    playerCodeEl.textContent = deviceId.substring(0, 12) + '...';
+                if (pMatch && pMatch[1]) {
+                    adminCredentials.password = pMatch[1].trim();
                 }
                 
-                console.log('Device Fingerprint:', fingerprintHash);
-                console.log('Device ID:', deviceId);
-            } catch (error) {
-                console.error('Error getting fingerprint:', error);
-                deviceId = localStorage.getItem('game_device_id') || 'device_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('game_device_id', deviceId);
-            }
-        }
-        // ===== Initialize Supabase =====
-        function initSupabase() {
-            try {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase client created');
-                verifySupabaseConnection();
+                credentialsLoaded = true;
+                console.log('✅ بيانات المسؤول:', adminCredentials);
                 return true;
-            } catch (e) {
-                console.error('❌ Failed to init Supabase:', e);
+                
+            } catch (error) {
+                console.error('❌ فشل جلب البيانات:', error);
+                adminCredentials = { username: 'onx', password: 'ONX' };
+                credentialsLoaded = true;
                 return false;
             }
         }
 
-        // ===== Verify Supabase Connection =====
-        async function verifySupabaseConnection() {
-            if (!supabase) return false;
-            
+        // ===== Initialize Device Fingerprint =====
+        async function initDeviceFingerprint() {
+            try {                deviceId = localStorage.getItem('game_device_id') || 'device_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('game_device_id', deviceId);
+                
+                const displayEl = document.getElementById('deviceFingerprintDisplay');
+                if (displayEl) displayEl.textContent = deviceId.substring(0, 8) + '...';
+                
+                const playerCodeEl = document.getElementById('playerDeviceCode');
+                if (playerCodeEl) playerCodeEl.textContent = deviceId.substring(0, 8) + '...';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                deviceId = localStorage.getItem('game_device_id') || 'device_001';
+                localStorage.setItem('game_device_id', deviceId);
+            }
+        }
+
+        // ===== Initialize Supabase =====
+        function initSupabase() {
             try {
-                const { error } = await supabase
-                    .from('users')
-                    .select('id')
-                    .limit(1);                
-                if (error) {
-                    console.error('❌ Supabase Error:', error.message);
-                    return false;
-                }
-                console.log('✅ Supabase Connected Successfully');
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase جاهز');
                 return true;
             } catch (e) {
-                console.error('Exception:', e);
+                console.error('❌ خطأ Supabase:', e);
                 return false;
             }
         }
 
         // ===== Toast Notifications =====
-        function showToast(msg, type='info', duration=3500) {
+        function showToast(msg, type='info') {
             const container = document.getElementById('toastContainer');
-            if (!container) return;
+            if (!container) { alert(msg); return; }
             
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-exclamation-circle':type==='warning'?'fa-exclamation-triangle':'fa-info-circle'}"></i> ${msg}`;
+            toast.innerHTML = msg;
+            toast.style.cssText = `padding:14px 24px;border-radius:14px;font-weight:700;backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.2);box-shadow:0 10px 40px rgba(0,0,0,0.4);animation:slideDown 0.4s ease;margin:10px;`;
+            
+            if (type === 'success') toast.style.background = 'rgba(0,245,160,0.15)';
+            else if (type === 'error') toast.style.background = 'rgba(255,68,68,0.15)';
+            else if (type === 'warning') toast.style.background = 'rgba(255,165,0,0.15)';
+            else toast.style.background = 'rgba(0,210,255,0.15)';
+            
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
+            setTimeout(() => toast.remove(), 3500);
         }
 
-        // ===== Login Handler (MAIN FUNCTION) =====        async function handleLogin() {
-            console.log('🟢 [START] بدء عملية تسجيل الدخول...');
-            
-            const nameEl = document.getElementById('loginName');
-            const passEl = document.getElementById('loginPass');
+        // ===== Login Handler =====
+        async function handleLogin() {
+            console.log('🔵 بدء تسجيل الدخول...');            
+            const nameInput = document.getElementById('loginName');
+            const passInput = document.getElementById('loginPass');
             const loginBtn = document.getElementById('loginBtn');
             
-            if (!nameEl || !passEl) {
-                alert('❌ خطأ: حقول الإدخال غير موجودة!');
-                console.error('Login fields not found');
-                return;
-            }
-
-            const name = nameEl.value.trim();
-            const pass = passEl.value.trim();
+            if (!nameInput || !passInput) { alert('❌ خطأ: حقول الإدخال غير موجودة'); return; }
             
-            if (!name || !pass) {
-                showToast('أدخل الاسم وكلمة المرور', 'warning');
-                return;
-            }
-
-            // Disable button during processing
+            const name = nameInput.value.trim().toLowerCase();
+            const pass = passInput.value.trim();
+            
+            if (!name || !pass) { showToast('⚠️ أدخل الاسم وكلمة المرور', 'warning'); return; }
+            
             if (loginBtn) {
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
             }
-
-            console.log('🟢 [1] البيانات المدخلة:', { name, pass });
-            showToast('جاري التحقق من البيانات...', 'info', 2000);
-
-            try {
-                // تهيئة البصمة
-                await initDeviceFingerprint();
-                console.log('🟢 [2] تم تهيئة بصمة الجهاز');
-
-                // جلب بيانات المسؤول إذا لم تُجلب بعد
-                if (!credentialsLoaded) {
-                    await fetchAdminCredentials();
-                }
-
-                // تهيئة Supabase
-                initSupabase();
-                const isSupabaseReady = supabase !== undefined;
-                console.log('🟢 [3] Supabase status:', isSupabaseReady ? 'READY' : 'FALLBACK');
-
-                // التحقق من صحة البيانات
-                const isAdmin = (name === adminCredentials.username && pass === adminCredentials.password);
-                console.log('🔐 نتيجة التحقق:', isAdmin ? '✅ مسؤول' : '❌ لاعب عادي');
-
-                if (isAdmin) {                    // ===== دخول كمسؤول =====
-                    console.log('🔵 [4] جاري إعداد جلسة المسؤول...');
-                    
-                    currentUser = {
-                        id: 'admin_' + deviceId,
-                        name: name,
-                        role: 'admin',
-                        device_id: deviceId,
-                        is_online: true,
-                        total_score: 9999,
-                        games_played: 0,
-                        warnings: 0
-                    };
-                    
-                    // محاولة الحفظ في Supabase (بدون انتظار)
-                    if (isSupabaseReady) {
-                        supabase.from('users').upsert({
-                            device_id: deviceId,
-                            name: name,
-                            role: 'admin',
-                            is_online: true,
-                            last_seen: new Date().toISOString()
-                        }, { onConflict: 'device_id' }).then(res => {
-                            if (res.error) console.warn('⚠️ فشل حفظ المسؤول:', res.error.message);
-                            else console.log('✅ تم حفظ بيانات المسؤول');
-                        }).catch(err => console.error('❌ Supabase error:', err));
-                    }
-                    
-                    // حفظ محلياً
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    
-                    console.log('🔵 [5] جاري الانتقال للوحة التحكم...');
-                    showToast('🛡️ مرحباً المسؤول: ' + name, 'success', 2000);
-                    
-                    // الانتقال للشاشة مع تأكيد
-                    setTimeout(() => {
-                        showScreen('adminPanel');
-                        loadAdminData();
-                        console.log('✅ تم الانتقال بنجاح للوحة المسؤول');
-                    }, 300);
-                    
-                } else {
-                    // ===== دخول كلاعب =====
-                    console.log('🟢 [4] جاري إعداد جلسة اللاعب...');
-                    
-                    currentUser = {
-                        id: deviceId,
-                        name: name,
-                        role: 'player',
-                        device_id: deviceId,                        total_score: 0,
-                        games_played: 0,
-                        warnings: 0,
-                        is_online: true
-                    };
-                    
-                    if (isSupabaseReady) {
-                        try {
-                            // تحقق من الحظر
-                            const { data: check } = await supabase
-                                .from('users')
-                                .select('role')
-                                .eq('device_id', deviceId)
-                                .single()
-                                .catch(() => ({ data: null }));
-                            
-                            if (check?.role === 'banned') {
-                                showToast('🚫 هذا الجهاز محظور من اللعب', 'error');
-                                if (loginBtn) {
-                                    loginBtn.disabled = false;
-                                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول إلى النظام';
-                                }
-                                return;
-                            }
-                            
-                            // حفظ البيانات
-                            await supabase.from('users').upsert({
-                                device_id: deviceId,
-                                name: name,
-                                role: 'player',
-                                is_online: true,
-                                last_seen: new Date().toISOString()
-                            }, { onConflict: 'device_id' }).catch(() => {});
-                            
-                        } catch(e) {
-                            console.warn('⚠️ فشل الاتصال بـ Supabase، نستخدم الوضع المحلي', e);
-                        }
-                    }
-                    
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    
-                    console.log('🟢 [5] جاري الانتقال لواجهة اللاعب...');
-                    showToast('🎮 مرحباً ' + name, 'success', 2000);
-                    
-                    setTimeout(() => {
-                        showScreen('playerPanel');
-                        renderPlayerInterface();
-                        console.log('✅ تم الانتقال بنجاح لواجهة اللاعب');
-                    }, 300);
-                }                
-            } catch (error) {
-                console.error('💥 خطأ فادح في تسجيل الدخول:', error);
-                showToast('❌ حدث خطأ: ' + error.message, 'error', 5000);
+            
+            // جلب بيانات المسؤول إذا لم تُجلب
+            if (!credentialsLoaded) await fetchAdminCredentials();
+            
+            console.log('📝 البيانات:', { name, pass, admin: adminCredentials });
+            
+            // التحقق من المسؤول
+            if (name === adminCredentials.username && pass === adminCredentials.password) {
+                console.log('✅ دخول كمسؤول');
+                showToast('🛡️ مرحباً المسؤول!', 'success');
                 
-                // Fallback: دخول كلاعب على الأقل
-                currentUser = {
-                    id: deviceId,
-                    name: name,
-                    role: 'player',
-                    device_id: deviceId,
-                    total_score: 0,
-                    is_online: true
-                };
+                currentUser = { id: 'admin_' + deviceId, name, role: 'admin', device_id: deviceId, is_online: true };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showScreen('playerPanel');
-                renderPlayerInterface();
-            } finally {
-                // Re-enable button
-                if (loginBtn) {
-                    setTimeout(() => {
+                
+                // حفظ في Supabase
+                if (supabase) {
+                    supabase.from('users').upsert({
+                        device_id: deviceId, name, role: 'admin', is_online: true,
+                        last_seen: new Date().toISOString()
+                    }, { onConflict: 'device_id' }).catch(() => {});
+                }
+                
+                setTimeout(() => {
+                    showScreen('adminPanel');
+                    loadAdminData();
+                    if (loginBtn) {
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول إلى النظام';
-                    }, 1000);
+                    }
+                }, 500);
+                
+            } else {
+                console.log('✅ دخول كلاعب');
+                showToast('🎮 مرحباً ' + name, 'success');                
+                currentUser = { id: deviceId, name, role: 'player', device_id: deviceId, total_score: 0, games_played: 0, warnings: 0, is_online: true };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // حفظ في Supabase
+                if (supabase) {
+                    supabase.from('users').upsert({
+                        device_id: deviceId, name, role: 'player', is_online: true,
+                        last_seen: new Date().toISOString()
+                    }, { onConflict: 'device_id' }).catch(() => {});
                 }
+                
+                setTimeout(() => {
+                    showScreen('playerPanel');
+                    renderPlayerInterface();
+                    if (loginBtn) {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول إلى النظام';
+                    }
+                }, 500);
             }
         }
 
         // ===== Screen Navigation =====
-        function showScreen(id) {
-            console.log('🔄 الانتقال إلى الشاشة:', id);
-            
-            // إخفاء جميع الشاشات
-            document.querySelectorAll('.screen').forEach(s => {
-                s.classList.remove('active');
-                // Force hide for safety
-                setTimeout(() => {
-                    if (!s.classList.contains('active')) {
-                        s.style.display = 'none';
-                    }
-                }, 100);
-            });
-            
-            // إظهار الشاشة المطلوبة
-            const target = document.getElementById(id);
+        function showScreen(screenId) {
+            console.log('🔄 الانتقال إلى:', screenId);
+            document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            const target = document.getElementById(screenId);
             if (target) {
                 target.style.display = 'block';
-                // Force reflow
-                void target.offsetWidth;
-                target.classList.add('active');                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                console.log('✅ تم عرض الشاشة:', id);
-            } else {
-                console.error('❌ الشاشة غير موجودة:', id);
+                setTimeout(() => target.classList.add('active'), 10);
             }
         }
 
         // ===== Admin Panel Functions =====
         async function loadAdminData() {
             if (!supabase) {
-                // Local fallback
                 document.getElementById('statActiveUsers').textContent = '1';
                 document.getElementById('statTotalPlayers').textContent = '0';
                 document.getElementById('statTotalRounds').textContent = '0';
@@ -711,59 +533,36 @@ async function fetchAdminCredentials() {
             }
             
             try {
-                const { count: activeCount } = await supabase
-                    .from('users')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('is_online', true)
-                    .eq('role', 'player');
-                
-                const { count: totalPlayers } = await supabase
-                    .from('users')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('role', 'player');
-                
-                const { count: roundsCount } = await supabase
-                    .from('game_rounds')
-                    .select('*', { count: 'exact', head: true });
-                
-                const { count: bannedCount } = await supabase
-                    .from('users')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('role', 'banned');
-                
-                document.getElementById('statActiveUsers').textContent = activeCount || 0;
+                const { count: activeCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_online', true).eq('role', 'player');
+                const { count: totalPlayers } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'player');
+                const { count: roundsCount } = await supabase.from('game_rounds').select('*', { count: 'exact', head: true });
+                const { count: bannedCount } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'banned');
+                                document.getElementById('statActiveUsers').textContent = activeCount || 0;
                 document.getElementById('statTotalPlayers').textContent = totalPlayers || 0;
                 document.getElementById('statTotalRounds').textContent = roundsCount || 0;
                 document.getElementById('statBannedUsers').textContent = bannedCount || 0;
                 
-                const { data: players } = await supabase
-                    .from('users')
-                    .select('*')                    .eq('role', 'player')
-                    .order('total_score', { ascending: false });
-                
+                const { data: players } = await supabase.from('users').select('*').eq('role', 'player').order('total_score', { ascending: false });
                 renderAdminPlayerList(players || []);
-            } catch (error) {
-                console.error('Error loading admin data:', error);
-            }
+            } catch (error) { console.error('Error:', error); }
         }
 
         function renderAdminPlayerList(players) {
             const list = document.getElementById('adminPlayerList');
             if (!list) return;
             list.innerHTML = '';
-            
             players.forEach(p => {
                 const div = document.createElement('div');
-                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(255,255,255,0.1);';
+                div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);margin-bottom:8px;';
                 div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
                         <span style="font-weight:700;">${p.name}</span>
                         <span class="status-badge ${p.is_online?'online':'offline'}">${p.is_online?'متصل':'غير متصل'}</span>
-                        <span style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.total_score || 0} نقطة</span>
+                        <span style="font-size:0.85em;color:rgba(255,255,255,0.6);">${p.total_score||0} نقطة</span>
                     </div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="issueWarning('${p.id}')">⚠️ تحذير</button>
-                        <button class="btn ${p.role==='banned'?'btn-success':'btn-danger'}" style="padding:6px 12px; font-size:0.85em;" onclick="toggleBan('${p.id}', ${p.role!=='banned'})">${p.role==='banned'?'فك الحظر':'حظر'}</button>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-warning" style="padding:6px 12px;font-size:0.85em;" onclick="issueWarning('${p.id}')">⚠️</button>
+                        <button class="btn ${p.role==='banned'?'btn-success':'btn-danger'}" style="padding:6px 12px;font-size:0.85em;" onclick="toggleBan('${p.id}',${p.role!=='banned'})">${p.role==='banned'?'فك':'حظر'}</button>
                     </div>
                 `;
                 list.appendChild(div);
@@ -772,220 +571,100 @@ async function fetchAdminCredentials() {
 
         async function issueWarning(userId) {
             const reason = prompt('سبب التحذير:');
-            if (!reason) return;
-            
-            try {
-                await supabase.from('warnings').insert({
-                    user_id: userId,
-                    issued_by: currentUser?.id,
-                    reason: reason
-                });
-                
-                await supabase
-                    .from('users')
-                    .update({ warnings: supabase.raw('warnings + 1') })
-                    .eq('id', userId);
-                
-                addChat('النظام', `⚠️ تم إصدار تحذير للاعب`, true);
-                showToast('✅ تم إصدار التحذير', 'success');                loadAdminData();
-            } catch (error) {
-                console.error('Warning error:', error);
-                showToast('❌ فشل إصدار التحذير', 'error');
-            }
+            if (!reason || !supabase) return;
+            await supabase.from('warnings').insert({ user_id: userId, issued_by: currentUser?.id, reason });
+            await supabase.from('users').update({ warnings: supabase.raw('warnings + 1') }).eq('id', userId);
+            showToast('✅ تم إصدار التحذير', 'success');
+            loadAdminData();
         }
 
         async function toggleBan(userId, ban) {
-            try {
-                await supabase.from('users').update({
-                    role: ban ? 'banned' : 'player'
-                }).eq('id', userId);
-                
-                addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب`, true);
-                showToast(ban ? 'تم حظر اللاعب' : 'تم فك الحظر', 'success');
-                loadAdminData();
-            } catch (error) {
-                console.error('Ban error:', error);
-                showToast('❌ فشل العملية', 'error');
-            }
+            if (!supabase) return;
+            await supabase.from('users').update({ role: ban ? 'banned' : 'player' }).eq('id', userId);
+            showToast(ban ? '🚫 تم الحظر' : '✅ تم فك الحظر', 'success');
+            loadAdminData();
         }
 
         function adjustMaxPlayers(delta) {
-            maxPlayers = Math.max(2, Math.min(10, maxPlayers + delta));
-            document.getElementById('maxPlayersDisplay').textContent = maxPlayers;
-            showToast(`تم تحديد عدد اللاعبين: ${maxPlayers}`, 'success');
+            maxPlayers = Math.max(2, Math.min(10, maxPlayers + delta));            document.getElementById('maxPlayersDisplay').textContent = maxPlayers;
         }
 
-        async function spinWheel() {
-            showToast('جاري تدوير العجلة...', 'info');
-        }
-
-        async function startGame() {
-            showToast('بدأت اللعبة!', 'success');
-        }
+        function spinWheel() { showToast('جاري التدوير...', 'info'); }
+        function startGame() { showToast('بدأت اللعبة!', 'success'); }
 
         // ===== Player Interface Functions =====
         async function renderPlayerInterface() {
             if (!currentUser) return;
-            
-            const playerDeviceCode = document.getElementById('playerDeviceCode');
-            if(playerDeviceCode) {
-                playerDeviceCode.textContent = deviceId.substring(0, 12) + '...';
-            }
-            
             const personalStats = document.getElementById('personalStats');
-            if(personalStats) {
+            if (personalStats) {
                 personalStats.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-value">${currentUser.total_score || 0}</div>                        <div class="stat-label">إجمالي النقاط</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${currentUser.games_played || 0}</div>
-                        <div class="stat-label">عدد الجولات</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${currentUser.warnings || 0}</div>
-                        <div class="stat-label">التحذيرات</div>
-                    </div>
+                    <div class="stat-card"><div class="stat-value">${currentUser.total_score||0}</div><div class="stat-label">إجمالي النقاط</div></div>
+                    <div class="stat-card"><div class="stat-value">${currentUser.games_played||0}</div><div class="stat-label">عدد الجولات</div></div>
+                    <div class="stat-card"><div class="stat-value">${currentUser.warnings||0}</div><div class="stat-label">التحذيرات</div></div>
                 `;
             }
-            
             await renderLeaderboard();
             renderChat();
         }
 
         async function renderLeaderboard() {
             if (!supabase) return;
-            
-            try {
-                const { data: leaders } = await supabase
-                    .from('users')
-                    .select('name, total_score, games_played')
-                    .eq('role', 'player')
-                    .order('total_score', { ascending: false })
-                    .limit(10);
-                
-                const list = document.getElementById('leaderboard');
-                if (!list) return;
-                list.innerHTML = '';
-                
-                (leaders || []).forEach((p, i) => {
-                    const div = document.createElement('div');
-                    div.className = 'lb-item';
-                    div.innerHTML = `
-                        <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-                        <div class="lb-info">
-                            <div class="lb-name">${p.name} ${p.name===currentUser.name?'(أنت)':''}</div>
-                            <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played || 0} جولات</div>
-                        </div>
-                        <div class="lb-score">${p.total_score || 0}</div>
-                    `;
-                    list.appendChild(div);
-                });
-            } catch (error) {
-                console.error('Leaderboard error:', error);
-            }
+            const { data: leaders } = await supabase.from('users').select('name,total_score,games_played').eq('role','player').order('total_score',{ascending:false}).limit(10);
+            const list = document.getElementById('leaderboard');
+            if (!list) return;
+            list.innerHTML = '';
+            (leaders||[]).forEach((p,i) => {
+                const div = document.createElement('div');
+                div.className = 'lb-item';
+                div.innerHTML = `
+                    <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+                    <div class="lb-info"><div class="lb-name">${p.name}${p.name===currentUser.name?' (أنت)':''}</div><div style="font-size:0.85em;color:rgba(255,255,255,0.6);">${p.games_played||0} جولات</div></div>
+                    <div class="lb-score">${p.total_score||0}</div>
+                `;
+                list.appendChild(div);
+            });
         }
+
         async function renderChat() {
             if (!supabase) return;
-            
-            try {
-                const { data: messages } = await supabase
-                    .from('chat_messages')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(50);
-                
-                const box = document.getElementById('playerChat');
-                if (!box) return;
-                box.innerHTML = '';
-                
-                (messages || []).reverse().forEach(msg => {
-                    const div = document.createElement('div');
-                    div.className = 'chat-msg' + (msg.sender_id === currentUser?.id ? ' self' : '');
-                    div.innerHTML = `
-                        <div class="sender">${msg.is_system?'🤖 ':''}${msg.sender_name}</div>
-                        <div class="text">${msg.message}</div>
-                        <div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">
-                            ${new Date(msg.created_at).toLocaleTimeString('ar-SA')}
-                        </div>
-                    `;
-                    box.appendChild(div);
-                });
-                
-                box.scrollTop = box.scrollHeight;
-            } catch (error) {
-                console.error('Chat error:', error);
-            }
+            const { data: messages } = await supabase.from('chat_messages').select('*').order('created_at',{ascending:false}).limit(50);
+            const box = document.getElementById('playerChat');
+            if (!box) return;
+            box.innerHTML = '';
+            (messages||[]).reverse().forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'chat-msg' + (msg.sender_id===currentUser?.id?' self':'');
+                div.innerHTML = `<div class="sender">${msg.is_system?'🤖 ':''}${msg.sender_name}</div><div class="text">${msg.message}</div>`;
+                box.appendChild(div);            });
+            box.scrollTop = box.scrollHeight;
         }
 
         async function sendChat(role) {
             const input = document.getElementById(role==='admin'?'adminChatInput':'playerChatInput');
-            const val = input.value.trim();
+            const val = input?.value.trim();
             if (!val || !supabase) return;
-            
-            try {
-                await supabase.from('chat_messages').insert({
-                    sender_id: currentUser.id,
-                    sender_name: currentUser.name,
-                    message: val,
-                    is_system: false
-                });
-                
-                input.value = '';
-            } catch (error) {
-                console.error('Send chat error:', error);
-            }        }
-
-        async function addChat(sender, msg, system=false) {
-            if (!supabase) return;
-            try {
-                await supabase.from('chat_messages').insert({
-                    sender_id: currentUser?.id,
-                    sender_name: sender,
-                    message: msg,
-                    is_system: system
-                });
-            } catch (error) {
-                console.error('Add chat error:', error);
-            }
+            await supabase.from('chat_messages').insert({ sender_id: currentUser.id, sender_name: currentUser.name, message: val, is_system: false });
+            input.value = '';
+            renderChat();
         }
 
-        function renderGame() {
-            // Game rendering logic
-        }
+        function submitAnswer() { showToast('جاري التطوير', 'info'); }
+        function skipAnswer() { showToast('تم التخطي', 'info'); }
 
-        function submitAnswer() {
-            showToast('جاري تطوير هذه الميزة', 'info');
-        }
-
-        function skipAnswer() {
-            showToast('جاري تطوير هذه الميزة', 'info');
-        }
-
-        // ===== Cleanup on Exit =====
-        window.addEventListener('beforeunload', async () => {
+        // ===== Cleanup =====
+        window.addEventListener('beforeunload', () => {
             if (currentUser && supabase) {
-                try {
-                    await supabase.from('users').update({
-                        is_online: false,
-                        last_seen: new Date().toISOString()
-                    }).eq('id', currentUser.id);
-                } catch(e) {
-                    console.warn('Failed to update online status', e);
-                }
+                supabase.from('users').update({ is_online: false, last_seen: new Date().toISOString() }).eq('id', currentUser.id).catch(()=>{});
             }
         });
 
         // ===== Initialization =====
         window.addEventListener('load', async () => {
-            console.log('🚀 Starting app initialization...');
-            
-            // Load credentials first
+            console.log('🚀 Starting...');
+            await initDeviceFingerprint();
+            initSupabase();
             await fetchAdminCredentials();
-            
-            // Then init fingerprint            await initDeviceFingerprint();
-            
-            console.log('✅ App initialized');
+            console.log('✅ Ready');
         });
     </script>
 </body>
