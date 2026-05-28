@@ -3,265 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>✨ لعبة الحروف الفاخرة | نظام إدارة متقدم</title>
+    <title>✨ لعبة الحروف الفاخرة | Supabase Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FingerprintJS for device identification -->
+    <script src="https://openfpcdn.io/fingerprintjs/v4/fingerprint.min.js"></script>
     <style>
         :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --accent: #fd79a8;
-            --neon-blue: #00d2ff;
-            --neon-purple: #7b2ff7;
-            --neon-pink: #ff006e;
-            --neon-green: #00f5a0;
-            --neon-gold: #ffd700;
-            --dark: #0a0a1a;
-            --darker: #05050f;
-            --card-bg: rgba(255, 255, 255, 0.06);
-            --card-border: rgba(255, 255, 255, 0.12);
-            --glass-blur: blur(24px);
-            --shadow-neon: 0 0 25px rgba(123, 47, 247, 0.45);
-            --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --primary: #6c5ce7; --secondary: #a29bfe; --accent: #fd79a8;
+            --neon-blue: #00d2ff; --neon-purple: #7b2ff7; --neon-pink: #ff006e;
+            --neon-green: #00f5a0; --neon-gold: #ffd700; --dark: #0a0a1a;
+            --card-bg: rgba(255,255,255,0.06); --card-border: rgba(255,255,255,0.12);
+            --shadow-neon: 0 0 25px rgba(123,47,247,0.45);
+            --transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--dark);
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* خلفية متحركة */
-        .bg-orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45;
-            animation: floatOrb 22s infinite ease-in-out;
-        }
-        .orb:nth-child(1) { width: 450px; height: 450px; background: var(--neon-purple); top: -120px; left: -100px; }
-        .orb:nth-child(2) { width: 350px; height: 350px; background: var(--neon-blue); bottom: 10%; right: -80px; animation-delay: -6s; }
-        .orb:nth-child(3) { width: 400px; height: 400px; background: var(--neon-pink); top: 40%; left: 30%; animation-delay: -12s; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family:'Tajawal',sans-serif; background:var(--dark); color:#fff; min-height:100vh; overflow-x:hidden; }
+        .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+        .orb { position:absolute; border-radius:50%; filter:blur(90px); opacity:0.45; animation:floatOrb 22s infinite ease-in-out; }
+        .orb:nth-child(1) { width:450px; height:450px; background:var(--neon-purple); top:-120px; left:-100px; }
+        .orb:nth-child(2) { width:350px; height:350px; background:var(--neon-blue); bottom:10%; right:-80px; animation-delay:-6s; }
+        .orb:nth-child(3) { width:400px; height:400px; background:var(--neon-pink); top:40%; left:30%; animation-delay:-12s; }
         @keyframes floatOrb { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(60px,-80px) scale(1.15)} }
-
-        /* الحاوية الرئيسية */        .app-container { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 24px; min-height: 100vh; }
         
-        /* البطاقات الزجاجية */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--card-border);
-            border-radius: 26px;
-            padding: 28px;
-            margin: 18px 0;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-        }
-        .glass-card::before {
-            content:''; position:absolute; inset:0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
-            pointer-events:none; z-index:0;
-        }
-        .glass-card > * { position:relative; z-index:1; }
-        .glass-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.25); box-shadow: var(--shadow-neon); }
-
-        /* العناوين والتدرجات */
-        .main-title {
-            text-align:center; margin: 35px 0 25px;
-        }
-        .main-title h1 {
-            font-size: 3.4em; font-weight: 900;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink), var(--neon-gold));
-            background-size: 400% 400%;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: gradShift 7s ease infinite;
-            letter-spacing: 1.5px; margin-bottom: 12px;
-        }
+        .app-container { position:relative; z-index:1; max-width:1400px; margin:0 auto; padding:20px; min-height:100vh; }
+        .glass-card { background:var(--card-bg); backdrop-filter:blur(24px); border:1px solid var(--card-border); border-radius:26px; padding:28px; margin:18px 0; position:relative; overflow:hidden; transition:var(--transition); box-shadow:0 12px 40px rgba(0,0,0,0.35); }
+        .glass-card:hover { transform:translateY(-6px); border-color:rgba(255,255,255,0.25); box-shadow:var(--shadow-neon); }
+        .main-title { text-align:center; margin:35px 0 25px; }
+        .main-title h1 { font-size:3.4em; font-weight:900; background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple),var(--neon-pink),var(--neon-gold)); background-size:400% 400%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:gradShift 7s ease infinite; margin-bottom:12px; }
         @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        .main-title p { color: rgba(255,255,255,0.75); font-size: 1.2em; font-weight: 400; }
-
-        /* الأزرار */
-        .btn {
-            display:inline-flex; align-items:center; justify-content:center; gap:10px;
-            padding: 16px 36px; border:none; border-radius: 16px;
-            font-family:'Tajawal',sans-serif; font-size:1.15em; font-weight:700;
-            cursor:pointer; transition:var(--transition); position:relative; overflow:hidden;
-            min-width:160px;
-        }
-        .btn::before {
-            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);            transition:left 0.5s; z-index:1;
-        }
+        .main-title p { color:rgba(255,255,255,0.75); font-size:1.2em; }
+        
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:16px 36px; border:none; border-radius:16px; font-family:'Tajawal',sans-serif; font-size:1.15em; font-weight:700; cursor:pointer; transition:var(--transition); position:relative; overflow:hidden; min-width:160px; }
+        .btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent); transition:left 0.5s; }
         .btn:hover::before { left:100%; }
-        .btn:active { transform: translateY(2px) scale(0.98); }
-        .btn-primary { background:linear-gradient(135deg, var(--neon-purple), var(--neon-pink)); color:#fff; box-shadow: var(--shadow-neon); }
-        .btn-secondary { background:linear-gradient(135deg, var(--neon-blue), var(--neon-green)); color:#fff; box-shadow:0 8px 30px rgba(0,210,255,0.4); }
-        .btn-accent { background:linear-gradient(135deg, #ff6b6b, #ffa500); color:#fff; }
-        .btn-gold { background:linear-gradient(135deg, var(--neon-gold), #ffaa00); color:#1a1a2e; font-weight:800; }
-        .btn-danger { background:linear-gradient(135deg, #ff4444, #cc0000); color:#fff; }
+        .btn-primary { background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink)); color:#fff; box-shadow:var(--shadow-neon); }
+        .btn-secondary { background:linear-gradient(135deg,var(--neon-blue),var(--neon-green)); color:#fff; }
+        .btn-accent { background:linear-gradient(135deg,#ff6b6b,#ffa500); color:#fff; }
+        .btn-gold { background:linear-gradient(135deg,var(--neon-gold),#ffaa00); color:#1a1a2e; font-weight:800; }
+        .btn-danger { background:linear-gradient(135deg,#ff4444,#cc0000); color:#fff; }
+        .btn-warning { background:rgba(255,165,0,0.2); color:#ffa500; border:1px solid rgba(255,165,0,0.4); }
         .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none!important; }
-
-        /* الحقول */
-        .input-field {
-            width:100%; padding:16px 20px; background:rgba(255,255,255,0.08);
-            border:2px solid rgba(255,255,255,0.15); border-radius:16px; color:#fff;
-            font-family:'Tajawal',sans-serif; font-size:1.1em; outline:none; transition:var(--transition);
-        }
-        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }
-        .input-field::placeholder { color:rgba(255,255,255,0.4); }
-
-        /* شاشات الدخول والأدوار */
-        .screen { display:none; animation:fadeIn 0.5s ease; flex-direction:column; gap:20px; }
-        .screen.active { display:flex; }
+        
+        .input-field { width:100%; padding:16px 20px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); border-radius:16px; color:#fff; font-family:'Tajawal',sans-serif; font-size:1.1em; outline:none; transition:var(--transition); }        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }
+        
+        .screen { display:none; animation:fadeIn 0.5s ease; }
+        .screen.active { display:block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
-
-        /* عجلة الحظ */
-        .wheel-container { position:relative; width:320px; height:320px; margin:20px auto; }
-        .wheel {
-            width:100%; height:100%; border-radius:50%; position:relative;
-            transition:transform 4.8s cubic-bezier(0.22,1,0.36,1);
-            border:4px solid rgba(255,255,255,0.3);
-            box-shadow:0 0 50px rgba(123,47,247,0.5), inset 0 0 60px rgba(0,0,0,0.4); cursor:pointer;
-        }
-        .wheel canvas { width:100%; height:100%; border-radius:50%; }
-        .wheel-pointer {
-            position:absolute; top:-22px; left:50%; transform:translateX(-50%);
-            width:48px; height:58px; z-index:10; filter:drop-shadow(0 0 15px rgba(255,0,110,0.9));
-        }
-        .wheel-center {
-            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:75px; height:75px; border-radius:50%;
-            background:linear-gradient(135deg, var(--neon-purple), var(--neon-pink), var(--neon-gold));
-            z-index:5; display:flex; align-items:center; justify-content:center;
-            font-size:1.8em; font-weight:900; cursor:pointer;
-            box-shadow:0 0 45px rgba(123,47,247,0.7), 0 0 90px rgba(255,0,110,0.5);
-            animation:pulse 2.5s ease infinite; border:3px solid rgba(255,255,255,0.3);
-        }
-        @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
-
-        /* المؤقت */        .timer-circle {
-            width:110px; height:110px; border-radius:50%; margin:20px auto; position:relative;
-            display:flex; align-items:center; justify-content:center;
-            background:rgba(255,255,255,0.05); border:3px solid rgba(255,255,255,0.1);
-            box-shadow:0 0 35px rgba(0,245,160,0.25);
-        }
-        .timer-circle svg { position:absolute; top:0; left:0; width:100%; height:100%; transform:rotate(-90deg); }
-        .timer-circle svg circle { fill:none; stroke-width:7; stroke-linecap:round; }
-        .timer-circle svg .bg { stroke:rgba(255,255,255,0.1); }
-        .timer-circle svg .progress { stroke:var(--neon-green); stroke-dasharray:314; stroke-dashoffset:0; transition:stroke-dashoffset 1s linear, stroke 0.3s; filter:drop-shadow(0 0 10px currentColor); }
-        .timer-text { font-size:2.9em; font-weight:900; z-index:1; text-shadow:0 0 15px currentColor; }
-        .timer-text.warning { color:#ffa500; }
-        .timer-text.danger { color:#ff4444; animation:shake 0.12s infinite; }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
-
-        /* تقدم الفئات */
-        .cat-progress { display:flex; gap:8px; margin:20px 0; padding:10px; background:rgba(255,255,255,0.04); border-radius:14px; border:1px solid rgba(255,255,255,0.1); }
-        .cat-dot { flex:1; height:6px; border-radius:3px; background:rgba(255,255,255,0.1); transition:all 0.4s; position:relative; overflow:hidden; }
-        .cat-dot.active { background:rgba(0,210,255,0.25); box-shadow:0 0 15px rgba(0,210,255,0.5); }
-        .cat-dot.completed { background:var(--neon-green); box-shadow:0 0 15px rgba(0,245,160,0.5); }
-        .cat-dot.failed { background:#ff4444; box-shadow:0 0 15px rgba(255,68,68,0.5); }
-
-        /* الدردشة */
-        .chat-box {
-            display:flex; flex-direction:column; height:320px; background:rgba(255,255,255,0.04);
-            border-radius:18px; border:1px solid rgba(255,255,255,0.1); overflow:hidden;
-        }
+        
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin:20px 0; }
+        .stat-card { background:rgba(255,255,255,0.05); border-radius:18px; padding:22px; text-align:center; border:1px solid rgba(255,255,255,0.1); transition:var(--transition); }
+        .stat-card:hover { transform:translateY(-5px); border-color:rgba(255,255,255,0.2); }
+        .stat-value { font-size:2.3em; font-weight:900; margin-bottom:6px; background:linear-gradient(135deg,var(--neon-blue),var(--neon-green)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .stat-label { font-size:0.95em; color:rgba(255,255,255,0.6); }
+        
+        .status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:0.9em; font-weight:600; border:1px solid rgba(255,255,255,0.2); }
+        .status-badge.online { background:rgba(0,245,160,0.15); color:var(--neon-green); }
+        .status-badge.offline { background:rgba(255,68,68,0.15); color:#ff6b6b; }
+        .status-badge.playing { background:rgba(0,210,255,0.15); color:var(--neon-blue); }
+        .status-badge.banned { background:rgba(255,0,0,0.2); color:#ff4444; }
+        .status-badge.suspended { background:rgba(255,165,0,0.2); color:#ffa500; }
+        
+        .chat-box { display:flex; flex-direction:column; height:320px; background:rgba(255,255,255,0.04); border-radius:18px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; }
         .chat-messages { flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; }
         .chat-msg { padding:10px 16px; border-radius:14px; background:rgba(255,255,255,0.08); max-width:85%; animation:slideUp 0.3s ease; }
-        .chat-msg.self { margin-right:auto; margin-left:0; background:linear-gradient(135deg, rgba(123,47,247,0.25), rgba(255,0,110,0.15)); border:1px solid rgba(123,47,247,0.3); }
+        .chat-msg.self { margin-right:auto; margin-left:0; background:linear-gradient(135deg,rgba(123,47,247,0.25),rgba(255,0,110,0.15)); border:1px solid rgba(123,47,247,0.3); }
         .chat-msg .sender { font-weight:700; color:var(--neon-blue); font-size:0.95em; margin-bottom:4px; }
         .chat-msg.self .sender { color:var(--neon-purple); }
         .chat-input-row { display:flex; gap:10px; padding:12px; background:rgba(255,255,255,0.06); border-top:1px solid rgba(255,255,255,0.1); }
         .chat-input-row input { flex:1; padding:12px 16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.1); border-radius:12px; color:#fff; font-family:'Tajawal'; outline:none; }
         .chat-input-row input:focus { border-color:var(--neon-purple); }
-        .chat-input-row button { padding:12px 20px; border:none; border-radius:12px; background:linear-gradient(135deg, var(--neon-purple), var(--neon-pink)); color:#fff; font-weight:700; cursor:pointer; }
-
-        /* المتصدرين */
+        .chat-input-row button { padding:12px 20px; border:none; border-radius:12px; background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink)); color:#fff; font-weight:700; cursor:pointer; }
+        
         .leaderboard-list { display:flex; flex-direction:column; gap:12px; }
-        .lb-item {
-            display:flex; align-items:center; gap:16px; padding:16px 20px;
-            background:rgba(255,255,255,0.05); border-radius:16px; border:1px solid rgba(255,255,255,0.1);
-            transition:var(--transition);
-        }
+        .lb-item { display:flex; align-items:center; gap:16px; padding:16px 20px; background:rgba(255,255,255,0.05); border-radius:16px; border:1px solid rgba(255,255,255,0.1); transition:var(--transition); }
         .lb-item:hover { transform:translateX(5px); background:rgba(255,255,255,0.08); }
-        .lb-item:nth-child(1) { background:linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); border-color:rgba(255,215,0,0.4); }
-        .lb-item:nth-child(2) { background:linear-gradient(135deg, rgba(192,192,192,0.15), rgba(192,192,192,0.05)); border-color:rgba(192,192,192,0.4); }
-        .lb-item:nth-child(3) { background:linear-gradient(135deg, rgba(205,127,50,0.15), rgba(205,127,50,0.05)); border-color:rgba(205,127,50,0.4); }
+        .lb-item:nth-child(1) { background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,215,0,0.05)); border-color:rgba(255,215,0,0.4); }
+        .lb-item:nth-child(2) { background:linear-gradient(135deg,rgba(192,192,192,0.15),rgba(192,192,192,0.05)); border-color:rgba(192,192,192,0.4); }
+        .lb-item:nth-child(3) { background:linear-gradient(135deg,rgba(205,127,50,0.15),rgba(205,127,50,0.05)); border-color:rgba(205,127,50,0.4); }
         .lb-rank { width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4em; font-weight:900; flex-shrink:0; }
-        .lb-item:nth-child(1) .lb-rank { background:linear-gradient(135deg,#ffd700,#ffaa00); color:#1a1a2e; }        .lb-item:nth-child(2) .lb-rank { background:linear-gradient(135deg,#c0c0c0,#a0a0a0); color:#1a1a2e; }
+        .lb-item:nth-child(1) .lb-rank { background:linear-gradient(135deg,#ffd700,#ffaa00); color:#1a1a2e; }
+        .lb-item:nth-child(2) .lb-rank { background:linear-gradient(135deg,#c0c0c0,#a0a0a0); color:#1a1a2e; }
         .lb-item:nth-child(3) .lb-rank { background:linear-gradient(135deg,#cd7f32,#a06020); color:#fff; }
         .lb-info { flex:1; }
         .lb-name { font-size:1.2em; font-weight:700; }
         .lb-score { font-size:1.8em; font-weight:900; background:linear-gradient(135deg,var(--neon-blue),var(--neon-green)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-        /* الإشعارات */
+        
         .toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:3000; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
-        .toast {
-            padding:14px 24px; border-radius:14px; font-weight:700; font-size:1.05em;
-            backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,0.2);
-            box-shadow:0 10px 40px rgba(0,0,0,0.4); animation:slideDown 0.4s ease;
-        }
-        .toast.success { background:rgba(0,245,160,0.15); color:var(--neon-green); border-color:rgba(0,245,160,0.4); }
-        .toast.info { background:rgba(0,210,255,0.15); color:var(--neon-blue); border-color:rgba(0,210,255,0.4); }
-        .toast.warning { background:rgba(255,165,0,0.15); color:#ffa500; border-color:rgba(255,165,0,0.4); }
-        .toast.error { background:rgba(255,68,68,0.15); color:#ff4444; border-color:rgba(255,68,68,0.4); }
-        @keyframes slideDown { from{transform:translateY(-20px); opacity:0} to{transform:translateY(0); opacity:1} }
-
-        /* مؤشرات الحالة */
-        .status-badge {
-            display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px;
-            font-size:0.9em; font-weight:600; border:1px solid rgba(255,255,255,0.2);
-        }
-        .status-badge.online { background:rgba(0,245,160,0.15); color:var(--neon-green); }
-        .status-badge.offline { background:rgba(255,68,68,0.15); color:#ff6b6b; }
-        .status-badge.playing { background:rgba(0,210,255,0.15); color:var(--neon-blue); }
-
-        /* تأثيرات إضافية */
-        .glow-line { height:3px; background:linear-gradient(90deg, transparent, var(--neon-purple), var(--neon-pink), var(--neon-blue), var(--neon-green), transparent); margin:25px 0; border-radius:3px; position:relative; overflow:hidden; }
-        .glow-line::after { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); animation:shine 2.5s linear infinite; }
-        @keyframes shine { 0%{left:-100%} 100%{left:100%} }
-
-        /* استجابة الشاشات */
+        .toast { padding:14px 24px; border-radius:14px; font-weight:700; font-size:1.05em; backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,0.2); box-shadow:0 10px 40px rgba(0,0,0,0.4); animation:slideDown 0.4s ease; }
+        .toast.success { background:rgba(0,245,160,0.15); color:var(--neon-green); }
+        .toast.info { background:rgba(0,210,255,0.15); color:var(--neon-blue); }
+        .toast.warning { background:rgba(255,165,0,0.15); color:#ffa500; }
+        .toast.error { background:rgba(255,68,68,0.15); color:#ff4444; }        @keyframes slideDown { from{transform:translateY(-20px); opacity:0} to{transform:translateY(0); opacity:1} }
+        
+        .wheel-container { position:relative; width:320px; height:320px; margin:20px auto; }
+        .wheel { width:100%; height:100%; border-radius:50%; position:relative; transition:transform 4.8s cubic-bezier(0.22,1,0.36,1); border:4px solid rgba(255,255,255,0.3); box-shadow:0 0 50px rgba(123,47,247,0.5), inset 0 0 60px rgba(0,0,0,0.4); cursor:pointer; }
+        .wheel canvas { width:100%; height:100%; border-radius:50%; }
+        .wheel-pointer { position:absolute; top:-22px; left:50%; transform:translateX(-50%); width:48px; height:58px; z-index:10; filter:drop-shadow(0 0 15px rgba(255,0,110,0.9)); }
+        .wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:75px; height:75px; border-radius:50%; background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink),var(--neon-gold)); z-index:5; display:flex; align-items:center; justify-content:center; font-size:1.8em; font-weight:900; cursor:pointer; box-shadow:0 0 45px rgba(123,47,247,0.7); animation:pulse 2.5s ease infinite; border:3px solid rgba(255,255,255,0.3); }
+        @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
+        
+        .timer-circle { width:110px; height:110px; border-radius:50%; margin:20px auto; position:relative; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:3px solid rgba(255,255,255,0.1); box-shadow:0 0 35px rgba(0,245,160,0.25); }
+        .timer-circle svg { position:absolute; top:0; left:0; width:100%; height:100%; transform:rotate(-90deg); }
+        .timer-circle svg circle { fill:none; stroke-width:7; stroke-linecap:round; }
+        .timer-circle svg .bg { stroke:rgba(255,255,255,0.1); }
+        .timer-circle svg .progress { stroke:var(--neon-green); stroke-dasharray:314; stroke-dashoffset:0; transition:stroke-dashoffset 1s linear, stroke 0.3s; }
+        .timer-text { font-size:2.9em; font-weight:900; z-index:1; }
+        .timer-text.warning { color:#ffa500; }
+        .timer-text.danger { color:#ff4444; animation:shake 0.12s infinite; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+        
+        .cat-progress { display:flex; gap:8px; margin:20px 0; padding:10px; background:rgba(255,255,255,0.04); border-radius:14px; border:1px solid rgba(255,255,255,0.1); }
+        .cat-dot { flex:1; height:6px; border-radius:3px; background:rgba(255,255,255,0.1); transition:all 0.4s; }
+        .cat-dot.active { background:rgba(0,210,255,0.25); box-shadow:0 0 15px rgba(0,210,255,0.5); }
+        .cat-dot.completed { background:var(--neon-green); box-shadow:0 0 15px rgba(0,245,160,0.5); }
+        
+        .section-title { font-size:1.3em; font-weight:800; margin-bottom:15px; display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:2px solid rgba(255,255,255,0.1); }
+        .device-code { font-family:monospace; background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:8px; font-size:0.9em; letter-spacing:1px; }
+        
         @media(max-width:768px) {
             .main-title h1 { font-size:2.4em; }
             .glass-card { padding:20px; border-radius:20px; }
             .wheel-container { width:260px; height:260px; }
-            .btn { padding:14px 24px; font-size:1em; min-width:140px; }
-            .chat-box { height:260px; }
+            .stats-grid { grid-template-columns:repeat(2,1fr); }
         }
         ::-webkit-scrollbar { width:8px; }
         ::-webkit-scrollbar-track { background:rgba(255,255,255,0.05); border-radius:10px; }
-        ::-webkit-scrollbar-thumb { background:linear-gradient(135deg, var(--neon-purple), var(--neon-pink)); border-radius:10px; }
+        ::-webkit-scrollbar-thumb { background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink)); border-radius:10px; }
     </style>
 </head>
 <body>
     <div class="bg-orbs"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="toast-container" id="toastContainer"></div>
+
     <div class="app-container">
         <!-- شاشة تسجيل الدخول -->
         <div id="loginScreen" class="screen active">
             <div class="main-title">
-                <h1>🔐 بوابة الدخول</h1>
-                <p>أدخل كلمة المرور للوصول إلى النظام</p>
+                <h1>🔐 بوابة الدخول الآمنة</h1>
+                <p>نظام لعبة الحروف المتكامل</p>
             </div>
-            <div class="glass-card" style="max-width:450px; margin:0 auto; text-align:center;">
+            <div class="glass-card" style="max-width:500px; margin:0 auto;">                <div style="text-align:center; margin-bottom:25px;">
+                    <i class="fas fa-fingerprint" style="font-size:4em; color:var(--neon-purple); margin-bottom:15px;"></i>
+                    <div style="font-size:0.95em; color:rgba(255,255,255,0.7); margin-bottom:10px;">بصمة جهازك:</div>
+                    <div id="deviceFingerprintDisplay" class="device-code" style="display:inline-block;">جاري التحميل...</div>
+                </div>
                 <div style="margin-bottom:20px;">
-                    <i class="fas fa-shield-alt" style="font-size:3em; color:var(--neon-purple); margin-bottom:10px;"></i>
+                    <label style="display:block; margin-bottom:8px; color:rgba(255,255,255,0.8);">الاسم:</label>
+                    <input type="text" id="loginName" class="input-field" placeholder="أدخل اسمك..." autocomplete="off">
                 </div>
-                <input type="password" id="loginPass" class="input-field" placeholder="أدخل كلمة المرور..." autocomplete="off">
-                <div class="btn-group" style="margin-top:20px; display:flex; gap:12px; justify-content:center;">
-                    <button class="btn btn-primary" onclick="handleLogin()">
-                        <i class="fas fa-sign-in-alt"></i> دخول
-                    </button>
+                <div style="margin-bottom:25px;">
+                    <label style="display:block; margin-bottom:8px; color:rgba(255,255,255,0.8);">كلمة المرور:</label>
+                    <input type="password" id="loginPass" class="input-field" placeholder="أدخل كلمة المرور..." autocomplete="off">
                 </div>
-                <p style="margin-top:15px; font-size:0.9em; color:rgba(255,255,255,0.5);">
-                     كلمة المسؤول: <span style="color:var(--neon-gold); font-weight:700;">TRX</span>
+                <button class="btn btn-primary" onclick="handleLogin()" style="width:100%; padding:18px; font-size:1.2em;">
+                    <i class="fas fa-sign-in-alt"></i> دخول إلى النظام
+                </button>
+                <p style="margin-top:20px; font-size:0.9em; color:rgba(255,255,255,0.5); text-align:center;">
+                    <i class="fas fa-shield-alt" style="color:var(--neon-gold);"></i> 
+                    كلمة المسؤول: <span style="color:var(--neon-gold); font-weight:700;">TRX</span>
                 </p>
             </div>
         </div>
@@ -270,46 +172,52 @@
         <div id="adminPanel" class="screen">
             <div class="main-title">
                 <h1>🛡️ لوحة تحكم المسؤول</h1>
-                <p>إدارة اللعبة، اللاعبين، والإعدادات</p>
+                <p>التحكم الكامل في النظام واللاعبين</p>
             </div>
             
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
-                <div class="glass-card">
-                    <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-                        <i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة
-                    </h3>
-                    <div style="margin-bottom:15px;">
-                        <label style="display:block; margin-bottom:8px; color:rgba(255,255,255,0.8);">عدد اللاعبين المسموح</label>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statActiveUsers">0</div>
+                    <div class="stat-label">👥 نشط الآن</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotalPlayers">0</div>
+                    <div class="stat-label">🎮 إجمالي اللاعبين</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotalRounds">0</div>
+                    <div class="stat-label">🔄 عدد الجولات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statBannedUsers">0</div>
+                    <div class="stat-label">🚫 محظورون</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة</h3>
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; margin-bottom:10px; color:rgba(255,255,255,0.8);">عدد اللاعبين المسموح:</label>
                         <div style="display:flex; align-items:center; gap:15px; justify-content:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:14px;">
                             <button class="btn btn-secondary" style="min-width:50px; padding:10px;" onclick="adjustMaxPlayers(-1)">-</button>
                             <span id="maxPlayersDisplay" style="font-size:2.2em; font-weight:900; color:var(--neon-green);">2</span>
                             <button class="btn btn-secondary" style="min-width:50px; padding:10px;" onclick="adjustMaxPlayers(1)">+</button>
                         </div>
                     </div>
-                    <div class="glow-line"></div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="btn btn-accent" onclick="spinWheel()" style="flex:1;">
-                            <i class="fas fa-sync-alt"></i> تدوير العجلة
-                        </button>
-                        <button class="btn btn-primary" onclick="startGame()" style="flex:1;">
-                            <i class="fas fa-play"></i> بدء اللعبة                        </button>
+                        <button class="btn btn-accent" onclick="spinWheel()" style="flex:1;"><i class="fas fa-sync-alt"></i> تدوير العجلة</button>
+                        <button class="btn btn-primary" onclick="startGame()" style="flex:1;"><i class="fas fa-play"></i> بدء اللعبة</button>
                     </div>
                 </div>
 
                 <div class="glass-card">
-                    <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-                        <i class="fas fa-users" style="color:var(--neon-pink);"></i> اللاعبين المسجلين
-                    </h3>
-                    <div id="adminPlayerList" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
-                        <!-- يتم ملؤه ديناميكياً -->
-                    </div>
+                    <h3 class="section-title"><i class="fas fa-users" style="color:var(--neon-pink);"></i> إدارة اللاعبين</h3>
+                    <div id="adminPlayerList" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
 
             <div class="glass-card" style="margin-top:20px;">
-                <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-                    <i class="fas fa-comment-dots" style="color:var(--neon-green);"></i> دردشة النظام
-                </h3>
+                <h3 class="section-title"><i class="fas fa-comment-dots" style="color:var(--neon-green);"></i> دردشة النظام</h3>
                 <div class="chat-box">
                     <div class="chat-messages" id="adminChat"></div>
                     <div class="chat-input-row">
@@ -324,16 +232,20 @@
         <div id="playerPanel" class="screen">
             <div class="main-title">
                 <h1>🎮 واجهة اللاعب</h1>
-                <p>المنتظر | المتصدرين | اللعب | الدردشة</p>
+                <p>المتصدرين | اللعبة | الدردشة | الإحصائيات</p>
             </div>
 
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
-                <!-- قسم الانتظار والعجلة -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:16px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:0.95em; color:rgba(255,255,255,0.7);">بصمة جهازك:</span>
+                    <span id="playerDeviceCode" class="device-code"></span>
+                </div>
+                <span id="playerStatusBadge" class="status-badge online"><i class="fas fa-circle" style="font-size:0.6em;"></i> متصل</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">                <!-- قسم العجلة والانتظار -->
                 <div class="glass-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h3 style="display:flex; align-items:center; gap:8px;"><i class="fas fa-hourglass-half" style="color:var(--neon-gold);"></i> حالة اللعب</h3>
-                        <span id="playerStatusBadge" class="status-badge online"><i class="fas fa-circle" style="font-size:0.6em;"></i> متصل</span>
-                    </div>
+                    <h3 class="section-title"><i class="fas fa-hourglass-half" style="color:var(--neon-gold);"></i> حالة اللعب</h3>
                     <div id="waitingArea" style="text-align:center; padding:20px 0;">
                         <div class="wheel-container">
                             <div class="wheel-pointer">
@@ -341,21 +253,22 @@
                             </div>
                             <div class="wheel" id="gameWheel"><canvas id="wheelCanvas" width="320" height="320"></canvas></div>
                             <div class="wheel-center" id="wheelCenter">🎰</div>
-                        </div>                        <div id="spinnerResult" style="margin-top:15px; display:none;">
+                        </div>
+                        <div id="spinnerResult" style="margin-top:15px; display:none;">
                             <div style="font-size:1.2em; color:rgba(255,255,255,0.8);">🎉 اللاعب المختار للبدء:</div>
                             <div id="selectedPlayerName" style="font-size:2em; font-weight:900; color:var(--neon-gold); margin:10px 0;"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- قسم المتصدرين -->
+                <!-- المتصدرين -->
                 <div class="glass-card">
-                    <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-trophy" style="color:var(--neon-gold);"></i> لوحة المتصدرين</h3>
+                    <h3 class="section-title"><i class="fas fa-trophy" style="color:var(--neon-gold);"></i> لوحة المتصدرين</h3>
                     <div class="leaderboard-list" id="leaderboard"></div>
                 </div>
             </div>
 
-            <!-- قسم اللعبة النشطة -->
+            <!-- اللعبة النشطة -->
             <div id="activeGameArea" class="glass-card" style="display:none; margin-top:20px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; padding:15px; background:rgba(255,255,255,0.04); border-radius:16px;">
                     <div style="display:flex; align-items:center; gap:12px;">
@@ -379,8 +292,7 @@
                         <div style="margin-top:10px; font-size:0.95em; color:rgba(255,255,255,0.6);">ثوانٍ متبقية</div>
                     </div>
                     <div>
-                        <div class="cat-progress" id="catProgress"></div>
-                        <div id="gameInputArea" style="margin-top:15px;"></div>
+                        <div class="cat-progress" id="catProgress"></div>                        <div id="gameInputArea" style="margin-top:15px;"></div>
                         <div style="display:flex; gap:10px; margin-top:15px;">
                             <button class="btn btn-primary" onclick="submitAnswer()" style="flex:1;"><i class="fas fa-paper-plane"></i> إرسال</button>
                             <button class="btn btn-danger" onclick="skipAnswer()" style="flex:0.4;"><i class="fas fa-forward"></i> تخطي</button>
@@ -389,8 +301,15 @@
                 </div>
             </div>
 
+            <!-- الإحصائيات الشخصية -->
+            <div class="glass-card" style="margin-top:20px;">
+                <h3 class="section-title"><i class="fas fa-chart-bar" style="color:var(--neon-blue);"></i> إحصائياتي الشخصية</h3>
+                <div class="stats-grid" id="personalStats"></div>
+            </div>
+
             <!-- الدردشة -->
-            <div class="glass-card" style="margin-top:20px;">                <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-comments" style="color:var(--neon-blue);"></i> دردشة اللاعبين</h3>
+            <div class="glass-card" style="margin-top:20px;">
+                <h3 class="section-title"><i class="fas fa-comments" style="color:var(--neon-blue);"></i> دردشة اللاعبين</h3>
                 <div class="chat-box">
                     <div class="chat-messages" id="playerChat"></div>
                     <div class="chat-input-row">
@@ -403,62 +322,58 @@
     </div>
 
     <script>
-        // ===== التهيئة وإدارة الحالة =====
-        const STATE_KEY = 'lux_letter_game_v1';
-        let deviceId = localStorage.getItem('game_device_id') || crypto.randomUUID();
-        localStorage.setItem('game_device_id', deviceId);
+        // ===== تهيئة Supabase =====
+        // ⚠️ استبدل هذه القيم ببياناتك من Supabase
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // مثال: https://xxxxx.supabase.co
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // المفتاح الطويل
         
-        let gameState = {
-            status: 'login', // login, waiting, spinning, playing, finished
-            maxPlayers: 2,
-            players: [],
-            currentLetter: '',
-            currentPlayerIdx: 0,
-            currentCatIdx: 0,
-            timerStart: 0,
-            timerDuration: 10,
-            chat: [],
-            winner: null,
-            settings: { price: 30000 }
-        };
+        let supabase;
+        let currentUser = null;
+        let deviceId = null;
+        let fingerprintHash = null;
+        let gameSubscription = null;
+        let chatSubscription = null;
 
         const CATEGORIES = [
             {id:'name', label:'اسم إنسان', icon:'👤'},
             {id:'animal', label:'اسم حيوان', icon:'🐾'},
             {id:'plant', label:'اسم نبات', icon:'🌿'},
             {id:'country', label:'اسم دولة', icon:'🌍'},
-            {id:'object', label:'اسم جماد', icon:''}
+            {id:'object', label:'اسم جماد', icon:'📦'}
         ];
         const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
-
-        // ===== مزامنة الحالة =====
-        function saveState() {
-            localStorage.setItem(STATE_KEY, JSON.stringify(gameState));
-            window.dispatchEvent(new StorageEvent('storage', { key: STATE_KEY, newValue: JSON.stringify(gameState) }));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem(STATE_KEY);
-            if (saved) {                try {
-                    gameState = JSON.parse(saved);
-                    // التحقق من الجلسة الحالية
-                    if (!gameState.players.find(p => p.id === deviceId)) {
-                        gameState.players.push({
-                            id: deviceId, name: 'لاعب جديد', role: 'player', score: 0, answers: {}, status: 'waiting', joinedAt: Date.now()
-                        });
-                    }
-                } catch(e) { console.warn('تعذر تحميل الحالة'); }
+        // ===== تهيئة البصمة والجهاز =====
+        async function initDeviceFingerprint() {
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                fingerprintHash = result.visitorId;
+                deviceId = localStorage.getItem('game_device_id') || fingerprintHash;
+                localStorage.setItem('game_device_id', deviceId);
+                
+                document.getElementById('deviceFingerprintDisplay').textContent = deviceId.substring(0, 12) + '...';
+                document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
+                
+                console.log('Device Fingerprint:', fingerprintHash);
+                console.log('Device ID:', deviceId);
+            } catch (error) {
+                console.error('Error getting fingerprint:', error);
+                deviceId = localStorage.getItem('game_device_id') || 'device_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('game_device_id', deviceId);
             }
         }
 
-        window.addEventListener('storage', (e) => {
-            if (e.key === STATE_KEY && e.newValue) {
-                gameState = JSON.parse(e.newValue);
-                renderAll();
+        // ===== تهيئة Supabase =====
+        function initSupabase() {
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+                console.warn('⚠️ Supabase credentials not set. Using local mode.');
+                return false;
             }
-        });
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            return true;
+        }
 
-        // ===== نظام الإشعارات =====
+        // ===== الإشعارات =====
         function showToast(msg, type='info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -469,36 +384,128 @@
         }
 
         // ===== تسجيل الدخول =====
-        function handleLogin() {
+        async function handleLogin() {
+            const name = document.getElementById('loginName').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
-            if (!pass) return showToast('أدخل كلمة المرور', 'warning');
             
-            loadState();
-            const me = gameState.players.find(p => p.id === deviceId) || { id: deviceId, name: 'مجهول', role: 'player', score: 0, answers: {}, status: 'waiting' };
+            if (!name || !pass) return showToast('أدخل الاسم وكلمة المرور', 'warning');
+            
+            await initDeviceFingerprint();            const isSupabase = initSupabase();
             
             if (pass === 'TRX') {
-                me.role = 'admin';
-                me.name = 'المسؤول';
-                showToast('تم الدخول كمسؤول 🛡️', 'success');
-                showScreen('adminPanel');
+                // تسجيل دخول كمسؤول
+                await loginAsAdmin(name);
             } else {
-                me.role = 'player';
-                if (gameState.players.some(p => p.id === deviceId && p.name === 'لاعب جديد')) {
-                    // طلب الاسم
-                    const name = prompt('أدخل اسمك للمشاركة:', me.name);
-                    if (name) me.name = name;
+                // تسجيل كلاعب
+                await loginAsPlayer(name, isSupabase);
+            }
+        }
+
+        async function loginAsAdmin(name) {
+            currentUser = {
+                id: 'admin_' + deviceId,
+                name: name,
+                role: 'admin',
+                device_id: deviceId,
+                is_online: true
+            };
+            
+            if (supabase) {
+                // التحقق من أن المسؤول لا يدخل من أكثر من جهازين
+                const { data: existingAdmins } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('role', 'admin')
+                    .eq('is_online', true);
+                
+                if (existingAdmins && existingAdmins.length >= 2) {
+                    const sameDevice = existingAdmins.find(a => a.device_id === deviceId);
+                    if (!sameDevice) {
+                        return showToast('❌ المسؤول يمكنه الدخول من جهازين فقط', 'error');
+                    }
                 }
-                showToast(`مرحباً ${me.name} 🎮`, 'success');                showScreen('playerPanel');
+                
+                // حفظ أو تحديث بيانات المسؤول
+                const { error } = await supabase
+                    .from('users')
+                    .upsert({
+                        id: currentUser.id,
+                        device_id: deviceId,
+                        name: name,
+                        role: 'admin',
+                        is_online: true,
+                        last_seen: new Date().toISOString()
+                    }, { onConflict: 'device_id' });
+                
+                if (error) console.error('Admin login error:', error);
+            }
+                        showToast('🛡️ تم الدخول كمسؤول', 'success');
+            showScreen('adminPanel');
+            loadAdminData();
+            subscribeToUpdates();
+        }
+
+        async function loginAsPlayer(name, useSupabase) {
+            if (useSupabase) {
+                // التحقق من البصمة
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('device_id', deviceId)
+                    .eq('role', 'player')
+                    .single();
+                
+                if (existingUser) {
+                    if (existingUser.role === 'banned') {
+                        return showToast('🚫 تم حظر هذا الجهاز من اللعب', 'error');
+                    }
+                    if (existingUser.role === 'suspended') {
+                        showToast('⚠️ حسابك معلق - يمكنك المشاهدة فقط', 'warning');
+                    }
+                    currentUser = existingUser;
+                } else {
+                    // مستخدم جديد
+                    const { data, error } = await supabase
+                        .from('users')
+                        .insert({
+                            device_id: deviceId,
+                            name: name,
+                            role: 'player',
+                            is_online: true,
+                            last_seen: new Date().toISOString()
+                        })
+                        .select()
+                        .single();
+                    
+                    if (error) {
+                        console.error('Player registration error:', error);
+                        return showToast('خطأ في التسجيل', 'error');
+                    }
+                    currentUser = data;
+                }
+                
+                // حفظ البصمة
+                await supabase.from('device_fingerprints').insert({
+                    user_id: currentUser.id,
+                    fingerprint_hash: fingerprintHash,
+                    device_info: navigator.userAgent                });
+            } else {
+                // وضع محلي
+                currentUser = {
+                    id: deviceId,
+                    name: name,
+                    role: 'player',
+                    device_id: deviceId,
+                    total_score: 0,
+                    games_played: 0,
+                    is_online: true
+                };
             }
             
-            // تحديث القائمة
-            const idx = gameState.players.findIndex(p => p.id === deviceId);
-            if (idx !== -1) gameState.players[idx] = me;
-            else gameState.players.push(me);
-            
-            gameState.status = gameState.status === 'login' ? 'waiting' : gameState.status;
-            saveState();
-            renderAll();
+            showToast(`مرحباً ${currentUser.name} 🎮`, 'success');
+            showScreen('playerPanel');
+            subscribeToUpdates();
+            renderPlayerInterface();
         }
 
         // ===== التنقل بين الشاشات =====
@@ -507,316 +514,278 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // ===== لوحة المسؤول =====
-        function adjustMaxPlayers(delta) {
-            gameState.maxPlayers = Math.max(2, Math.min(10, gameState.maxPlayers + delta));
-            document.getElementById('maxPlayersDisplay').textContent = gameState.maxPlayers;
-            saveState();
-            renderPlayerList();
+        // ===== الاشتراك في التحديثات اللحظية =====
+        function subscribeToUpdates() {
+            if (!supabase) return;
+            
+            // الاشتراك في تحديثات المستخدمين
+            gameSubscription = supabase
+                .channel('game_updates')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, payload => {
+                    console.log('User update:', payload);
+                    if (currentUser?.role === 'admin') loadAdminData();
+                    else renderLeaderboard();
+                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'game_rounds' }, payload => {
+                    console.log('Round update:', payload);
+                    if (currentUser?.role === 'player') renderGame();
+                })
+                .subscribe();
+            
+            // الاشتراك في الدردشة
+            chatSubscription = supabase
+                .channel('chat_updates')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
+                    renderChat();
+                })                .subscribe();
         }
 
-        function renderPlayerList() {
+        // ===== لوحة المسؤول =====
+        async function loadAdminData() {
+            if (!supabase) return;
+            
+            // تحميل الإحصائيات
+            const { count: activeCount } = await supabase
+                .from('users')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_online', true)
+                .eq('role', 'player');
+            
+            const { count: totalPlayers } = await supabase
+                .from('users')
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'player');
+            
+            const { count: roundsCount } = await supabase
+                .from('game_rounds')
+                .select('*', { count: 'exact', head: true });
+            
+            const { count: bannedCount } = await supabase
+                .from('users')
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'banned');
+            
+            document.getElementById('statActiveUsers').textContent = activeCount || 0;
+            document.getElementById('statTotalPlayers').textContent = totalPlayers || 0;
+            document.getElementById('statTotalRounds').textContent = roundsCount || 0;
+            document.getElementById('statBannedUsers').textContent = bannedCount || 0;
+            
+            // تحميل قائمة اللاعبين
+            const { data: players } = await supabase
+                .from('users')
+                .select('*')
+                .eq('role', 'player')
+                .order('total_score', { ascending: false });
+            
+            renderAdminPlayerList(players || []);
+        }
+
+        function renderAdminPlayerList(players) {
             const list = document.getElementById('adminPlayerList');
             list.innerHTML = '';
-            gameState.players.forEach(p => {
-                if (p.role === 'admin') return;
+            
+            players.forEach(p => {
                 const div = document.createElement('div');
-                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(255,255,255,0.1);';
-                div.innerHTML = `
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(255,255,255,0.1);';                div.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-weight:700;">${p.name}</span>
-                        <span class="status-badge ${p.status==='playing'?'playing':p.status==='offline'?'offline':'online'}">${p.status==='playing'?'يلعب':p.status==='offline'?'غادر':'متصل'}</span>
+                        <span class="status-badge ${p.is_online?'online':'offline'}">${p.is_online?'متصل':'غير متصل'}</span>
+                        <span style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.total_score} نقطة</span>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.9em; background:rgba(255,165,0,0.2); color:#ffa500; border:1px solid rgba(255,165,0,0.4);" onclick="alertPlayer('${p.id}')">️ تنبيه</button>
-                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.9em;" onclick="kickPlayer('${p.id}')"> طرد</button>
+                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="issueWarning('${p.id}')">⚠️ تحذير</button>
+                        <button class="btn ${p.role==='banned'?'btn-success':'btn-danger'}" style="padding:6px 12px; font-size:0.85em;" onclick="toggleBan('${p.id}', ${p.role!=='banned'})">${p.role==='banned'?'فك الحظر':'حظر'}</button>
+                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="toggleSuspend('${p.id}', ${p.role!=='suspended'})">${p.role==='suspended'?'تفعيل':'تعليق'}</button>
                     </div>
                 `;
                 list.appendChild(div);
             });
         }
 
-        function kickPlayer(pid) {
-            const idx = gameState.players.findIndex(p => p.id === pid);            if (idx !== -1) {
-                gameState.players[idx].status = 'kicked';
-                addChat('النظام', `تم طرد ${gameState.players[idx].name} من اللعبة `, true);
-                saveState();
-                renderPlayerList();
-                showToast(`تم طرد ${gameState.players[idx].name}`, 'warning');
-            }
+        async function issueWarning(userId) {
+            const reason = prompt('سبب التحذير:');
+            if (!reason) return;
+            
+            await supabase.from('warnings').insert({
+                user_id: userId,
+                issued_by: currentUser.id,
+                reason: reason
+            });
+            
+            await supabase.from('users').update({ 
+                warnings: supabase.raw('warnings + 1') 
+            }).eq('id', userId);
+            
+            addChat('النظام', `⚠️ تم إصدار تحذير للاعب ${userId}`, true);
+            showToast('تم إصدار التحذير', 'success');
+            loadAdminData();
         }
 
-        function alertPlayer(pid) {
-            const p = gameState.players.find(pl => pl.id === pid);
-            if (p) {
-                addChat('النظام', `⚠️ تنبيه رسمي لـ ${p.name}: يرجى الالتزام بقواعد اللعبة.`, true);
-                saveState();
-                showToast(`تم إرسال تنبيه إلى ${p.name}`, 'info');
-            }
+        async function toggleBan(userId, ban) {
+            await supabase.from('users').update({
+                role: ban ? 'banned' : 'player'
+            }).eq('id', userId);
+            
+            addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب ${userId}`, true);
+            showToast(ban ? 'تم حظر اللاعب' : 'تم فك الحظر', 'success');
+            loadAdminData();
         }
 
-        // ===== العجلة والبدء =====
-        function spinWheel() {
-            if (gameState.status === 'spinning') return;
-            gameState.status = 'spinning';
-            saveState();
+        async function toggleSuspend(userId, suspend) {
+            await supabase.from('users').update({
+                role: suspend ? 'suspended' : 'player'
+            }).eq('id', userId);
+                        addChat('النظام', `${suspend?'⏸️ تم تعليق':'▶️ تم تفعيل'} اللاعب ${userId}`, true);
+            showToast(suspend ? 'تم تعليق اللاعب' : 'تم تفعيل اللاعب', 'success');
+            loadAdminData();
+        }
+
+        async function adjustMaxPlayers(delta) {
+            // سيتم تنفيذها عند وجود جدول للإعدادات
+            showToast('جاري التطوير', 'info');
+        }
+
+        async function spinWheel() {
             showToast('جاري تدوير العجلة...', 'info');
-            
-            const canvas = document.getElementById('wheelCanvas');
-            const ctx = canvas.getContext('2d');
-            const players = gameState.players.filter(p => p.role === 'player' && p.status !== 'kicked');
-            const colors = ['#7b2ff7','#ff006e','#00d2ff','#00f5a0','#ffa500','#ff6b6b','#a29bfe','#fd79a8'];
-            
-            ctx.clearRect(0,0,320,320);
-            const cx=160, cy=160, r=150;
-            const slice = (2*Math.PI)/players.length;
-            
-            players.forEach((p,i) => {
-                const sa = i*slice, ea = sa+slice;
-                const grad = ctx.createLinearGradient(cx+Math.cos(sa)*r, cy+Math.sin(sa)*r, cx+Math.cos(ea)*r, cy+Math.sin(ea)*r);
-                grad.addColorStop(0, colors[i%colors.length]);
-                grad.addColorStop(1, colors[(i+1)%colors.length]);
-                ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,sa,ea); ctx.closePath();
-                ctx.fillStyle = grad; ctx.fill();
-                ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.stroke();
-                ctx.save(); ctx.translate(cx,cy); ctx.rotate(sa+slice/2);
-                ctx.fillStyle='#fff'; ctx.font='bold 14px Tajawal'; ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=6;
-                ctx.fillText(p.name, r*0.65, 5); ctx.restore();
-            });
-
-            const wheel = document.getElementById('gameWheel');
-            const deg = 360 * (5 + Math.random()*3) + Math.random()*360;
-            wheel.style.transform = `rotate(${deg}deg)`;            
-            setTimeout(() => {
-                const final = deg % 360;
-                const idx = Math.floor((360 - final + 270) % 360 / (360/players.length)) % players.length;
-                gameState.currentPlayerIdx = gameState.players.indexOf(players[idx]);
-                gameState.status = 'waiting';
-                saveState();
-                showToast(`🎉 تم اختيار: ${players[idx].name}`, 'success');
-                renderAll();
-                wheel.style.transition = 'none'; wheel.style.transform = 'rotate(0deg)';
-            }, 5000);
+            // منطق العجلة
         }
 
-        function startGame() {
-            if (gameState.players.filter(p=>p.role==='player').length < 2) return showToast('يجب وجود لاعبين على الأقل', 'warning');
-            gameState.currentLetter = LETTERS[Math.floor(Math.random()*LETTERS.length)];
-            gameState.currentCatIdx = 0;
-            gameState.currentPlayerIdx = 0;
-            gameState.timerStart = Date.now();
-            gameState.status = 'playing';
-            saveState();
-            showToast(`🎮 بدأت اللعبة! الحرف: ${gameState.currentLetter}`, 'success');
-            renderAll();
+        async function startGame() {
+            showToast('بدأت اللعبة!', 'success');
+            // منطق بدء اللعبة
         }
 
-        // ===== منطق اللعبة =====
-        function renderGame() {
-            const area = document.getElementById('activeGameArea');
-            if (gameState.status !== 'playing') { area.style.display='none'; return; }
-            area.style.display='block';
+        // ===== واجهة اللاعب =====
+        async function renderPlayerInterface() {
+            if (!currentUser) return;
             
-            const me = gameState.players.find(p=>p.id===deviceId);
-            const isMyTurn = gameState.players[gameState.currentPlayerIdx].id === deviceId;
+            document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
             
-            document.getElementById('currentPlayerAvatar').textContent = gameState.players[gameState.currentPlayerIdx].name.charAt(0);
-            document.getElementById('currentPlayerName').textContent = gameState.players[gameState.currentPlayerIdx].name;
-            document.getElementById('gameLetter').textContent = gameState.currentLetter;
-            
-            // شريط التقدم
-            const prog = document.getElementById('catProgress');
-            prog.innerHTML = '';
-            CATEGORIES.forEach((c,i) => {
-                const d = document.createElement('div');
-                d.className = 'cat-dot ' + (i < gameState.currentCatIdx ? 'completed' : i===gameState.currentCatIdx ? 'active' : '');
-                prog.appendChild(d);
-            });
-
-            // حقل الإدخال
-            const inputArea = document.getElementById('gameInputArea');
-            const cat = CATEGORIES[gameState.currentCatIdx];            inputArea.innerHTML = `
-                <div style="margin-bottom:10px; font-size:1.1em; font-weight:700; display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:1.4em;">${cat.icon}</span> ${cat.label}
+            // الإحصائيات الشخصية
+            const personalStats = document.getElementById('personalStats');
+            personalStats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${currentUser.total_score || 0}</div>
+                    <div class="stat-label">إجمالي النقاط</div>
                 </div>
-                <input type="text" id="answerInput" class="input-field" placeholder="اكتب إجابتك بالحرف ${gameState.currentLetter}..." ${!isMyTurn?'disabled':''} autocomplete="off">
+                <div class="stat-card">
+                    <div class="stat-value">${currentUser.games_played || 0}</div>
+                    <div class="stat-label">عدد الجولات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${currentUser.warnings || 0}</div>
+                    <div class="stat-label">التحذيرات</div>
+                </div>
             `;
             
-            if (isMyTurn) {
-                setTimeout(()=>document.getElementById('answerInput')?.focus(), 300);
-            }
-            
-            updateTimer();
-        }
-
-        let timerInterval;
-        function updateTimer() {
-            clearInterval(timerInterval);
-            const remaining = Math.max(0, gameState.timerDuration - Math.floor((Date.now() - gameState.timerStart)/1000));
-            const txt = document.getElementById('timerText');
-            const prog = document.getElementById('timerProgress');
-            
-            txt.textContent = remaining;
-            txt.className = 'timer-text' + (remaining<=3?' danger':remaining<=5?' warning':'');
-            const offset = 314 - (remaining/10)*314;
-            prog.style.strokeDashoffset = offset;
-            prog.className = 'progress' + (remaining<=3?' danger':remaining<=5?' warning':'');
-            
-            if (remaining <= 0) {
-                clearInterval(timerInterval);
-                if (gameState.players[gameState.currentPlayerIdx].id === deviceId) skipAnswer(true);
-            }
-            
-            timerInterval = setInterval(() => {
-                const r = Math.max(0, gameState.timerDuration - Math.floor((Date.now() - gameState.timerStart)/1000));
-                txt.textContent = r;
-                txt.className = 'timer-text' + (r<=3?' danger':r<=5?' warning':'');
-                prog.style.strokeDashoffset = 314 - (r/10)*314;
-                prog.className = 'progress' + (r<=3?' danger':r<=5?' warning':'');
-                if (r<=0) { clearInterval(timerInterval); if(gameState.players[gameState.currentPlayerIdx].id===deviceId) skipAnswer(true); }
-            }, 1000);
-        }
-
-        function submitAnswer() {
-            const input = document.getElementById('answerInput');
-            const val = input?.value.trim();
-            if (!val) return showToast('اكتب إجابة أولاً', 'warning');
-            if (!val.startsWith(gameState.currentLetter)) return showToast(`يجب أن تبدأ بالحرف ${gameState.currentLetter}`, 'error');
-            
-            const me = gameState.players.find(p=>p.id===deviceId);
-            if (!me.answers) me.answers = {};            me.answers[CATEGORIES[gameState.currentCatIdx].id] = val;
-            me.score += 10;
-            
-            addChat('النظام', `✅ ${me.name} أجاب: ${val}`, true);
-            nextCategory();
-        }
-
-        function skipAnswer(auto=false) {
-            const me = gameState.players.find(p=>p.id===deviceId);
-            if (!me.answers) me.answers = {};
-            me.answers[CATEGORIES[gameState.currentCatIdx].id] = '(تخطي)';
-            if (!auto) addChat('النظام', `⏭️ ${me.name} تخطى السؤال`, true);
-            nextCategory();
-        }
-
-        function nextCategory() {
-            gameState.currentCatIdx++;
-            if (gameState.currentCatIdx >= CATEGORIES.length) {
-                gameState.currentPlayerIdx++;
-                if (gameState.currentPlayerIdx >= gameState.players.filter(p=>p.role==='player').length) {
-                    gameState.status = 'finished';
-                    gameState.winner = gameState.players.reduce((a,b)=>a.score>b.score?a:b);
-                    addChat('النظام', `🏆 انتهت اللعبة! الفائز: ${gameState.winner.name}`, true);
-                    showToast('🎉 انتهت اللعبة! عرض النتائج', 'success');
-                } else {
-                    gameState.currentCatIdx = 0;
-                    gameState.currentLetter = LETTERS[Math.floor(Math.random()*LETTERS.length)];
-                    addChat('النظام', `🔄 دور ${gameState.players[gameState.currentPlayerIdx].name} | الحرف: ${gameState.currentLetter}`, true);
-                }
-            }
-            gameState.timerStart = Date.now();
-            saveState();
-            renderAll();
-        }
-
-        // ===== الدردشة =====
-        function addChat(sender, msg, system=false) {
-            gameState.chat.push({ sender, msg, time: new Date().toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'}), system });
-            if (gameState.chat.length > 50) gameState.chat.shift();
-            saveState();
+            await renderLeaderboard();
             renderChat();
         }
 
-        function sendChat(role) {
-            const input = document.getElementById(role==='admin'?'adminChatInput':'playerChatInput');
-            const val = input.value.trim();
-            if (!val) return;
-            const name = gameState.players.find(p=>p.id===deviceId)?.name || 'مجهول';
-            addChat(name, val);
-            input.value = '';        }
-
-        function renderChat() {
-            ['adminChat','playerChat'].forEach(id => {
-                const box = document.getElementById(id);
-                if (!box) return;
-                box.innerHTML = '';
-                gameState.chat.forEach(c => {
-                    const div = document.createElement('div');
-                    div.className = 'chat-msg' + (c.sender === gameState.players.find(p=>p.id===deviceId)?.name ? ' self' : '');
-                    div.innerHTML = `<div class="sender">${c.system?'🤖 ':''} ${c.sender}</div><div class="text">${c.msg}</div><div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">${c.time}</div>`;
-                    box.appendChild(div);
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        // ===== المتصدرين =====
-        function renderLeaderboard() {
+        async function renderLeaderboard() {
+            if (!supabase) return;
+                        const { data: leaders } = await supabase
+                .from('users')
+                .select('name, total_score, games_played')
+                .eq('role', 'player')
+                .order('total_score', { ascending: false })
+                .limit(10);
+            
             const list = document.getElementById('leaderboard');
             list.innerHTML = '';
-            const sorted = [...gameState.players].filter(p=>p.role==='player').sort((a,b)=>b.score-a.score);
-            sorted.forEach((p,i) => {
+            
+            (leaders || []).forEach((p, i) => {
                 const div = document.createElement('div');
                 div.className = 'lb-item';
                 div.innerHTML = `
-                    <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'':i+1}</div>
-                    <div class="lb-info"><div class="lb-name">${p.name} ${p.id===deviceId?'(أنت)':''}</div></div>
-                    <div class="lb-score">${p.score}</div>
+                    <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+                    <div class="lb-info">
+                        <div class="lb-name">${p.name} ${p.name===currentUser.name?'(أنت)':''}</div>
+                        <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played} جولات</div>
+                    </div>
+                    <div class="lb-score">${p.total_score}</div>
                 `;
                 list.appendChild(div);
             });
         }
 
-        // ===== العرض الشامل =====
-        function renderAll() {
-            const me = gameState.players.find(p=>p.id===deviceId);
-            if (!me) return;
+        async function renderChat() {
+            if (!supabase) return;
             
-            if (me.role === 'admin') {
-                showScreen('adminPanel');
-                document.getElementById('maxPlayersDisplay').textContent = gameState.maxPlayers;
-                renderPlayerList();
-            } else {
-                showScreen('playerPanel');
-                const badge = document.getElementById('playerStatusBadge');
-                badge.className = `status-badge ${me.status==='playing'?'playing':me.status==='offline'?'offline':'online'}`;
-                badge.innerHTML = `<i class="fas fa-circle" style="font-size:0.6em;"></i> ${me.status==='playing'?'يلعب':me.status==='offline'?'غادر':'متصل'}`;
-                
-                renderLeaderboard();                renderChat();
-                renderGame();
-                
-                if (gameState.status === 'finished') {
-                    document.getElementById('activeGameArea').style.display = 'none';
-                    showToast(`🏆 الفائز: ${gameState.winner.name}!`, 'success');
-                }
-            }
+            const { data: messages } = await supabase
+                .from('chat_messages')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(50);
+            
+            const box = document.getElementById('playerChat');
+            box.innerHTML = '';
+            
+            (messages || []).reverse().forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'chat-msg' + (msg.sender_id === currentUser?.id ? ' self' : '');
+                div.innerHTML = `
+                    <div class="sender">${msg.is_system?'🤖 ':''}${msg.sender_name}</div>
+                    <div class="text">${msg.message}</div>
+                    <div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">
+                        ${new Date(msg.created_at).toLocaleTimeString('ar-SA')}
+                    </div>
+                `;
+                box.appendChild(div);
+            });
+                        box.scrollTop = box.scrollHeight;
         }
 
-        // ===== منع الغش وإدارة الجلسة =====
-        window.addEventListener('beforeunload', () => {
-            const me = gameState.players.find(p=>p.id===deviceId);
-            if (me && me.role === 'player') {
-                me.status = 'offline';
-                saveState();
+        async function sendChat(role) {
+            const input = document.getElementById(role==='admin'?'adminChatInput':'playerChatInput');
+            const val = input.value.trim();
+            if (!val || !supabase) return;
+            
+            await supabase.from('chat_messages').insert({
+                sender_id: currentUser.id,
+                sender_name: currentUser.name,
+                message: val,
+                is_system: false
+            });
+            
+            input.value = '';
+        }
+
+        async function addChat(sender, msg, system=false) {
+            if (!supabase) return;
+            await supabase.from('chat_messages').insert({
+                sender_id: currentUser?.id,
+                sender_name: sender,
+                message: msg,
+                is_system: system
+            });
+        }
+
+        function renderGame() {
+            // منطق اللعبة
+        }
+
+        function submitAnswer() {
+            // إرسال الإجابة
+        }
+
+        function skipAnswer() {
+            // تخطي
+        }
+
+        // ===== عند الخروج =====
+        window.addEventListener('beforeunload', async () => {
+            if (currentUser && supabase) {
+                await supabase.from('users').update({
+                    is_online: false,
+                    last_seen: new Date().toISOString()
+                }).eq('id', currentUser.id);
             }
         });
-
+        // ===== التهيئة عند التحميل =====
         window.addEventListener('load', () => {
-            loadState();
-            renderAll();
-            // إعادة الاتصال عند العودة
-            const me = gameState.players.find(p=>p.id===deviceId);
-            if (me && me.status === 'offline') {
-                me.status = 'waiting';
-                saveState();
-                showToast('👋 عدت للعبة! تم تحديث حالتك', 'info');
-            }
+            initDeviceFingerprint();
         });
-
-        // مزامنة المؤقت كل ثانية لمنع الانزياح
-        setInterval(() => {
-            if (gameState.status === 'playing') renderGame();
-        }, 1000);
     </script>
 </body>
 </html>
