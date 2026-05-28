@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>✨ لعبة الحروف الفاخرة | Supabase Edition</title>
+    <title>✨ لعبة الحروف الفاخرة | Supabase Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FingerprintJS for device identification -->
     <script src="https://openfpcdn.io/fingerprintjs/v4/fingerprint.min.js"></script>
     <style>
         :root {
@@ -45,10 +43,11 @@
         .btn-gold { background:linear-gradient(135deg,var(--neon-gold),#ffaa00); color:#1a1a2e; font-weight:800; }
         .btn-danger { background:linear-gradient(135deg,#ff4444,#cc0000); color:#fff; }
         .btn-warning { background:rgba(255,165,0,0.2); color:#ffa500; border:1px solid rgba(255,165,0,0.4); }
+        .btn-success { background:rgba(0,245,160,0.2); color:var(--neon-green); border:1px solid rgba(0,245,160,0.4); }
         .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none!important; }
         
-        .input-field { width:100%; padding:16px 20px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); border-radius:16px; color:#fff; font-family:'Tajawal',sans-serif; font-size:1.1em; outline:none; transition:var(--transition); }        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }
-        
+        .input-field { width:100%; padding:16px 20px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); border-radius:16px; color:#fff; font-family:'Tajawal',sans-serif; font-size:1.1em; outline:none; transition:var(--transition); }
+        .input-field:focus { border-color:var(--neon-purple); box-shadow:0 0 0 4px rgba(123,47,247,0.2), 0 0 25px rgba(123,47,247,0.3); }        
         .screen { display:none; animation:fadeIn 0.5s ease; }
         .screen.active { display:block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
@@ -96,8 +95,8 @@
         .toast.success { background:rgba(0,245,160,0.15); color:var(--neon-green); }
         .toast.info { background:rgba(0,210,255,0.15); color:var(--neon-blue); }
         .toast.warning { background:rgba(255,165,0,0.15); color:#ffa500; }
-        .toast.error { background:rgba(255,68,68,0.15); color:#ff4444; }        @keyframes slideDown { from{transform:translateY(-20px); opacity:0} to{transform:translateY(0); opacity:1} }
-        
+        .toast.error { background:rgba(255,68,68,0.15); color:#ff4444; }
+        @keyframes slideDown { from{transform:translateY(-20px); opacity:0} to{transform:translateY(0); opacity:1} }        
         .wheel-container { position:relative; width:320px; height:320px; margin:20px auto; }
         .wheel { width:100%; height:100%; border-radius:50%; position:relative; transition:transform 4.8s cubic-bezier(0.22,1,0.36,1); border:4px solid rgba(255,255,255,0.3); box-shadow:0 0 50px rgba(123,47,247,0.5), inset 0 0 60px rgba(0,0,0,0.4); cursor:pointer; }
         .wheel canvas { width:100%; height:100%; border-radius:50%; }
@@ -143,10 +142,10 @@
         <div id="loginScreen" class="screen active">
             <div class="main-title">
                 <h1>🔐 بوابة الدخول الآمنة</h1>
-                <p>نظام لعبة الحروف المتكامل</p>
+                <p>نظام لعبة الحروف المتكامل - Supabase</p>
             </div>
-            <div class="glass-card" style="max-width:500px; margin:0 auto;">                <div style="text-align:center; margin-bottom:25px;">
-                    <i class="fas fa-fingerprint" style="font-size:4em; color:var(--neon-purple); margin-bottom:15px;"></i>
+            <div class="glass-card" style="max-width:500px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:25px;">                    <i class="fas fa-fingerprint" style="font-size:4em; color:var(--neon-purple); margin-bottom:15px;"></i>
                     <div style="font-size:0.95em; color:rgba(255,255,255,0.7); margin-bottom:10px;">بصمة جهازك:</div>
                     <div id="deviceFingerprintDisplay" class="device-code" style="display:inline-block;">جاري التحميل...</div>
                 </div>
@@ -194,8 +193,8 @@
                 </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">                <div class="glass-card">
-                    <h3 class="section-title"><i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">
+                <div class="glass-card">                    <h3 class="section-title"><i class="fas fa-cogs" style="color:var(--neon-blue);"></i> إعدادات اللعبة</h3>
                     <div style="margin-bottom:20px;">
                         <label style="display:block; margin-bottom:10px; color:rgba(255,255,255,0.8);">عدد اللاعبين المسموح:</label>
                         <div style="display:flex; align-items:center; gap:15px; justify-content:center; background:rgba(255,255,255,0.05); padding:15px; border-radius:14px;">
@@ -243,8 +242,8 @@
                 <span id="playerStatusBadge" class="status-badge online"><i class="fas fa-circle" style="font-size:0.6em;"></i> متصل</span>
             </div>
 
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">                <!-- قسم العجلة والانتظار -->
-                <div class="glass-card">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:20px;">
+                <!-- قسم العجلة والانتظار -->                <div class="glass-card">
                     <h3 class="section-title"><i class="fas fa-hourglass-half" style="color:var(--neon-gold);"></i> حالة اللعب</h3>
                     <div id="waitingArea" style="text-align:center; padding:20px 0;">
                         <div class="wheel-container">
@@ -292,8 +291,8 @@
                         <div style="margin-top:10px; font-size:0.95em; color:rgba(255,255,255,0.6);">ثوانٍ متبقية</div>
                     </div>
                     <div>
-                        <div class="cat-progress" id="catProgress"></div>                        <div id="gameInputArea" style="margin-top:15px;"></div>
-                        <div style="display:flex; gap:10px; margin-top:15px;">
+                        <div class="cat-progress" id="catProgress"></div>
+                        <div id="gameInputArea" style="margin-top:15px;"></div>                        <div style="display:flex; gap:10px; margin-top:15px;">
                             <button class="btn btn-primary" onclick="submitAnswer()" style="flex:1;"><i class="fas fa-paper-plane"></i> إرسال</button>
                             <button class="btn btn-danger" onclick="skipAnswer()" style="flex:0.4;"><i class="fas fa-forward"></i> تخطي</button>
                         </div>
@@ -322,10 +321,9 @@
     </div>
 
     <script>
-        // ===== تهيئة Supabase =====
-        // ⚠️ استبدل هذه القيم ببياناتك من Supabase
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // مثال: https://xxxxx.supabase.co
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // المفتاح الطويل
+        // ===== Supabase Configuration =====
+        const SUPABASE_URL = 'https://vtrwdcyjsnyvdtzisucv.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0cndkY3lqc255dmR0emlzdWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTExODAsImV4cCI6MjA5NTUyNzE4MH0.p908XmhnvEGiixWDM04eBeXL1vxLLg-dsxCoQ8CMD1s';
         
         let supabase;
         let currentUser = null;
@@ -333,16 +331,24 @@
         let fingerprintHash = null;
         let gameSubscription = null;
         let chatSubscription = null;
+        let maxPlayers = 2;
+        let gameState = {
+            status: 'waiting',
+            currentLetter: '',
+            currentPlayerIdx: 0,
+            currentCatIdx: 0,
+            timerStart: 0
+        };
 
         const CATEGORIES = [
-            {id:'name', label:'اسم إنسان', icon:'👤'},
-            {id:'animal', label:'اسم حيوان', icon:'🐾'},
+            {id:'name', label:'اسم إنسان', icon:'👤'},            {id:'animal', label:'اسم حيوان', icon:'🐾'},
             {id:'plant', label:'اسم نبات', icon:'🌿'},
             {id:'country', label:'اسم دولة', icon:'🌍'},
             {id:'object', label:'اسم جماد', icon:'📦'}
         ];
         const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
-        // ===== تهيئة البصمة والجهاز =====
+
+        // ===== Initialize Device Fingerprint =====
         async function initDeviceFingerprint() {
             try {
                 const fp = await FingerprintJS.load();
@@ -363,17 +369,14 @@
             }
         }
 
-        // ===== تهيئة Supabase =====
+        // ===== Initialize Supabase =====
         function initSupabase() {
-            if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-                console.warn('⚠️ Supabase credentials not set. Using local mode.');
-                return false;
-            }
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase connected');
             return true;
         }
 
-        // ===== الإشعارات =====
+        // ===== Toast Notifications =====
         function showToast(msg, type='info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -383,71 +386,80 @@
             setTimeout(() => toast.remove(), 3500);
         }
 
-        // ===== تسجيل الدخول =====
+        // ===== Login Handler =====
         async function handleLogin() {
             const name = document.getElementById('loginName').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
+                        if (!name || !pass) return showToast('أدخل الاسم وكلمة المرور', 'warning');
             
-            if (!name || !pass) return showToast('أدخل الاسم وكلمة المرور', 'warning');
-            
-            await initDeviceFingerprint();            const isSupabase = initSupabase();
+            await initDeviceFingerprint();
+            initSupabase();
             
             if (pass === 'TRX') {
-                // تسجيل دخول كمسؤول
                 await loginAsAdmin(name);
             } else {
-                // تسجيل كلاعب
-                await loginAsPlayer(name, isSupabase);
+                await loginAsPlayer(name);
             }
         }
 
         async function loginAsAdmin(name) {
-            currentUser = {
-                id: 'admin_' + deviceId,
-                name: name,
-                role: 'admin',
-                device_id: deviceId,
-                is_online: true
-            };
-            
-            if (supabase) {
-                // التحقق من أن المسؤول لا يدخل من أكثر من جهازين
-                const { data: existingAdmins } = await supabase
+            try {
+                // Check if admin already exists
+                const { data: existingAdmin } = await supabase
                     .from('users')
                     .select('*')
+                    .eq('device_id', deviceId)
                     .eq('role', 'admin')
-                    .eq('is_online', true);
+                    .single();
                 
-                if (existingAdmins && existingAdmins.length >= 2) {
-                    const sameDevice = existingAdmins.find(a => a.device_id === deviceId);
-                    if (!sameDevice) {
+                if (existingAdmin) {
+                    // Check session limit (max 2)
+                    const { data: onlineAdmins } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('role', 'admin')
+                        .eq('is_online', true);
+                    
+                    const sameDevice = onlineAdmins?.find(a => a.device_id === deviceId);
+                    if (!sameDevice && onlineAdmins.length >= 2) {
                         return showToast('❌ المسؤول يمكنه الدخول من جهازين فقط', 'error');
                     }
+                    
+                    currentUser = existingAdmin;
+                    await supabase.from('users').update({ 
+                        is_online: true, 
+                        last_seen: new Date().toISOString() 
+                    }).eq('id', existingAdmin.id);
+                } else {
+                    // Create new admin
+                    const { data, error } = await supabase
+                        .from('users')
+                        .insert({
+                            device_id: deviceId,
+                            name: name,
+                            role: 'admin',
+                            is_online: true,
+                            last_seen: new Date().toISOString()                        })
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    currentUser = data;
                 }
                 
-                // حفظ أو تحديث بيانات المسؤول
-                const { error } = await supabase
-                    .from('users')
-                    .upsert({
-                        id: currentUser.id,
-                        device_id: deviceId,
-                        name: name,
-                        role: 'admin',
-                        is_online: true,
-                        last_seen: new Date().toISOString()
-                    }, { onConflict: 'device_id' });
-                
-                if (error) console.error('Admin login error:', error);
+                showToast('🛡️ تم الدخول كمسؤول', 'success');
+                showScreen('adminPanel');
+                loadAdminData();
+                subscribeToUpdates();
+            } catch (error) {
+                console.error('Admin login error:', error);
+                showToast('خطأ في تسجيل الدخول', 'error');
             }
-                        showToast('🛡️ تم الدخول كمسؤول', 'success');
-            showScreen('adminPanel');
-            loadAdminData();
-            subscribeToUpdates();
         }
 
-        async function loginAsPlayer(name, useSupabase) {
-            if (useSupabase) {
-                // التحقق من البصمة
+        async function loginAsPlayer(name) {
+            try {
+                // Check if user exists
                 const { data: existingUser } = await supabase
                     .from('users')
                     .select('*')
@@ -463,8 +475,12 @@
                         showToast('⚠️ حسابك معلق - يمكنك المشاهدة فقط', 'warning');
                     }
                     currentUser = existingUser;
+                    await supabase.from('users').update({ 
+                        is_online: true, 
+                        last_seen: new Date().toISOString() 
+                    }).eq('id', existingUser.id);
                 } else {
-                    // مستخدم جديد
+                    // New player registration
                     const { data, error } = await supabase
                         .from('users')
                         .insert({
@@ -472,53 +488,42 @@
                             name: name,
                             role: 'player',
                             is_online: true,
-                            last_seen: new Date().toISOString()
-                        })
+                            last_seen: new Date().toISOString()                        })
                         .select()
                         .single();
                     
-                    if (error) {
-                        console.error('Player registration error:', error);
-                        return showToast('خطأ في التسجيل', 'error');
-                    }
+                    if (error) throw error;
                     currentUser = data;
                 }
                 
-                // حفظ البصمة
+                // Save device fingerprint
                 await supabase.from('device_fingerprints').insert({
                     user_id: currentUser.id,
                     fingerprint_hash: fingerprintHash,
-                    device_info: navigator.userAgent                });
-            } else {
-                // وضع محلي
-                currentUser = {
-                    id: deviceId,
-                    name: name,
-                    role: 'player',
-                    device_id: deviceId,
-                    total_score: 0,
-                    games_played: 0,
-                    is_online: true
-                };
+                    device_info: navigator.userAgent
+                });
+                
+                showToast(`مرحباً ${currentUser.name} 🎮`, 'success');
+                showScreen('playerPanel');
+                subscribeToUpdates();
+                renderPlayerInterface();
+            } catch (error) {
+                console.error('Player login error:', error);
+                showToast('خطأ في التسجيل', 'error');
             }
-            
-            showToast(`مرحباً ${currentUser.name} 🎮`, 'success');
-            showScreen('playerPanel');
-            subscribeToUpdates();
-            renderPlayerInterface();
         }
 
-        // ===== التنقل بين الشاشات =====
+        // ===== Screen Navigation =====
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        // ===== الاشتراك في التحديثات اللحظية =====
+        // ===== Real-time Subscriptions =====
         function subscribeToUpdates() {
             if (!supabase) return;
             
-            // الاشتراك في تحديثات المستخدمين
+            // Subscribe to user updates
             gameSubscription = supabase
                 .channel('game_updates')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, payload => {
@@ -532,19 +537,19 @@
                 })
                 .subscribe();
             
-            // الاشتراك في الدردشة
-            chatSubscription = supabase
+            // Subscribe to chat messages            chatSubscription = supabase
                 .channel('chat_updates')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
                     renderChat();
-                })                .subscribe();
+                })
+                .subscribe();
         }
 
-        // ===== لوحة المسؤول =====
+        // ===== Admin Panel Functions =====
         async function loadAdminData() {
             if (!supabase) return;
             
-            // تحميل الإحصائيات
+            // Load statistics
             const { count: activeCount } = await supabase
                 .from('users')
                 .select('*', { count: 'exact', head: true })
@@ -570,7 +575,7 @@
             document.getElementById('statTotalRounds').textContent = roundsCount || 0;
             document.getElementById('statBannedUsers').textContent = bannedCount || 0;
             
-            // تحميل قائمة اللاعبين
+            // Load players list
             const { data: players } = await supabase
                 .from('users')
                 .select('*')
@@ -581,16 +586,16 @@
         }
 
         function renderAdminPlayerList(players) {
-            const list = document.getElementById('adminPlayerList');
-            list.innerHTML = '';
+            const list = document.getElementById('adminPlayerList');            list.innerHTML = '';
             
             players.forEach(p => {
                 const div = document.createElement('div');
-                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(255,255,255,0.1);';                div.innerHTML = `
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(255,255,255,0.1);';
+                div.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-weight:700;">${p.name}</span>
                         <span class="status-badge ${p.is_online?'online':'offline'}">${p.is_online?'متصل':'غير متصل'}</span>
-                        <span style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.total_score} نقطة</span>
+                        <span style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.total_score || 0} نقطة</span>
                     </div>
                     <div style="display:flex; gap:8px;">
                         <button class="btn btn-warning" style="padding:6px 12px; font-size:0.85em;" onclick="issueWarning('${p.id}')">⚠️ تحذير</button>
@@ -612,11 +617,9 @@
                 reason: reason
             });
             
-            await supabase.from('users').update({ 
-                warnings: supabase.raw('warnings + 1') 
-            }).eq('id', userId);
+            await supabase.rpc('increment_warnings', { user_id: userId });
             
-            addChat('النظام', `⚠️ تم إصدار تحذير للاعب ${userId}`, true);
+            addChat('النظام', `⚠️ تم إصدار تحذير للاعب`, true);
             showToast('تم إصدار التحذير', 'success');
             loadAdminData();
         }
@@ -626,42 +629,43 @@
                 role: ban ? 'banned' : 'player'
             }).eq('id', userId);
             
-            addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب ${userId}`, true);
+            addChat('النظام', `${ban?'🚫 تم حظر':'✅ تم فك حظر'} اللاعب`, true);
             showToast(ban ? 'تم حظر اللاعب' : 'تم فك الحظر', 'success');
             loadAdminData();
         }
 
         async function toggleSuspend(userId, suspend) {
-            await supabase.from('users').update({
-                role: suspend ? 'suspended' : 'player'
+            await supabase.from('users').update({                role: suspend ? 'suspended' : 'player'
             }).eq('id', userId);
-                        addChat('النظام', `${suspend?'⏸️ تم تعليق':'▶️ تم تفعيل'} اللاعب ${userId}`, true);
+            
+            addChat('النظام', `${suspend?'⏸️ تم تعليق':'▶️ تم تفعيل'} اللاعب`, true);
             showToast(suspend ? 'تم تعليق اللاعب' : 'تم تفعيل اللاعب', 'success');
             loadAdminData();
         }
 
-        async function adjustMaxPlayers(delta) {
-            // سيتم تنفيذها عند وجود جدول للإعدادات
-            showToast('جاري التطوير', 'info');
+        function adjustMaxPlayers(delta) {
+            maxPlayers = Math.max(2, Math.min(10, maxPlayers + delta));
+            document.getElementById('maxPlayersDisplay').textContent = maxPlayers;
+            showToast(`تم تحديد عدد اللاعبين: ${maxPlayers}`, 'success');
         }
 
         async function spinWheel() {
             showToast('جاري تدوير العجلة...', 'info');
-            // منطق العجلة
+            // Wheel logic will be implemented
         }
 
         async function startGame() {
             showToast('بدأت اللعبة!', 'success');
-            // منطق بدء اللعبة
+            // Game start logic
         }
 
-        // ===== واجهة اللاعب =====
+        // ===== Player Interface Functions =====
         async function renderPlayerInterface() {
             if (!currentUser) return;
             
             document.getElementById('playerDeviceCode').textContent = deviceId.substring(0, 12) + '...';
             
-            // الإحصائيات الشخصية
+            // Personal stats
             const personalStats = document.getElementById('personalStats');
             personalStats.innerHTML = `
                 <div class="stat-card">
@@ -681,10 +685,10 @@
             await renderLeaderboard();
             renderChat();
         }
-
         async function renderLeaderboard() {
             if (!supabase) return;
-                        const { data: leaders } = await supabase
+            
+            const { data: leaders } = await supabase
                 .from('users')
                 .select('name, total_score, games_played')
                 .eq('role', 'player')
@@ -701,9 +705,9 @@
                     <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
                     <div class="lb-info">
                         <div class="lb-name">${p.name} ${p.name===currentUser.name?'(أنت)':''}</div>
-                        <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played} جولات</div>
+                        <div style="font-size:0.85em; color:rgba(255,255,255,0.6);">${p.games_played || 0} جولات</div>
                     </div>
-                    <div class="lb-score">${p.total_score}</div>
+                    <div class="lb-score">${p.total_score || 0}</div>
                 `;
                 list.appendChild(div);
             });
@@ -729,11 +733,11 @@
                     <div class="text">${msg.message}</div>
                     <div style="font-size:0.75em; color:rgba(255,255,255,0.4); text-align:left; margin-top:4px;">
                         ${new Date(msg.created_at).toLocaleTimeString('ar-SA')}
-                    </div>
-                `;
+                    </div>                `;
                 box.appendChild(div);
             });
-                        box.scrollTop = box.scrollHeight;
+            
+            box.scrollTop = box.scrollHeight;
         }
 
         async function sendChat(role) {
@@ -762,27 +766,27 @@
         }
 
         function renderGame() {
-            // منطق اللعبة
+            // Game rendering logic
         }
 
         function submitAnswer() {
-            // إرسال الإجابة
+            // Answer submission logic
         }
 
         function skipAnswer() {
-            // تخطي
+            // Skip answer logic
         }
 
-        // ===== عند الخروج =====
+        // ===== Cleanup on Exit =====
         window.addEventListener('beforeunload', async () => {
             if (currentUser && supabase) {
                 await supabase.from('users').update({
                     is_online: false,
-                    last_seen: new Date().toISOString()
-                }).eq('id', currentUser.id);
+                    last_seen: new Date().toISOString()                }).eq('id', currentUser.id);
             }
         });
-        // ===== التهيئة عند التحميل =====
+
+        // ===== Initialization =====
         window.addEventListener('load', () => {
             initDeviceFingerprint();
         });
