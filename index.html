@@ -353,65 +353,70 @@
         const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
 
         // ===== Fetch Admin Credentials from Raw File =====
-        async function fetchAdminCredentials() {
-            try {
-                console.log('🔄 جاري جلب بيانات المسؤول من الملف الآمن...');
-                const response = await fetch(ADMIN_CREDENTIALS_URL, { cache: 'no-store' });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        // ===== Fetch Admin Credentials from Raw File =====
+async function fetchAdminCredentials() {
+    try {
+        console.log('🔄 جاري جلب بيانات المسؤول من الملف الآمن...');
+        const response = await fetch(ADMIN_CREDENTIALS_URL, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const text = await response.text();
+        console.log('📄 محتوى الملف:', text);
+        
+        // Parse the special format with 【S】 and 【P】
+        let username = '';
+        let password = '';
+        
+        // Method 1: Look for 【S】...【S】 and 【P】...【P】
+        const sMatch = text.match(/【S】([^【】]+)【S】/);
+        const pMatch = text.match(/【P】([^【】]+)【P】/);
+        
+        if (sMatch && sMatch[1]) {
+            // Extract just the part before .com if exists
+            const sValue = sMatch[1].trim();
+            username = sValue.split('.')[0].toLowerCase(); // Take "ONX" from "ONX.COM"
+        }
+        
+        if (pMatch && pMatch[1]) {
+            password = pMatch[1].trim(); // "ONX"
+        }
+        
+        // Method 2: Fallback - simple line parsing
+        if (!username || !password) {
+            const lines = text.trim().split('\n');
+            for (const line of lines) {
+                const cleanLine = line.replace(/[【\]]/g, '').trim();
+                if (cleanLine.startsWith('S') || cleanLine.startsWith('s')) {
+                    const value = cleanLine.substring(1).trim();
+                    username = value.split('.')[0].toLowerCase();
+                } else if (cleanLine.startsWith('P') || cleanLine.startsWith('p')) {
+                    password = cleanLine.substring(1).trim();
                 }
-                
-                const text = await response.text();
-                console.log('📄 محتوى الملف:', text);
-                
-                // Parse credentials - يدعم عدة صيغ
-                let parsed = {};
-                
-                // محاولة تحليل كـ JSON أولاً
-                try {
-                    parsed = JSON.parse(text);
-                } catch {
-                    // إذا فشل، نحاول صيغة username:password
-                    const lines = text.trim().split('\n');
-                    for (const line of lines) {
-                        if (line.includes(':')) {
-                            const [key, value] = line.split(':').map(s => s.trim());
-                            if (key.toLowerCase().includes('user') || key.toLowerCase().includes('name')) {
-                                parsed.username = value;
-                            } else if (key.toLowerCase().includes('pass') || key.toLowerCase().includes('key')) {
-                                parsed.password = value;
-                            }
-                        }
-                    }
-                    // إذا كان النص بسيطاً بدون علامات
-                    if (!parsed.username && !parsed.password) {
-                        const parts = text.trim().split(/[\s,:]+/).filter(s => s);
-                        if (parts.length >= 2) {
-                            parsed.username = parts[0];
-                            parsed.password = parts[1];
-                        }                    }
-                }
-                
-                adminCredentials = {
-                    username: parsed.username || parsed.name || parsed.admin || 'admin',
-                    password: parsed.password || parsed.pass || parsed.key || 'TRX'
-                };
-                
-                credentialsLoaded = true;
-                console.log('✅ تم تحميل بيانات المسؤول:', adminCredentials);
-                showToast('✅ تم الاتصال بالخادم الآمن', 'success', 2000);
-                return true;
-                
-            } catch (error) {
-                console.error('❌ فشل جلب بيانات المسؤول:', error);
-                // Fallback credentials
-                adminCredentials = { username: 'admin', password: 'TRX' };
-                credentialsLoaded = true;
-                showToast('⚠️ وضع الطوارئ: بيانات افتراضية', 'warning', 3000);
-                return false;
             }
         }
+        
+        adminCredentials = {
+            username: username || 'admin',
+            password: password || 'TRX'
+        };
+        
+        credentialsLoaded = true;
+        console.log('✅ تم تحميل بيانات المسؤول:', adminCredentials);
+        showToast(`✅ المستخدم: ${adminCredentials.username}`, 'success', 3000);
+        return true;
+        
+    } catch (error) {
+        console.error('❌ فشل جلب بيانات المسؤول:', error);
+        // Fallback credentials
+        adminCredentials = { username: 'onx', password: 'ONX' };
+        credentialsLoaded = true;
+        showToast('⚠️ وضع الطوارئ: onx / ONX', 'warning', 3000);
+        return false;
+    }
+}
 
         // ===== Initialize Device Fingerprint =====
         async function initDeviceFingerprint() {
