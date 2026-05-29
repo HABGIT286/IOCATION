@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.css"></script>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -434,7 +434,7 @@
     </div>
 
     <div class="app-container">
-        <!-- Login Screen -->
+        <!-- ✅ Login Screen - Modified with Single Access Code -->
         <div id="loginScreen" class="login-wrapper">
             <div class="glass-card login-box">
                 <div class="login-header">
@@ -442,19 +442,15 @@
                     <h1>لعبة الحروف الاحترافية</h1>                    <p>النظام المتكامل لإدارة المسابقات</p>
                 </div>
 
+                <!-- حقل رمز الدخول الموحد -->
                 <div class="input-group">
-                    <label><i class="fas fa-user"></i> اسم المستخدم</label>
+                    <label><i class="fas fa-key"></i> رمز الدخول</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-user-circle"></i>
-                        <input type="text" id="loginName" class="input-field" placeholder="أدخل اسم المستخدم..." autocomplete="off">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="loginPass" class="input-field" placeholder="أدخل كلمة المرور..." onkeypress="if(event.key==='Enter')handleLogin()">
+                        <i class="fas fa-fingerprint"></i>
+                        <input type="text" id="accessCode" class="input-field" 
+                               placeholder="أدخل رمز الدخول (مثال: ONX للمسؤول)..." 
+                               autocomplete="off" 
+                               onkeypress="if(event.key==='Enter')handleLogin()">
                     </div>
                 </div>
 
@@ -465,7 +461,7 @@
 
                 <div class="login-footer">
                     <i class="fas fa-shield-alt"></i>
-                    <span>بيانات المسؤول: <strong>ONX / ONX</strong></span>
+                    <span>🔐 رمز المسؤول: <strong>ONX</strong> | أي رمز آخر = مستخدم عادي</span>
                 </div>
             </div>
         </div>
@@ -488,11 +484,11 @@
                     </li>
                     <li class="nav-item" id="navLeaderboard">
                         <a class="nav-link" onclick="showPage('leaderboard')">
-                            <i class="fas fa-trophy"></i><span>المتصدرين</span>                        </a>
+                            <i class="fas fa-trophy"></i><span>المتصدرين</span>
+                        </a>
                     </li>
                     <li class="nav-item" id="navPlayers" style="display:none;">
-                        <a class="nav-link" onclick="showPage('players')">
-                            <i class="fas fa-users"></i><span>إدارة اللاعبين</span>
+                        <a class="nav-link" onclick="showPage('players')">                            <i class="fas fa-users"></i><span>إدارة اللاعبين</span>
                         </a>
                     </li>
                     <li class="nav-item" id="navGame" style="display:none;">
@@ -537,11 +533,11 @@
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
-                            <div class="stat-info">                                <h4>إجمالي اللاعبين</h4>
+                            <div class="stat-info">
+                                <h4>إجمالي اللاعبين</h4>
                                 <div class="value" id="statTotal">0</div>
                             </div>
-                        </div>
-                        <div class="stat-card">
+                        </div>                        <div class="stat-card">
                             <div class="stat-icon purple"><i class="fas fa-sync-alt"></i></div>
                             <div class="stat-info">
                                 <h4>عدد الجولات</h4>
@@ -586,10 +582,10 @@
                                 <button class="control-btn" onclick="showPage('chat')">
                                     <i class="fas fa-comments"></i><span>الدردشة</span>
                                 </button>
-                            </div>                        </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
-
                 <!-- Leaderboard Page -->
                 <section id="page-leaderboard" class="page-section">
                     <div class="page-header">
@@ -635,11 +631,11 @@
                                         <path d="M20 50L5 15C5 7 11 0 20 0C29 0 35 7 35 15L20 50Z" fill="#ff006e"/>
                                     </svg>
                                 </div>
-                                <div class="wheel" id="gameWheel">                                    <canvas id="wheelCanvas" width="350" height="350"></canvas>
+                                <div class="wheel" id="gameWheel">
+                                    <canvas id="wheelCanvas" width="350" height="350"></canvas>
                                 </div>
                                 <button class="wheel-center-btn" onclick="spinWheel()">🎰</button>
-                            </div>
-                            <div id="wheelResult" style="display:none; margin-top:20px;">
+                            </div>                            <div id="wheelResult" style="display:none; margin-top:20px;">
                                 <h3 style="color:var(--gold-gradient); font-size:1.5em;">🎉 اللاعب المختار:</h3>
                                 <p style="font-size:2em; font-weight:900;" id="selectedPlayer"></p>
                             </div>
@@ -684,11 +680,11 @@
                         <p>تخصيص تجربة اللعبة</p>
                     </div>
                     <div class="glass-card">
-                        <div class="settings-grid">                            <div class="setting-item">
+                        <div class="settings-grid">
+                            <div class="setting-item">
                                 <label>وقت السؤال (ثواني)</label>
                                 <div style="display:flex; align-items:center; gap:10px;">
-                                    <input type="range" id="timerRange" min="5" max="30" value="10" oninput="updateTimerValue(this.value)">
-                                    <span class="value" id="timerValue">10</span>
+                                    <input type="range" id="timerRange" min="5" max="30" value="10" oninput="updateTimerValue(this.value)">                                    <span class="value" id="timerValue">10</span>
                                 </div>
                             </div>
                             <div class="setting-item">
@@ -733,11 +729,11 @@
             </main>
         </div>
     </div>
+
     <!-- Confirmation Modal -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>تأكيد العملية</h3>
+            <div class="modal-header">                <h3>تأكيد العملية</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modalMessage"></div>
@@ -753,10 +749,6 @@
         const SUPABASE_URL = 'https://vtrwdcyjsnyvdtzisucv.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0cndkY3lqc255dmR0emlzdWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTExODAsImV4cCI6MjA5NTUyNzE4MH0.p908XmhnvEGiixWDM04eBeXL1vxLLg-dsxCoQ8CMD1s';
         
-        // ⚙️ بيانات المسؤول (يمكن تغييرها من هنا)
-        const ADMIN_USERNAME = "ONX";
-        const ADMIN_PASSWORD = "ONX";
-
         let supabase = null;
         let currentUser = null;
         let deviceId = null;
@@ -779,10 +771,9 @@
 
         // ===== Initialize =====
         window.addEventListener('load', async () => {
-            // Generate unique device ID
             deviceId = localStorage.getItem('game_device_id') || 'device_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('game_device_id', deviceId);
-                        // Initialize Supabase
+            
             if (typeof window.supabase !== 'undefined') {
                 try {
                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -791,14 +782,11 @@
                     console.warn('⚠️ Supabase initialization failed:', e);
                     updateConnectionStatus(false);
                 }
-            } else {
-                updateConnectionStatus(false);
+            } else {                updateConnectionStatus(false);
             }
             
-            // Load saved settings
             loadSettings();
             
-            // Check for saved session
             const saved = localStorage.getItem('currentUser');
             if (saved) {
                 try {
@@ -809,7 +797,6 @@
                 }
             }
             
-            // Setup connection monitoring
             setupConnectionMonitor();
         });
 
@@ -831,7 +818,8 @@
 
         function updateConnectionStatus(online) {
             const status = document.getElementById('connectionStatus');
-            const text = document.getElementById('connectionText');            if (online) {
+            const text = document.getElementById('connectionText');
+            if (online) {
                 status.className = 'connection-status online';
                 text.textContent = 'متصل بالخادم';
             } else {
@@ -843,8 +831,7 @@
         function setupConnectionMonitor() {
             window.addEventListener('online', async () => {
                 showToast('🔄 جاري إعادة الاتصال...', 'info');
-                const connected = await testConnection();
-                if (connected && currentUser) {
+                const connected = await testConnection();                if (connected && currentUser) {
                     await syncUserOnlineStatus();
                     showToast('✅ تم إعادة الاتصال بنجاح', 'success');
                 }
@@ -880,7 +867,8 @@
             document.getElementById('confettiToggle').checked = confettiEnabled;
         }
 
-        function updateTimerValue(val) {            document.getElementById('timerValue').textContent = val;
+        function updateTimerValue(val) {
+            document.getElementById('timerValue').textContent = val;
         }
 
         function updatePlayersValue(val) {
@@ -892,8 +880,7 @@
             maxPlayers = parseInt(document.getElementById('playersRange').value);
             confettiEnabled = document.getElementById('confettiToggle').checked;
             
-            localStorage.setItem('gameSettings', JSON.stringify({
-                timer: gameTimer,
+            localStorage.setItem('gameSettings', JSON.stringify({                timer: gameTimer,
                 maxPlayers: maxPlayers,
                 confettiEnabled: confettiEnabled
             }));
@@ -901,35 +888,31 @@
             showToast('✅ تم حفظ الإعدادات بنجاح', 'success');
         }
 
-        // ===== Login Handler =====
+        // ✅ ===== Login Handler - Modified with Single Access Code =====
         async function handleLogin() {
-            const nameInput = document.getElementById('loginName');
-            const passInput = document.getElementById('loginPass');
+            const codeInput = document.getElementById('accessCode');
             const loginBtn = document.getElementById('loginBtn');
             
-            const name = nameInput.value.trim();
-            const pass = passInput.value.trim();
+            const accessCode = codeInput.value.trim().toUpperCase();
 
-            // Validate inputs
-            if (!name || !pass) {
-                showToast('⚠️ يرجى إدخال اسم المستخدم وكلمة المرور', 'warning');
-                shakeInput(name ? passInput : nameInput);
+            if (!accessCode) {
+                showToast('⚠️ يرجى إدخال رمز الدخول', 'warning');
+                shakeInput(codeInput);
                 return;
             }
 
-            // Disable button during processing
             const originalBtnContent = loginBtn.innerHTML;
             loginBtn.disabled = true;
             loginBtn.innerHTML = '<div class="spinner" style="width:25px;height:25px;border-width:3px;"></div> جاري التحقق...';
 
             try {
-                // Check admin credentials
-                const isAdmin = (name === ADMIN_USERNAME && pass === ADMIN_PASSWORD);
+                // ✅ التحقق من الرمز: ONX = مسؤول، أي شيء آخر = مستخدم
+                const isAdmin = (accessCode === 'ONX');
                 
-                // Create user object
                 currentUser = {
                     id: isAdmin ? 'admin_' + deviceId : 'user_' + deviceId,
-                    name: name,                    role: isAdmin ? 'admin' : 'player',
+                    name: isAdmin ? 'المسؤول' : ('لاعب_' + deviceId.slice(-4)),
+                    role: isAdmin ? 'admin' : 'player',
                     device_id: deviceId,
                     is_online: true,
                     loginTime: new Date().toISOString(),
@@ -937,32 +920,27 @@
                     gamesPlayed: 0
                 };
 
-                // Save to Supabase if available
                 if (supabase && isOnline) {
                     const { error } = await supabase.from('users').upsert({
                         device_id: deviceId,
-                        name: name,
+                        name: currentUser.name,
                         role: currentUser.role,
                         is_online: true,
                         last_seen: new Date().toISOString(),
                         total_score: 0,
                         games_played: 0,
-                        warnings: 0
-                    }, { onConflict: 'device_id' });
+                        warnings: 0                    }, { onConflict: 'device_id' });
                     
                     if (error) console.warn('⚠️ Supabase save warning:', error.message);
                 }
 
-                // Save session locally
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                // Show welcome message
                 showToast(
-                    isAdmin ? '🛡️ أهلاً بك أيها المسؤول!' : '🎮 أهلاً بك ' + escapeHtml(name),
+                    isAdmin ? '🛡️ أهلاً بك أيها المسؤول!' : '🎮 أهلاً بك كلاعب',
                     'success'
                 );
 
-                // Show dashboard after delay
                 setTimeout(() => {
                     showDashboard();
                 }, 800);
@@ -971,14 +949,14 @@
                 console.error('❌ Login error:', error);
                 showToast('❌ حدث خطأ غير متوقع، حاول مرة أخرى', 'error');
             } finally {
-                // Re-enable button
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = originalBtnContent;
             }
         }
 
         // ===== Input Shake Effect =====
-        function shakeInput(input) {            input.classList.add('error');
+        function shakeInput(input) {
+            input.classList.add('error');
             setTimeout(() => input.classList.remove('error'), 500);
             input.focus();
         }
@@ -988,23 +966,19 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboard').classList.add('active');
             
-            // Update sidebar
             document.getElementById('sidebarName').textContent = currentUser.name;
             document.getElementById('sidebarRole').textContent = currentUser.role === 'admin' ? '👑 مسؤول' : '🎮 لاعب';
             document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
             document.getElementById('sidebarAvatar').style.background = 
                 currentUser.role === 'admin' ? 'var(--gold-gradient)' : 'var(--primary-gradient)';
             
-            // Show/hide admin sections
             const isAdmin = currentUser.role === 'admin';
             document.getElementById('navPlayers').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('navGame').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('navSettings').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('adminControls').style.display = isAdmin ? 'grid' : 'none';
             document.getElementById('playerControls').style.display = isAdmin ? 'none' : 'grid';
-            
-            // Load data
-            loadStats();
+                        loadStats();
             loadLeaderboard();
             loadChat();
             if (isAdmin) loadPlayers();
@@ -1020,16 +994,15 @@
             const activeLink = event?.target?.closest('.nav-link');
             if (activeLink) activeLink.classList.add('active');
             
-            // Reload data when needed
             if (pageName === 'leaderboard') loadLeaderboard();
             if (pageName === 'players' && currentUser?.role === 'admin') loadPlayers();
             if (pageName === 'chat') loadChat();
             if (pageName === 'settings') loadSettings();
         }
 
-        // ===== Load Stats =====        async function loadStats() {
+        // ===== Load Stats =====
+        async function loadStats() {
             if (!supabase || !isOnline) {
-                // Fallback values for offline mode
                 document.getElementById('statActive').textContent = '1';
                 document.getElementById('statTotal').textContent = '1';
                 document.getElementById('statRounds').textContent = '0';
@@ -1054,8 +1027,7 @@
                 await loadTopPlayers();
             } catch (e) {
                 console.warn('⚠️ Stats load error:', e);
-                loadTopPlayersOffline();
-            }
+                loadTopPlayersOffline();            }
         }
 
         function loadTopPlayersOffline() {
@@ -1076,7 +1048,8 @@
                 container.innerHTML = '<p style="text-align:center;color:var(--text-secondary)">لا توجد بيانات بعد</p>';
                 return;
             }
-                        data.forEach((p, i) => {
+            
+            data.forEach((p, i) => {
                 container.innerHTML += `
                     <div class="leader-item ${i===0?'top-1':i===1?'top-2':i===2?'top-3':''}">
                         <div class="rank ${i===0?'gold':i===1?'silver':i===2?'bronze':'normal'}">${i+1}</div>
@@ -1103,8 +1076,7 @@
                 .order('total_score',{ascending:false});
             
             const container = document.getElementById('fullLeaderboard');
-            container.innerHTML = '';
-            
+            container.innerHTML = '';            
             if (!data || data.length === 0) {
                 container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">كن أول من يسجل نقاطاً! 🎯</p>';
                 return;
@@ -1125,7 +1097,8 @@
         }
 
         // ===== Load Players (Admin) =====
-        async function loadPlayers() {            if (!supabase || !isOnline || currentUser?.role !== 'admin') {
+        async function loadPlayers() {
+            if (!supabase || !isOnline || currentUser?.role !== 'admin') {
                 document.getElementById('playersTableBody').innerHTML = 
                     '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-secondary)">⚠️ الاتصال بالخادم مطلوب لعرض القائمة</td></tr>';
                 return;
@@ -1152,8 +1125,7 @@
                         <td><strong>${escapeHtml(p.name)}</strong></td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                         <td>${p.total_score||0}</td>
-                        <td>${p.games_played||0}</td>
-                        <td>${p.warnings||0}</td>
+                        <td>${p.games_played||0}</td>                        <td>${p.warnings||0}</td>
                         <td class="action-btns">
                             <button class="action-btn warn" onclick="warnPlayer('${p.device_id}')" title="تحذير">⚠️</button>
                             <button class="action-btn ban" onclick="confirmBan('${p.device_id}', ${p.role!=='banned'})" title="${p.role==='banned'?'فك الحظر':'حظر'}">
@@ -1174,7 +1146,8 @@
             
             const reason = prompt('✍️ اكتب سبب التحذير:');
             if (!reason || !reason.trim()) {
-                showToast('تم إلغاء التحذير', 'info');                return;
+                showToast('تم إلغاء التحذير', 'info');
+                return;
             }
             
             try {
@@ -1201,8 +1174,7 @@
             const modal = document.getElementById('confirmModal');
             const message = document.getElementById('modalMessage');
             const confirmBtn = document.getElementById('modalConfirmBtn');
-            
-            message.textContent = `هل أنت متأكد من ${ban ? 'حظر' : 'فك الحظر'} هذا اللاعب؟`;
+                        message.textContent = `هل أنت متأكد من ${ban ? 'حظر' : 'فك الحظر'} هذا اللاعب؟`;
             confirmBtn.onclick = () => {
                 closeModal();
                 toggleBan(userId, ban);
@@ -1223,7 +1195,8 @@
             
             try {
                 await supabase.from('users')
-                    .update({                         role: ban ? 'banned' : 'player',
+                    .update({
+                        role: ban ? 'banned' : 'player',
                         is_online: ban ? false : null 
                     })
                     .eq('device_id', userId);
@@ -1250,8 +1223,7 @@
             const wheel = document.getElementById('gameWheel');
             const randomDeg = 360 * 5 + Math.floor(Math.random() * 360);
             wheel.style.transform = `rotate(${randomDeg}deg)`;
-            
-            setTimeout(() => {
+                        setTimeout(() => {
                 const players = ['اللاعب 1', 'اللاعب 2', 'اللاعب 3', 'اللاعب 4'];
                 const selected = players[Math.floor(Math.random() * players.length)];
                 
@@ -1272,14 +1244,14 @@
             }
             
             gameState.currentLetter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
-            gameState.currentCatIdx = 0;            gameState.isPlaying = true;
+            gameState.currentCatIdx = 0;
+            gameState.isPlaying = true;
             
             document.getElementById('gameArea').style.display = 'block';
             document.getElementById('wheelResult').style.display = 'none';
             document.getElementById('categoryLabel').textContent = CATEGORIES[0];
             document.getElementById('answerInput').value = '';
             
-            // Update category dots
             document.querySelectorAll('.cat-dot').forEach((dot, i) => {
                 dot.className = 'cat-dot' + (i === 0 ? ' active' : '');
             });
@@ -1300,9 +1272,7 @@
                 
                 if (gameState.timer <= 0) {
                     clearInterval(gameState.timerInterval);
-                    showToast('⏰ انتهى الوقت!', 'warning');
-                    // Auto-skip after timeout
-                    setTimeout(() => skipAnswer(), 1500);
+                    showToast('⏰ انتهى الوقت!', 'warning');                    setTimeout(() => skipAnswer(), 1500);
                 }
             }, 1000);
         }
@@ -1321,11 +1291,10 @@
                 showToast('⚠️ يرجى كتابة إجابة أولاً', 'warning');
                 shakeInput(input);
                 return;
-            }            
-            // ✅ Answer validation logic can be added here
+            }
+            
             showToast('✅ إجابة صحيحة! +10 نقاط 🎯', 'success');
             
-            // Update score locally (sync to server if online)
             if (currentUser) {
                 currentUser.score = (currentUser.score || 0) + 10;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -1343,7 +1312,6 @@
             input.value = '';
             gameState.currentCatIdx++;
             
-            // Update categories
             const dots = document.querySelectorAll('.cat-dot');
             if (gameState.currentCatIdx < CATEGORIES.length) {
                 dots.forEach((dot, i) => {
@@ -1353,16 +1321,13 @@
                 document.getElementById('categoryLabel').textContent = CATEGORIES[gameState.currentCatIdx];
                 startTimer();
             } else {
-                // Round complete
-                showToast('🏆 اكتملت جميع الفئات! أحسنت!', 'success');
-                document.getElementById('gameArea').style.display = 'none';
+                showToast('🏆 اكتملت جميع الفئات! أحسنت!', 'success');                document.getElementById('gameArea').style.display = 'none';
                 gameState.isPlaying = false;
                 
                 if (confettiEnabled && typeof confetti !== 'undefined') {
                     confetti({ particleCount: 200, spread: 100, origin: { y: 0.8 } });
                 }
                 
-                // Refresh stats
                 loadStats();
             }
         }
@@ -1370,7 +1335,8 @@
         function skipAnswer() {
             showToast('⏭️ تم تخطي السؤال', 'info');
             
-            gameState.currentCatIdx++;            const dots = document.querySelectorAll('.cat-dot');
+            gameState.currentCatIdx++;
+            const dots = document.querySelectorAll('.cat-dot');
             
             if (gameState.currentCatIdx < CATEGORIES.length) {
                 dots.forEach((dot, i) => {
@@ -1404,8 +1370,7 @@
                 
                 if (!data || data.length === 0) {
                     container.innerHTML = '<div class="chat-message system"><div class="sender">🤖 النظام</div><div class="text">أهلاً! ابدأ المحادثة 🎮</div></div>';
-                    return;
-                }
+                    return;                }
                 
                 data.reverse().forEach(msg => {
                     const isSelf = msg.sender_id === currentUser?.id;
@@ -1419,7 +1384,8 @@
                     `;
                 });
                 container.scrollTop = container.scrollHeight;
-            } catch (e) {                console.warn('⚠️ Chat load error:', e);
+            } catch (e) {
+                console.warn('⚠️ Chat load error:', e);
             }
         }
 
@@ -1453,7 +1419,6 @@
                 showToast('❌ فشل إرسال الرسالة', 'error');
             }
         }
-
         // ===== Logout =====
         async function logout() {
             if (!confirm('هل تريد تسجيل الخروج؟')) return;
@@ -1468,6 +1433,7 @@
             currentUser = null;
             location.reload();
         }
+
         // ===== Toast Notifications =====
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
@@ -1480,7 +1446,6 @@
             
             container.appendChild(toast);
             
-            // Auto-remove
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(-20px)';
@@ -1503,8 +1468,7 @@
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
-            return div.innerHTML;
-        }
+            return div.innerHTML;        }
 
         // ===== Close modal on outside click =====
         document.getElementById('confirmModal').addEventListener('click', (e) => {
@@ -1513,12 +1477,11 @@
 
         // ===== Keyboard shortcuts =====
         document.addEventListener('keydown', (e) => {
-            // ESC to close modal
             if (e.key === 'Escape') {
                 closeModal();
             }
-            // Ctrl+L to focus login (if on login screen)            if (e.ctrlKey && e.key === 'l' && document.getElementById('loginScreen').style.display !== 'none') {
-                document.getElementById('loginName').focus();
+            if (e.ctrlKey && e.key === 'l' && document.getElementById('loginScreen').style.display !== 'none') {
+                document.getElementById('accessCode').focus();
             }
         });
     </script>
