@@ -36,12 +36,13 @@
             font-family: 'Tajawal', sans-serif;
             background: #000;
             color: var(--text-color);
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
+            overflow: hidden;
+            height: 100vh;
+            position: fixed;
+            width: 100%;
         }
 
-        /* Background - صورة ثابتة بدون طبقة لون */
+        /* Background */
         .background {
             position: fixed;
             top: 0;
@@ -87,18 +88,13 @@
             mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
-            animation: logoPulse 2s ease-in-out infinite, logoRotate 10s linear infinite;
+            animation: logoPulse 2s ease-in-out infinite;
             margin-bottom: 40px;
         }
 
         @keyframes logoPulse {
             0%, 100% { box-shadow: 0 0 30px var(--rgb-1), 0 0 60px var(--rgb-2); }
             50% { box-shadow: 0 0 50px var(--rgb-2), 0 0 100px var(--rgb-3); }
-        }
-
-        @keyframes logoRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         .welcome-title {
@@ -137,8 +133,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
             animation: btnPulse 2s ease-in-out infinite;
         }
 
@@ -289,12 +283,32 @@
             transform: scale(0.95);
         }
 
-        /* Main Content */
+        /* Main Content - ثابت مع تمرير داخلي */
         .main-content {
-            margin-top: 180px;
+            position: fixed;
+            top: 180px;
+            left: 0;
+            right: 0;
+            bottom: 150px;
             padding: 20px;
-            min-height: calc(100vh - 180px);
-            margin-bottom: 150px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: var(--rgb-1) transparent;
+        }
+
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
+            border-radius: 10px;
         }
 
         .tab-content {
@@ -311,7 +325,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Glass Cards - أطراف من الداخل */
+        /* Glass Cards */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -387,7 +401,7 @@
             opacity: 0.8;
         }
 
-        /* Music Player - محسّن */
+        /* Music Player */
         .music-player {
             position: fixed;
             bottom: 0;
@@ -532,15 +546,15 @@
             box-shadow: 0 0 15px var(--rgb-1);
         }
 
-        /* Songs List */
+        /* Songs List with Mini Controls */
         .song-item {
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 15px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .song-item:hover {
@@ -558,17 +572,17 @@
         }
 
         .song-number {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            width: 40px;
+            width: 35px;
         }
 
         .song-thumbnail {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 12px;
             object-fit: cover;
             border: 2px solid var(--glass-border);
@@ -579,14 +593,48 @@
         }
 
         .song-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             margin-bottom: 5px;
         }
 
         .song-meta {
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0.7;
+        }
+
+        /* Mini Controls */
+        .mini-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mini-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-btn:hover {
+            transform: scale(1.2);
+            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            border-color: transparent;
+        }
+
+        .mini-btn:active {
+            transform: scale(0.9);
         }
 
         /* Contact Section */
@@ -637,7 +685,7 @@
             opacity: 0.8;
         }
 
-        /* Themes Section - شفافة على كارد زجاجي */
+        /* Themes Section */
         .themes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -675,40 +723,186 @@
             font-weight: 700;
         }
 
-        /* Click Effect */
-        .click-effect {
+        /* Dialog Modal */
+        .dialog-overlay {
             position: fixed;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--rgb-1), transparent);
-            pointer-events: none;
-            animation: clickRipple 0.6s ease-out;
-            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes clickRipple {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(5); opacity: 0; }
+        .dialog-overlay.active {
+            display: flex;
         }
 
-        /* Now Playing Indicator */
-        .now-playing {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 14px;
+        .dialog {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            border: 2px solid var(--rgb-1);
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: dialogSlide 0.4s ease;
+        }
+
+        @keyframes dialogSlide {
+            from {
+                transform: scale(0.8) translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .dialog-icon {
+            font-size: 60px;
+            color: var(--rgb-1);
+            margin-bottom: 20px;
+            animation: iconShake 0.5s ease;
+        }
+
+        @keyframes iconShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .dialog-title {
+            font-size: 24px;
             font-weight: 700;
-            animation: nowPlayingPulse 2s ease-in-out infinite;
-            z-index: 10;
+            margin-bottom: 15px;
         }
 
-        @keyframes nowPlayingPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.95); }
+        .dialog-message {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .dialog-btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dialog-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .dialog-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10002;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 2px solid var(--rgb-1);
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: toastSlide 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        @keyframes toastSlide {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.hiding {
+            animation: toastHide 0.4s ease forwards;
+        }
+
+        @keyframes toastHide {
+            to {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        .toast-icon {
+            font-size: 30px;
+            color: var(--rgb-1);
+        }
+
+        .toast-message {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* Import Files Button */
+        .import-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            animation: importPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes importPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+        }
+
+        .import-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .import-btn:active {
+            transform: scale(0.95);
         }
 
         /* Visualizer */
@@ -741,6 +935,25 @@
             50% { transform: scaleY(1); }
         }
 
+        /* Now Playing Indicator */
+        .now-playing {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, var(--rgb-1), var(--rgb-2));
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            animation: nowPlayingPulse 2s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes nowPlayingPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .brand-name {
@@ -762,7 +975,7 @@
             }
             
             .main-content {
-                margin-top: 160px;
+                top: 160px;
             }
             
             .welcome-title {
@@ -778,6 +991,11 @@
         /* Prevent text selection */
         * {
             -webkit-touch-callout: none;
+        }
+
+        /* Hidden file input */
+        #fileInput {
+            display: none;
         }
     </style>
 </head>
@@ -851,6 +1069,10 @@
 
         <!-- Songs Tab -->
         <div class="tab-content" id="songs">
+            <button class="import-btn" onclick="importFiles()">
+                <i class="fas fa-folder-open"></i>
+                استيراد أغاني من الجهاز
+            </button>
             <div id="songsList"></div>
         </div>
 
@@ -947,11 +1169,29 @@
         </div>
     </div>
 
+    <!-- Dialog Modal -->
+    <div class="dialog-overlay" id="dialogOverlay">
+        <div class="dialog">
+            <div class="dialog-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="dialog-title" id="dialogTitle">تنبيه</h3>
+            <p class="dialog-message" id="dialogMessage">رسالة التنبيه</p>
+            <button class="dialog-btn" onclick="closeDialog()">حسناً</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Audio Element -->
     <audio id="audioPlayer" preload="metadata"></audio>
 
+    <!-- File Input -->
+    <input type="file" id="fileInput" multiple accept="audio/*" onchange="handleFiles(event)">
+
     <script>
-        // Songs Data - جميع الأغاني
+        // Songs Data
         const songs = [
             { id: 1, name: 'الأغنية 1', duration: '03:45', image: '1.jpg', file: '1.mp3' },
             { id: 2, name: 'الأغنية 2', duration: '04:12', image: '2.jpg', file: '2.mp3' },
@@ -969,6 +1209,7 @@
         let isPlaying = false;
         let isMuted = false;
         let previousVolume = 0.7;
+        let importedSongs = [];
 
         const audio = document.getElementById('audioPlayer');
         const playIcon = document.getElementById('playIcon');
@@ -1037,45 +1278,62 @@
         // Render Songs List
         function renderSongsList() {
             const container = document.getElementById('songsList');
-            container.innerHTML = songs.map((song, index) => `
+            const allSongs = [...songs, ...importedSongs];
+            
+            container.innerHTML = allSongs.map((song, index) => `
                 <div class="glass-card song-item" onclick="playSong(${index})" id="song-${index}">
                     <div class="song-number">${index + 1}</div>
-                    <img src="${song.image}" alt="${song.name}" class="song-thumbnail">
+                    <img src="${song.image || 'XX.jpg'}" alt="${song.name}" class="song-thumbnail">
                     <div class="song-details">
                         <h3 class="song-name">${song.name}</h3>
-                        <p class="song-meta">${song.duration}</p>
+                        <p class="song-meta">${song.duration || 'غير محدد'}</p>
                     </div>
-                    <i class="fas fa-play" style="font-size: 20px; opacity: 0.7;"></i>
+                    <div class="mini-controls">
+                        <button class="mini-btn" onclick="event.stopPropagation(); adjustVolume(${index}, 0.1)" title="رفع الصوت">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <button class="mini-btn" onclick="event.stopPropagation(); adjustVolume(${index}, -0.1)" title="تخفيض الصوت">
+                            <i class="fas fa-volume-down"></i>
+                        </button>
+                        <button class="mini-btn" onclick="event.stopPropagation(); skipForward(${index})" title="تقديم">
+                            <i class="fas fa-forward"></i>
+                        </button>
+                        <button class="mini-btn" onclick="event.stopPropagation(); skipBackward(${index})" title="رجوع">
+                            <i class="fas fa-backward"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
 
         // Load Song
         function loadSong(index) {
+            const allSongs = [...songs, ...importedSongs];
+            if (index >= allSongs.length) return;
+            
             currentSongIndex = index;
-            const song = songs[index];
+            const song = allSongs[index];
             
             audio.src = song.file;
-            albumImage.src = song.image;
+            albumImage.src = song.image || 'XX.jpg';
             albumTitle.textContent = song.name;
-            albumDuration.textContent = song.duration;
+            albumDuration.textContent = song.duration || 'غير محدد';
             
             // Update active song in list
             document.querySelectorAll('.song-item').forEach((item, i) => {
                 if (i === index) {
                     item.classList.add('playing');
-                    item.querySelector('i').classList.remove('fa-play');
-                    item.querySelector('i').classList.add('fa-pause');
                 } else {
                     item.classList.remove('playing');
-                    item.querySelector('i').classList.remove('fa-pause');
-                    item.querySelector('i').classList.add('fa-play');
                 }
             });
         }
 
         // Play Song
         function playSong(index) {
+            const allSongs = [...songs, ...importedSongs];
+            if (index >= allSongs.length) return;
+            
             loadSong(index);
             play();
         }
@@ -1097,7 +1355,7 @@
                 visualizer.style.display = 'flex';
             }).catch(error => {
                 console.error('Error playing audio:', error);
-                alert('تعذر تشغيل الأغنية. تأكد من وجود ملف: ' + songs[currentSongIndex].file);
+                showToast('تعذر تشغيل الأغنية', 'error');
             });
         }
 
@@ -1111,15 +1369,36 @@
 
         // Next/Previous
         function nextSong() {
+            const allSongs = [...songs, ...importedSongs];
             let nextIndex = currentSongIndex + 1;
-            if (nextIndex >= songs.length) nextIndex = 0;
+            if (nextIndex >= allSongs.length) nextIndex = 0;
             playSong(nextIndex);
         }
 
         function previousSong() {
+            const allSongs = [...songs, ...importedSongs];
             let prevIndex = currentSongIndex - 1;
-            if (prevIndex < 0) prevIndex = songs.length - 1;
+            if (prevIndex < 0) prevIndex = allSongs.length - 1;
             playSong(prevIndex);
+        }
+
+        // Mini Controls
+        function adjustVolume(index, change) {
+            const newVolume = Math.max(0, Math.min(1, audio.volume + change));
+            audio.volume = newVolume;
+            document.getElementById('volumeSlider').value = newVolume * 100;
+            updateVolumeIcon(newVolume);
+            showToast(`تم ${change > 0 ? 'رفع' : 'تخفيض'} الصوت`, 'success');
+        }
+
+        function skipForward(index) {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+            showToast('تم التقديم 10 ثواني', 'success');
+        }
+
+        function skipBackward(index) {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+            showToast('تم الرجوع 10 ثواني', 'success');
         }
 
         // Audio Events
@@ -1131,7 +1410,7 @@
             audio.addEventListener('ended', nextSong);
             audio.addEventListener('error', (e) => {
                 console.error('Audio error:', e);
-                console.log('Current song file:', songs[currentSongIndex].file);
+                showToast('ملف الأغنية غير موجود', 'error');
             });
         }
 
@@ -1157,8 +1436,12 @@
         // Volume Control
         function changeVolume(value) {
             audio.volume = value / 100;
+            updateVolumeIcon(audio.volume);
+        }
+
+        function updateVolumeIcon(volume) {
             const icon = document.getElementById('volumeIcon');
-            if (value == 0) {
+            if (volume == 0) {
                 icon.classList.remove('fa-volume-up');
                 icon.classList.add('fa-volume-mute');
             } else {
@@ -1169,20 +1452,17 @@
 
         function toggleMute() {
             const slider = document.getElementById('volumeSlider');
-            const icon = document.getElementById('volumeIcon');
             
             if (isMuted) {
                 audio.volume = previousVolume;
                 isMuted = false;
-                icon.classList.remove('fa-volume-mute');
-                icon.classList.add('fa-volume-up');
+                updateVolumeIcon(previousVolume);
                 slider.value = previousVolume * 100;
             } else {
                 previousVolume = audio.volume;
                 audio.volume = 0;
                 isMuted = true;
-                icon.classList.remove('fa-volume-up');
-                icon.classList.add('fa-volume-mute');
+                updateVolumeIcon(0);
                 slider.value = 0;
             }
         }
@@ -1191,9 +1471,7 @@
         function changeTheme(color1, color2) {
             document.documentElement.style.setProperty('--rgb-1', color1);
             document.documentElement.style.setProperty('--rgb-2', color2);
-            
-            // Add visual feedback
-            document.body.style.transition = 'all 0.5s';
+            showToast('تم تغيير الثيم بنجاح', 'success');
         }
 
         // Open Link
@@ -1212,6 +1490,73 @@
                 
                 setTimeout(() => effect.remove(), 600);
             });
+        }
+
+        // Dialog
+        function showDialog(title, message) {
+            document.getElementById('dialogTitle').textContent = title;
+            document.getElementById('dialogMessage').textContent = message;
+            document.getElementById('dialogOverlay').classList.add('active');
+        }
+
+        function closeDialog() {
+            document.getElementById('dialogOverlay').classList.remove('active');
+        }
+
+        // Toast
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+            const color = type === 'error' ? '#ff006e' : '#00d4ff';
+            
+            toast.innerHTML = `
+                <div class="toast-icon" style="color: ${color}">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // Import Files
+        function importFiles() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFiles(event) {
+            const files = Array.from(event.target.files);
+            
+            if (files.length === 0) {
+                showToast('لم يتم اختيار أي ملفات', 'error');
+                return;
+            }
+            
+            files.forEach((file, index) => {
+                if (file.type.startsWith('audio/')) {
+                    const url = URL.createObjectURL(file);
+                    const songName = file.name.replace(/\.[^/.]+$/, '');
+                    
+                    importedSongs.push({
+                        id: songs.length + importedSongs.length + 1,
+                        name: songName,
+                        duration: 'غير محدد',
+                        image: 'XX.jpg',
+                        file: url
+                    });
+                }
+            });
+            
+            renderSongsList();
+            showToast(`تم استيراد ${files.length} أغنية بنجاح`, 'success');
         }
 
         // Prevent Text Selection and Context Menu
