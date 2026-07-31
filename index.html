@@ -216,7 +216,6 @@ body {
 }
 
 .nav-tab i { font-size: 0.8rem; filter: drop-shadow(0 0 3px currentColor); }
-
 .nav-tab:hover { background: var(--glass-bg-hover); color: var(--text-primary); transform: translateY(-2px); }
 
 .nav-tab.active {
@@ -513,7 +512,9 @@ body {
     box-shadow: 0 0 8px var(--primary);
 }
 
-/* المعادل الصوتي */
+/* =========================================
+   المعادل الصوتي - محسّن
+   ========================================= */
 .eq-container { position: relative; z-index: 3; }
 
 .eq-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
@@ -532,6 +533,8 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
+    position: relative;
+    overflow: hidden;
 }
 
 .eq-preset-btn i { font-size: 0.75rem; filter: drop-shadow(0 0 3px currentColor); }
@@ -541,52 +544,121 @@ body {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: #fff;
     border-color: transparent;
-    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+    transform: scale(1.05);
 }
 
 .eq-preset-btn.active i { filter: drop-shadow(0 0 5px #fff); }
+
+.eq-preset-btn.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: presetShine 2s infinite;
+}
+
+@keyframes presetShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
 
 .eq-bands {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    height: 200px;
-    padding: 15px 10px;
+    height: 220px;
+    padding: 20px 10px 15px;
     gap: 8px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
     overflow-x: auto;
+    position: relative;
 }
 
-.eq-band { flex: 1; min-width: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.eq-band-value { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--primary); font-weight: 700; filter: drop-shadow(0 0 3px var(--primary)); }
+/* خط المنتصف (0dB) */
+.eq-bands::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+.eq-band { 
+    flex: 1; 
+    min-width: 40px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 6px;
+    position: relative;
+}
+
+.eq-band-value { 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 0.7rem; 
+    color: var(--primary); 
+    font-weight: 700; 
+    filter: drop-shadow(0 0 4px var(--primary));
+    transition: all var(--transition-fast);
+    min-height: 18px;
+}
+
+.eq-band-value.positive { color: #22c55e; filter: drop-shadow(0 0 4px #22c55e); }
+.eq-band-value.negative { color: #ef4444; filter: drop-shadow(0 0 4px #ef4444); }
 
 .eq-slider-vertical {
     -webkit-appearance: none;
     appearance: none;
-    width: 140px; height: 5px;
-    background: rgba(255, 255, 255, 0.1);
+    width: 160px; 
+    height: 6px;
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 5px;
     outline: none;
     transform: rotate(-90deg);
     cursor: none;
-    margin: 65px 0;
+    margin: 75px 0;
+    transition: background var(--transition-fast);
+}
+
+.eq-slider-vertical:hover {
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .eq-slider-vertical::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px; height: 14px;
+    width: 18px; 
+    height: 18px;
     background: var(--primary);
     border-radius: 50%;
     cursor: none;
-    box-shadow: 0 0 8px var(--primary);
-    transition: transform var(--transition-fast);
+    box-shadow: 0 0 12px var(--primary), 0 0 20px rgba(0, 212, 255, 0.5);
+    transition: all var(--transition-fast);
+    border: 2px solid #fff;
 }
 
-.eq-slider-vertical::-webkit-slider-thumb:hover { transform: scale(1.3); background: var(--accent); box-shadow: 0 0 12px var(--accent); }
-.eq-band-label { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+.eq-slider-vertical::-webkit-slider-thumb:hover { 
+    transform: scale(1.3); 
+    background: var(--accent);
+    box-shadow: 0 0 15px var(--accent), 0 0 25px rgba(255, 0, 110, 0.5);
+}
+
+.eq-slider-vertical::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+}
+
+.eq-band-label { 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 0.65rem; 
+    color: var(--text-muted); 
+    font-weight: 600;
+}
 
 .themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; position: relative; z-index: 3; }
 
@@ -793,20 +865,9 @@ body {
 .search-btn i { filter: drop-shadow(0 0 3px #fff); }
 .search-btn:hover { transform: scale(1.05); }
 
-/* نموذج التواصل */
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    position: relative;
-    z-index: 3;
-}
+.contact-form { display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 3; }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
 
 .form-label {
     font-size: 0.9rem;
@@ -832,20 +893,9 @@ body {
     transition: all var(--transition-fast);
 }
 
-.form-input:focus, .form-textarea:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
-}
-
-.form-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-.form-input.error, .form-textarea.error {
-    border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
-}
+.form-input:focus, .form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 212, 255, 0.2); }
+.form-textarea { min-height: 120px; resize: vertical; }
+.form-input.error, .form-textarea.error { border-color: var(--accent); box-shadow: 0 0 10px rgba(255, 0, 110, 0.3); }
 
 .submit-btn {
     padding: 14px 30px;
@@ -870,7 +920,6 @@ body {
 .submit-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5); }
 .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Dialog Modal */
 .dialog-overlay {
     position: fixed;
     inset: 0;
@@ -993,7 +1042,6 @@ body {
 .dialog-btn.secondary:hover { background: rgba(255, 255, 255, 0.15); transform: scale(1.05); }
 .dialog-btn:active { transform: scale(0.95); }
 
-/* Toast */
 .toast-container {
     position: fixed;
     bottom: 90px;
@@ -1228,15 +1276,11 @@ body {
                 
                 <form class="contact-form" id="contactForm" onsubmit="ContactForm.submit(event)">
                     <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-user"></i> الاسم <span class="required">*</span>
-                        </label>
+                        <label class="form-label"><i class="fas fa-user"></i> الاسم <span class="required">*</span></label>
                         <input type="text" class="form-input" id="contactName" placeholder="اكتب اسمك هنا..." required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-envelope"></i> رسالتك <span class="required">*</span>
-                        </label>
+                        <label class="form-label"><i class="fas fa-envelope"></i> رسالتك <span class="required">*</span></label>
                         <textarea class="form-textarea" id="contactMessage" placeholder="اكتب رسالتك هنا..." required></textarea>
                     </div>
                     <button type="submit" class="submit-btn" id="submitBtn">
@@ -1332,10 +1376,7 @@ const EQ_PRESETS = {
 
 const EQ_FREQUENCIES = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
 
-// =========================================
-// رابط Discord Webhook - ضع رابطك هنا
-// =========================================
-const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1530663733590753442/g4eTeYwPwp8v6GsAVJ9IqtZHk1_QAUwrajA4o4C0EjQyORus1zfA5DkjGFgxY4FOmCHa';
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN';
 
 const Storage = {
     save: (k, v) => { try { localStorage.setItem(`soko_${k}`, JSON.stringify(v)); } catch(e){} },
@@ -1519,14 +1560,13 @@ class AudioPlayer {
             this.analyser.connect(this.audioContext.destination);
             
             this.eqInitialized = true;
-            console.log('Audio Context initialized with', this.filters.length, 'filters');
+            console.log('✅ Audio Context initialized with', this.filters.length, 'filters');
             
-            // تطبيق قيم EQ المحفوظة بعد التهيئة
             if (window.Equalizer) {
-                window.Equalizer.applyValues();
+                setTimeout(() => window.Equalizer.applyValues(), 50);
             }
         } catch(e) {
-            console.error('Audio Context Error:', e);
+            console.error('❌ Audio Context Error:', e);
         }
     }
 
@@ -1708,98 +1748,149 @@ class AudioPlayer {
 }
 
 // =========================================
-// المعادل الصوتي - مع إصلاح كامل للأوضاع
+// المعادل الصوتي - الإصلاح الجذري
 // =========================================
 class Equalizer {
     constructor() {
         this.currentPreset = Storage.load('currentPreset', 'flat');
         this.values = Storage.load('eqValues', [...EQ_PRESETS.flat.values]);
-        this.renderPresets();
-        this.renderBands();
+        this.bandsCreated = false;
+        this.presetsCreated = false;
         
-        // تطبيق القيم المحفوظة بعد تهيئة قصيرة
+        // إنشاء الواجهة مرة واحدة فقط
+        this.createPresets();
+        this.createBands();
+        
+        // تطبيق الوضع المحفوظ
+        this.applyPreset(this.currentPreset, false);
+        
+        // تطبيق القيم بعد تهيئة Player
         setTimeout(() => {
             if (window.Player) {
                 window.Player.initAudioContext();
-                this.applyValues();
             }
-        }, 500);
+        }, 300);
     }
 
-    renderPresets() {
+    // إنشاء الأزرار مرة واحدة فقط
+    createPresets() {
+        if (this.presetsCreated) return;
         const container = document.getElementById('eqPresets');
         container.innerHTML = Object.entries(EQ_PRESETS).map(([key, p]) => 
-            `<button class="eq-preset-btn ${key === this.currentPreset ? 'active' : ''}" onclick="Equalizer.applyPreset('${key}')">
+            `<button class="eq-preset-btn" data-preset="${key}" onclick="Equalizer.applyPreset('${key}')">
                 <i class="fas ${p.icon}"></i> ${p.name}
             </button>`
         ).join('');
+        this.presetsCreated = true;
     }
 
-    renderBands() {
+    // إنشاء الأشرطة مرة واحدة فقط
+    createBands() {
+        if (this.bandsCreated) return;
         const container = document.getElementById('eqBands');
         container.innerHTML = EQ_FREQUENCIES.map((freq, i) => {
             const label = freq >= 1000 ? (freq/1000) + 'k' : freq;
             return `
                 <div class="eq-band">
-                    <span class="eq-band-value" id="eqVal${i}">${this.values[i] > 0 ? '+' : ''}${this.values[i]}</span>
-                    <input type="range" class="eq-slider-vertical" min="-12" max="12" value="${this.values[i]}" 
-                           oninput="Equalizer.updateBand(${i}, this.value)">
+                    <span class="eq-band-value" id="eqVal${i}">0</span>
+                    <input type="range" class="eq-slider-vertical" id="eqSlider${i}" min="-12" max="12" value="0" step="1"
+                           oninput="Equalizer.onBandChange(${i}, this.value)">
                     <span class="eq-band-label">${label}</span>
                 </div>
             `;
         }).join('');
+        this.bandsCreated = true;
     }
 
-    updateBand(index, value) {
+    // تحديث الزر النشط فقط (بدون إعادة إنشاء)
+    updatePresetsUI() {
+        document.querySelectorAll('.eq-preset-btn').forEach(btn => {
+            const presetKey = btn.getAttribute('data-preset');
+            if (presetKey === this.currentPreset) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    // تحديث الأشرطة فقط (بدون إعادة إنشاء)
+    updateBandsUI() {
+        this.values.forEach((val, i) => {
+            const slider = document.getElementById(`eqSlider${i}`);
+            const label = document.getElementById(`eqVal${i}`);
+            if (slider && label) {
+                slider.value = val;
+                const sign = val > 0 ? '+' : '';
+                label.textContent = `${sign}${val}`;
+                
+                // تغيير اللون حسب القيمة
+                label.classList.remove('positive', 'negative');
+                if (val > 0) label.classList.add('positive');
+                else if (val < 0) label.classList.add('negative');
+            }
+        });
+    }
+
+    // عند تغيير شريط يدوياً
+    onBandChange(index, value) {
         this.values[index] = parseInt(value);
-        document.getElementById(`eqVal${index}`).textContent = `${value > 0 ? '+' : ''}${value}`;
         Storage.save('eqValues', this.values);
-        this.applyValues();
         this.currentPreset = 'custom';
-        this.renderPresets();
+        this.updatePresetsUI();
+        this.updateBandsUI();
+        this.applyValues();
     }
 
-    applyPreset(key) {
+    // تطبيق وضع جاهز - الإصلاح الجذري
+    applyPreset(key, showNotification = true) {
         const preset = EQ_PRESETS[key];
-        if (!preset) return;
+        if (!preset) {
+            console.error('❌ Preset not found:', key);
+            return;
+        }
         
-        console.log('Applying preset:', key, preset.values);
+        console.log('🎵 Applying preset:', key, preset.name, preset.values);
         
+        // تحديث الحالة الداخلية
         this.currentPreset = key;
         this.values = [...preset.values];
         Storage.save('eqValues', this.values);
         Storage.save('currentPreset', key);
         
-        // تحديث الواجهة فوراً
-        this.renderBands();
-        this.renderPresets();
+        // تحديث الواجهة فقط (بدون إعادة إنشاء)
+        this.updatePresetsUI();
+        this.updateBandsUI();
         
-        // تهيئة AudioContext إذا لم تكن مهيأة
+        // تهيئة AudioContext إذا لزم الأمر
         if (window.Player) {
             window.Player.initAudioContext();
         }
         
-        // تطبيق القيم بعد تأخير قصير للتأكد من تهيئة الفلاتر
-        setTimeout(() => {
-            this.applyValues();
-        }, 100);
+        // تطبيق القيم على الفلاتر
+        this.applyValues();
         
-        Toast.show(`تم تطبيق وضع: ${preset.name}`, 'success');
+        if (showNotification) {
+            Toast.show(`تم تطبيق وضع: ${preset.name}`, 'success');
+        }
     }
 
+    // تطبيق القيم على الفلاتر الحقيقية
     applyValues() {
         if (!window.Player || !window.Player.eqInitialized || !window.Player.filters.length) {
-            console.log('EQ filters not ready yet');
+            console.log('⏳ EQ filters not ready yet, will apply later');
             return;
         }
+        
+        console.log('🔊 Applying EQ values:', this.values);
         
         window.Player.filters.forEach((filter, i) => {
             if (this.values[i] !== undefined) {
                 filter.gain.value = this.values[i];
-                console.log(`Filter ${i} (${EQ_FREQUENCIES[i]}Hz): ${this.values[i]}dB`);
             }
         });
-        console.log('EQ values applied successfully');
+        
+        console.log('✅ EQ values applied successfully');
     }
 }
 
@@ -1831,7 +1922,6 @@ const DeviceScanner = {
         const checkComplete = () => {
             processed++;
             if (processed === files.length) {
-                // توست واحد فقط في النهاية
                 const details = `
                     <span class="added"><i class="fas fa-check"></i> تمت إضافة: ${added}</span>
                     <span class="failed"><i class="fas fa-times"></i> فشلت: ${failed}</span>
@@ -1921,9 +2011,6 @@ const SongManager = {
     }
 };
 
-// =========================================
-// نموذج التواصل مع Discord Webhook
-// =========================================
 const ContactForm = {
     submit: async (event) => {
         event.preventDefault();
@@ -1932,7 +2019,6 @@ const ContactForm = {
         const message = document.getElementById('contactMessage').value.trim();
         const submitBtn = document.getElementById('submitBtn');
         
-        // التحقق من الحقول
         if (!name) {
             document.getElementById('contactName').classList.add('error');
             Toast.show('الرجاء إدخال الاسم', 'error');
@@ -1944,25 +2030,18 @@ const ContactForm = {
             return;
         }
         
-        // إزالة أخطاء سابقة
         document.getElementById('contactName').classList.remove('error');
         document.getElementById('contactMessage').classList.remove('error');
         
-        // تعطيل الزر أثناء الإرسال
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
         
-        // الحصول على الوقت الحالي
         const now = new Date();
         const timeStr = now.toLocaleString('ar-SA', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
         
-        // محتوى الرسالة لـ Discord
         const discordPayload = {
             embeds: [{
                 title: '📩 رسالة جديدة من SOKO MUSIC',
@@ -1978,7 +2057,6 @@ const ContactForm = {
         };
         
         try {
-            // التحقق من وجود Webhook URL
             if (DISCORD_WEBHOOK_URL.includes('YOUR_WEBHOOK')) {
                 throw new Error('Webhook URL غير configured');
             }
@@ -1991,20 +2069,16 @@ const ContactForm = {
             
             if (!response.ok) throw new Error('فشل الإرسال');
             
-            // نجاح
             const details = `
                 <span style="color: var(--primary);"><i class="fas fa-user"></i> ${name}</span>
                 <span style="color: var(--text-muted);"><i class="fas fa-clock"></i> ${timeStr}</span>
             `;
             Toast.show('تم إرسال رسالتك بنجاح! ✨', 'success', details);
-            
-            // مسح النموذج
             document.getElementById('contactForm').reset();
             
         } catch (error) {
             console.error('Error sending message:', error);
             
-            // حتى لو فشل webhook، نعرض رسالة نجاح للمستخدم (للعرض التوضيحي)
             const details = `
                 <span style="color: var(--primary);"><i class="fas fa-user"></i> ${name}</span>
                 <span style="color: var(--text-muted);"><i class="fas fa-clock"></i> ${timeStr}</span>
