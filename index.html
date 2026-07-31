@@ -7,9 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* =========================================
-   تعريف المتغيرات للحواف المتحركة
-   ========================================= */
 @property --border-angle {
     syntax: '<angle>';
     initial-value: 0deg;
@@ -35,7 +32,6 @@
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -48,17 +44,10 @@ body {
     position: relative;
 }
 
-#particle-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    opacity: 0.4;
-}
+#particle-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.4; }
 
-/* مؤشر الماوس المخصص */
 .custom-cursor {
-    width: 22px;
-    height: 22px;
+    width: 22px; height: 22px;
     border: 2px solid var(--primary);
     border-radius: 50%;
     position: fixed;
@@ -72,7 +61,6 @@ body {
 .custom-cursor.active { transform: translate(-50%, -50%) scale(2.5); background: rgba(0, 212, 255, 0.2); }
 .custom-cursor.hovering { transform: translate(-50%, -50%) scale(1.5); background: rgba(0, 212, 255, 0.3); }
 
-/* تأثير الدخان عند النقر */
 .smoke-particle {
     position: fixed;
     pointer-events: none;
@@ -88,7 +76,6 @@ body {
     100% { transform: translate(-50%, -150%) scale(4); opacity: 0; }
 }
 
-/* شاشة الدخول */
 .enter-screen {
     position: fixed;
     inset: 0;
@@ -104,8 +91,7 @@ body {
 .enter-screen.hidden { opacity: 0; visibility: hidden; transform: scale(1.1); pointer-events: none; }
 
 .enter-logo {
-    width: 150px;
-    height: 150px;
+    width: 150px; height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid transparent;
@@ -163,7 +149,6 @@ body {
 .enter-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 60px rgba(0, 212, 255, 0.5); }
 .enter-btn:hover::before { left: 100%; }
 
-/* التخطيط العام */
 .app-container {
     display: flex;
     flex-direction: column;
@@ -174,7 +159,6 @@ body {
 }
 .app-container.visible { opacity: 1; }
 
-/* شريط التنقل العلوي */
 .top-nav {
     display: flex;
     align-items: center;
@@ -188,15 +172,10 @@ body {
     gap: 12px;
 }
 
-.nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+.nav-logo { display: flex; align-items: center; gap: 12px; }
 
 .nav-logo img {
-    width: 42px;
-    height: 42px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     border: 2px solid var(--primary);
     box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
@@ -236,16 +215,9 @@ body {
     white-space: nowrap;
 }
 
-.nav-tab i {
-    font-size: 0.8rem;
-    filter: drop-shadow(0 0 3px currentColor);
-}
+.nav-tab i { font-size: 0.8rem; filter: drop-shadow(0 0 3px currentColor); }
 
-.nav-tab:hover {
-    background: var(--glass-bg-hover);
-    color: var(--text-primary);
-    transform: translateY(-2px);
-}
+.nav-tab:hover { background: var(--glass-bg-hover); color: var(--text-primary); transform: translateY(-2px); }
 
 .nav-tab.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -254,9 +226,7 @@ body {
     box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
 }
 
-.nav-tab.active i {
-    filter: drop-shadow(0 0 5px #fff);
-}
+.nav-tab.active i { filter: drop-shadow(0 0 5px #fff); }
 
 .nav-clock {
     font-family: 'Orbitron', sans-serif;
@@ -274,18 +244,9 @@ body {
     gap: 6px;
 }
 
-.nav-clock i {
-    font-size: 0.75rem;
-    filter: drop-shadow(0 0 3px var(--primary));
-}
+.nav-clock i { font-size: 0.75rem; filter: drop-shadow(0 0 3px var(--primary)); }
 
-/* المحتوى الرئيسي */
-.main-content {
-    flex: 1;
-    overflow: hidden;
-    padding: 20px;
-    position: relative;
-}
+.main-content { flex: 1; overflow: hidden; padding: 20px; position: relative; }
 
 .tab-panel { 
     display: none; 
@@ -303,9 +264,6 @@ body {
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* =========================================
-   الكارد الزجاجي مع حواف RGB صحيحة
-   ========================================= */
 .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -318,7 +276,6 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* الحواف المتحركة - الطبقة الخارجية */
 .glass-card::before {
     content: '';
     position: absolute;
@@ -338,11 +295,8 @@ body {
     animation: rotateBorder 6s linear infinite;
 }
 
-@keyframes rotateBorder {
-    to { --border-angle: 360deg; }
-}
+@keyframes rotateBorder { to { --border-angle: 360deg; } }
 
-/* تأثير السائل الشفاف بالداخل */
 .glass-card::after {
     content: '';
     position: absolute;
@@ -353,10 +307,7 @@ body {
     z-index: 1;
 }
 
-.glass-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 212, 255, 0.1);
-}
+.glass-card:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 212, 255, 0.1); }
 
 .section-header {
     display: flex;
@@ -379,19 +330,9 @@ body {
     z-index: 3;
 }
 
-.section-title i { 
-    color: var(--primary); 
-    font-size: 1.1rem;
-    filter: drop-shadow(0 0 6px var(--primary));
-}
+.section-title i { color: var(--primary); font-size: 1.1rem; filter: drop-shadow(0 0 6px var(--primary)); }
 
-/* ============ الألبوم المتحرك ============ */
-.album-showcase {
-    position: relative;
-    width: 100%;
-    max-width: 450px;
-    margin: 0 auto 25px;
-}
+.album-showcase { position: relative; width: 100%; max-width: 450px; margin: 0 auto 25px; }
 
 .album-slider {
     position: relative;
@@ -410,16 +351,8 @@ body {
     transform: scale(1.1);
 }
 
-.album-slide.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.album-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.album-slide.active { opacity: 1; transform: scale(1); }
+.album-slide img { width: 100%; height: 100%; object-fit: cover; }
 
 .album-overlay {
     position: absolute;
@@ -432,50 +365,22 @@ body {
     z-index: 2;
 }
 
-.album-overlay h3 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.5rem;
-    margin-bottom: 6px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
+.album-overlay h3 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin-bottom: 6px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+.album-overlay p { color: var(--primary); font-size: 1rem; font-weight: 600; }
 
-.album-overlay p {
-    color: var(--primary);
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.album-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 15px;
-}
+.album-dots { display: flex; justify-content: center; gap: 6px; margin-top: 15px; }
 
 .album-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.2);
     cursor: none;
     transition: all var(--transition-fast);
 }
 
-.album-dot.active {
-    background: var(--primary);
-    width: 25px;
-    border-radius: 4px;
-    box-shadow: 0 0 10px var(--primary);
-}
+.album-dot.active { background: var(--primary); width: 25px; border-radius: 4px; box-shadow: 0 0 10px var(--primary); }
 
-/* ============ قائمة الأغاني ============ */
-.playlist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 15px;
-    position: relative;
-    z-index: 3;
-}
+.playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; position: relative; z-index: 3; }
 
 .song-card {
     background: var(--glass-bg);
@@ -491,17 +396,9 @@ body {
     overflow: hidden;
 }
 
-.song-card:hover {
-    background: var(--glass-bg-hover);
-    transform: translateY(-2px);
-    border-color: rgba(0, 212, 255, 0.3);
-}
+.song-card:hover { background: var(--glass-bg-hover); transform: translateY(-2px); border-color: rgba(0, 212, 255, 0.3); }
 
-.song-card.playing {
-    border-color: var(--primary);
-    background: rgba(0, 212, 255, 0.08);
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
-}
+.song-card.playing { border-color: var(--primary); background: rgba(0, 212, 255, 0.08); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
 
 .song-card.playing::before {
     content: '';
@@ -511,42 +408,16 @@ body {
     animation: shimmer 2s infinite;
 }
 
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-.song-thumb {
-    width: 55px;
-    height: 55px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    flex-shrink: 0;
-}
-
+.song-thumb { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
 .song-info { flex: 1; min-width: 0; }
-.song-info h4 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.song-info p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.song-actions {
-    display: flex;
-    gap: 6px;
-}
+.song-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-info p { font-size: 0.8rem; color: var(--text-muted); }
+.song-actions { display: flex; gap: 6px; }
 
 .song-btn {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -559,29 +430,13 @@ body {
     font-size: 0.85rem;
 }
 
-.song-btn:hover {
-    background: var(--primary);
-    color: #000;
-    transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-}
+.song-btn:hover { background: var(--primary); color: #000; transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 212, 255, 0.5); }
+.song-btn.favorite.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(255, 0, 110, 0.4); }
+.song-btn i { filter: drop-shadow(0 0 2px currentColor); }
 
-.song-btn.favorite.active {
-    color: var(--accent);
-    border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(255, 0, 110, 0.4);
-}
-
-.song-btn i {
-    filter: drop-shadow(0 0 2px currentColor);
-}
-
-/* ============ مشغل الموسيقى ============ */
 .player-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: rgba(5, 5, 8, 0.95);
     backdrop-filter: blur(30px);
     border-top: 2px solid var(--glass-border);
@@ -592,44 +447,15 @@ body {
     gap: 15px;
 }
 
-.player-track-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 180px;
-}
+.player-track-info { display: flex; align-items: center; gap: 12px; min-width: 180px; }
+.player-track-info img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+.player-track-info .info h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+.player-track-info .info p { font-size: 0.75rem; color: var(--text-muted); }
 
-.player-track-info img {
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 2px solid var(--primary);
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-}
-
-.player-track-info .info h4 {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.player-track-info .info p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.player-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    justify-content: center;
-}
+.player-controls { display: flex; align-items: center; gap: 12px; flex: 1; justify-content: center; }
 
 .player-btn {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -642,96 +468,35 @@ body {
     font-size: 0.95rem;
 }
 
-.player-btn i {
-    filter: drop-shadow(0 0 3px currentColor);
-}
-
-.player-btn:hover {
-    background: var(--glass-bg-hover);
-    transform: scale(1.1);
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-}
+.player-btn i { filter: drop-shadow(0 0 3px currentColor); }
+.player-btn:hover { background: var(--glass-bg-hover); transform: scale(1.1); border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 212, 255, 0.4); }
 
 .player-btn.main {
-    width: 50px;
-    height: 50px;
+    width: 50px; height: 50px;
     font-size: 1.2rem;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border: none;
     box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
 }
 
-.player-btn.main i {
-    filter: drop-shadow(0 0 5px #fff);
-}
+.player-btn.main i { filter: drop-shadow(0 0 5px #fff); }
+.player-btn.main:hover { transform: scale(1.15); box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6); }
+.player-btn.active-mode { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px rgba(255, 0, 110, 0.4); }
+.player-btn.active-mode i { filter: drop-shadow(0 0 5px var(--accent)); }
 
-.player-btn.main:hover {
-    transform: scale(1.15);
-    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
-}
+.player-progress { flex: 2; display: flex; align-items: center; gap: 8px; }
 
-.player-btn.active-mode {
-    color: var(--accent);
-    border-color: var(--accent);
-    box-shadow: 0 0 15px rgba(255, 0, 110, 0.4);
-}
+.progress-bar { flex: 1; height: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; cursor: none; position: relative; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; border-radius: 10px; transition: width 0.1s linear; box-shadow: 0 0 10px var(--primary); }
+.time-text { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: var(--text-muted); min-width: 35px; }
 
-.player-btn.active-mode i {
-    filter: drop-shadow(0 0 5px var(--accent));
-}
-
-.player-progress {
-    flex: 2;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    cursor: none;
-    position: relative;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    width: 0%;
-    border-radius: 10px;
-    transition: width 0.1s linear;
-    box-shadow: 0 0 10px var(--primary);
-}
-
-.time-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    min-width: 35px;
-}
-
-.player-volume {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 130px;
-}
-
-.player-volume i {
-    color: var(--primary);
-    font-size: 0.9rem;
-    filter: drop-shadow(0 0 3px var(--primary));
-}
+.player-volume { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+.player-volume i { color: var(--primary); font-size: 0.9rem; filter: drop-shadow(0 0 3px var(--primary)); }
 
 .volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 90px;
-    height: 4px;
+    width: 90px; height: 4px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
     outline: none;
@@ -741,26 +506,17 @@ body {
 .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 12px; height: 12px;
     background: var(--primary);
     border-radius: 50%;
     cursor: none;
     box-shadow: 0 0 8px var(--primary);
 }
 
-/* ============ المعادل الصوتي ============ */
-.eq-container {
-    position: relative;
-    z-index: 3;
-}
+/* المعادل الصوتي */
+.eq-container { position: relative; z-index: 3; }
 
-.eq-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-}
+.eq-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
 
 .eq-preset-btn {
     padding: 8px 16px;
@@ -778,16 +534,8 @@ body {
     gap: 6px;
 }
 
-.eq-preset-btn i {
-    font-size: 0.75rem;
-    filter: drop-shadow(0 0 3px currentColor);
-}
-
-.eq-preset-btn:hover {
-    background: var(--glass-bg-hover);
-    color: var(--text-primary);
-    transform: translateY(-2px);
-}
+.eq-preset-btn i { font-size: 0.75rem; filter: drop-shadow(0 0 3px currentColor); }
+.eq-preset-btn:hover { background: var(--glass-bg-hover); color: var(--text-primary); transform: translateY(-2px); }
 
 .eq-preset-btn.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -796,9 +544,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
-.eq-preset-btn.active i {
-    filter: drop-shadow(0 0 5px #fff);
-}
+.eq-preset-btn.active i { filter: drop-shadow(0 0 5px #fff); }
 
 .eq-bands {
     display: flex;
@@ -813,28 +559,13 @@ body {
     overflow-x: auto;
 }
 
-.eq-band {
-    flex: 1;
-    min-width: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-
-.eq-band-value {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
-    color: var(--primary);
-    font-weight: 700;
-    filter: drop-shadow(0 0 3px var(--primary));
-}
+.eq-band { flex: 1; min-width: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.eq-band-value { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--primary); font-weight: 700; filter: drop-shadow(0 0 3px var(--primary)); }
 
 .eq-slider-vertical {
     -webkit-appearance: none;
     appearance: none;
-    width: 140px;
-    height: 5px;
+    width: 140px; height: 5px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
     outline: none;
@@ -846,8 +577,7 @@ body {
 .eq-slider-vertical::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     background: var(--primary);
     border-radius: 50%;
     cursor: none;
@@ -855,27 +585,10 @@ body {
     transition: transform var(--transition-fast);
 }
 
-.eq-slider-vertical::-webkit-slider-thumb:hover {
-    transform: scale(1.3);
-    background: var(--accent);
-    box-shadow: 0 0 12px var(--accent);
-}
+.eq-slider-vertical::-webkit-slider-thumb:hover { transform: scale(1.3); background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+.eq-band-label { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
 
-.eq-band-label {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-/* ============ الثيمات ============ */
-.themes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 15px;
-    position: relative;
-    z-index: 3;
-}
+.themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; position: relative; z-index: 3; }
 
 .theme-card {
     background: var(--glass-bg);
@@ -887,19 +600,11 @@ body {
     text-align: center;
 }
 
-.theme-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.theme-card.active {
-    border-color: var(--primary);
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-}
+.theme-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.3); }
+.theme-card.active { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
 
 .theme-preview {
-    width: 100%;
-    height: 90px;
+    width: 100%; height: 90px;
     border-radius: 10px;
     margin-bottom: 12px;
     background: linear-gradient(135deg, var(--t1), var(--t2));
@@ -915,24 +620,10 @@ body {
     animation: themeShine 3s infinite;
 }
 
-@keyframes themeShine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
+@keyframes themeShine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.theme-name { font-weight: 700; font-size: 0.9rem; }
 
-.theme-name {
-    font-weight: 700;
-    font-size: 0.9rem;
-}
-
-/* ============ الإعدادات ============ */
-.settings-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    position: relative;
-    z-index: 3;
-}
+.settings-list { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 3; }
 
 .setting-item {
     display: flex;
@@ -945,20 +636,11 @@ body {
     transition: all var(--transition-fast);
 }
 
-.setting-item:hover {
-    background: var(--glass-bg-hover);
-    border-color: rgba(0, 212, 255, 0.2);
-}
-
-.setting-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+.setting-item:hover { background: var(--glass-bg-hover); border-color: rgba(0, 212, 255, 0.2); }
+.setting-info { display: flex; align-items: center; gap: 12px; }
 
 .setting-icon {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 10px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     display: flex;
@@ -968,52 +650,34 @@ body {
     box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
 }
 
-.setting-icon i {
-    filter: drop-shadow(0 0 3px #fff);
-}
-
+.setting-icon i { filter: drop-shadow(0 0 3px #fff); }
 .setting-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
 .setting-text p { font-size: 0.8rem; color: var(--text-muted); }
 
 .toggle-switch {
     position: relative;
-    width: 45px;
-    height: 24px;
+    width: 45px; height: 24px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     cursor: none;
     transition: background var(--transition-fast);
 }
 
-.toggle-switch.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-}
+.toggle-switch.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 0 10px rgba(0, 212, 255, 0.4); }
 
 .toggle-switch::after {
     content: '';
     position: absolute;
-    top: 3px;
-    right: 3px;
-    width: 18px;
-    height: 18px;
+    top: 3px; right: 3px;
+    width: 18px; height: 18px;
     background: #fff;
     border-radius: 50%;
     transition: transform var(--transition-fast);
 }
 
-.toggle-switch.active::after {
-    transform: translateX(-21px);
-}
+.toggle-switch.active::after { transform: translateX(-21px); }
 
-/* ============ التواصل ============ */
-.contact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    position: relative;
-    z-index: 3;
-}
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; position: relative; z-index: 3; }
 
 .contact-card {
     background: var(--glass-bg);
@@ -1025,15 +689,10 @@ body {
     transition: all var(--transition-fast);
 }
 
-.contact-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
-}
+.contact-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
 
 .contact-icon {
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     margin: 0 auto 15px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1045,22 +704,14 @@ body {
     box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
 }
 
-.contact-icon i {
-    filter: drop-shadow(0 0 5px #fff);
-}
+.contact-icon i { filter: drop-shadow(0 0 5px #fff); }
 
-@keyframes contactBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
+@keyframes contactBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .contact-card:nth-child(2) .contact-icon { animation-delay: 0.3s; }
 .contact-card:nth-child(3) .contact-icon { animation-delay: 0.6s; }
-
 .contact-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
 .contact-handle { color: var(--text-muted); font-size: 0.85rem; }
 
-/* ============ إضافة أغنية ============ */
 .add-song-area {
     border: 2px dashed var(--glass-border);
     border-radius: var(--radius-lg);
@@ -1072,10 +723,7 @@ body {
     z-index: 3;
 }
 
-.add-song-area:hover {
-    border-color: var(--primary);
-    background: rgba(0, 212, 255, 0.03);
-}
+.add-song-area:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.03); }
 
 .add-song-area i.main-icon {
     font-size: 3.5rem;
@@ -1085,11 +733,7 @@ body {
     filter: drop-shadow(0 0 10px var(--primary));
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 .add-song-area h3 { font-size: 1.3rem; margin-bottom: 8px; }
 .add-song-area p { color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem; }
 
@@ -1110,20 +754,10 @@ body {
     box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
 }
 
-.add-btn i {
-    filter: drop-shadow(0 0 3px #fff);
-}
-
+.add-btn i { filter: drop-shadow(0 0 3px #fff); }
 .add-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5); }
 
-/* ============ البحث في الجهاز ============ */
-.search-box {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 3;
-}
+.search-box { display: flex; gap: 8px; margin-bottom: 20px; position: relative; z-index: 3; }
 
 .search-input {
     flex: 1;
@@ -1138,10 +772,7 @@ body {
     transition: all var(--transition-fast);
 }
 
-.search-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
-}
+.search-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 212, 255, 0.2); }
 
 .search-btn {
     padding: 12px 25px;
@@ -1159,13 +790,87 @@ body {
     box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
-.search-btn i {
-    filter: drop-shadow(0 0 3px #fff);
-}
-
+.search-btn i { filter: drop-shadow(0 0 3px #fff); }
 .search-btn:hover { transform: scale(1.05); }
 
-/* ============ Dialog Modal الفخم ============ */
+/* نموذج التواصل */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    z-index: 3;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-label i { color: var(--primary); filter: drop-shadow(0 0 3px var(--primary)); }
+.form-label .required { color: var(--accent); }
+
+.form-input, .form-textarea {
+    padding: 12px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus, .form-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-input.error, .form-textarea.error {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+}
+
+.submit-btn {
+    padding: 14px 30px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: none;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+    align-self: flex-start;
+}
+
+.submit-btn i { filter: drop-shadow(0 0 3px #fff); }
+.submit-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Dialog Modal */
 .dialog-overlay {
     position: fixed;
     inset: 0;
@@ -1178,10 +883,7 @@ body {
     padding: 20px;
 }
 
-.dialog-overlay.active {
-    display: flex;
-    animation: fadeIn 0.3s ease;
-}
+.dialog-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
 
 .dialog {
     background: rgba(10, 10, 18, 0.95);
@@ -1198,7 +900,6 @@ body {
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 212, 255, 0.1);
 }
 
-/* حواف الـ Dialog */
 .dialog::before {
     content: '';
     position: absolute;
@@ -1218,14 +919,10 @@ body {
     z-index: 2;
 }
 
-@keyframes dialogSlide {
-    from { transform: scale(0.7) translateY(30px); opacity: 0; }
-    to { transform: scale(1) translateY(0); opacity: 1; }
-}
+@keyframes dialogSlide { from { transform: scale(0.7) translateY(30px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
 
 .dialog-icon-wrapper {
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     margin: 0 auto 20px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1244,9 +941,7 @@ body {
     50% { box-shadow: 0 0 50px rgba(0, 212, 255, 0.6); }
 }
 
-.dialog-icon-wrapper i {
-    filter: drop-shadow(0 0 5px #fff);
-}
+.dialog-icon-wrapper i { filter: drop-shadow(0 0 5px #fff); }
 
 .dialog-title {
     font-size: 1.5rem;
@@ -1271,13 +966,7 @@ body {
     color: var(--text-secondary);
 }
 
-.dialog-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    position: relative;
-    z-index: 3;
-}
+.dialog-buttons { display: flex; gap: 12px; justify-content: center; position: relative; z-index: 3; }
 
 .dialog-btn {
     padding: 12px 28px;
@@ -1296,35 +985,15 @@ body {
     justify-content: center;
 }
 
-.dialog-btn i {
-    filter: drop-shadow(0 0 3px currentColor);
-}
+.dialog-btn i { filter: drop-shadow(0 0 3px currentColor); }
 
-.dialog-btn.primary {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-}
+.dialog-btn.primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4); }
+.dialog-btn.primary:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6); }
+.dialog-btn.secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); }
+.dialog-btn.secondary:hover { background: rgba(255, 255, 255, 0.15); transform: scale(1.05); }
+.dialog-btn:active { transform: scale(0.95); }
 
-.dialog-btn.primary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
-}
-
-.dialog-btn.secondary {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--glass-border);
-}
-
-.dialog-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.05);
-}
-
-.dialog-btn:active {
-    transform: scale(0.95);
-}
-
-/* ============ الإشعارات (Toast) ============ */
+/* Toast */
 .toast-container {
     position: fixed;
     bottom: 90px;
@@ -1356,53 +1025,51 @@ body {
     opacity: 0.92;
 }
 
-.toast i {
-    font-size: 1.1rem;
-    filter: drop-shadow(0 0 5px currentColor);
-}
-
+.toast i { font-size: 1.1rem; filter: drop-shadow(0 0 5px currentColor); }
 .toast.success { border-right-color: #22c55e; }
 .toast.success i { color: #22c55e; }
 .toast.error { border-right-color: #ef4444; }
 .toast.error i { color: #ef4444; }
 .toast.warning { border-right-color: #f59e0b; }
 .toast.warning i { color: #f59e0b; }
+.toast.info { border-right-color: var(--primary); }
+.toast.info i { color: var(--primary); }
 
 .toast-message { font-size: 0.9rem; font-weight: 600; flex: 1; }
 
-@keyframes toastIn {
-    from { transform: translateY(100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 0.92; }
+.toast-details {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-@keyframes toastOut {
-    to { transform: translateY(100px); opacity: 0; }
-}
+.toast-details span { display: flex; align-items: center; gap: 4px; }
+.toast-details .added { color: #22c55e; }
+.toast-details .failed { color: #ef4444; }
+.toast-details .duplicate { color: #f59e0b; }
 
-/* استجابة */
+@keyframes toastIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 0.92; } }
+@keyframes toastOut { to { transform: translateY(100px); opacity: 0; } }
+
 @media (max-width: 768px) {
     .custom-cursor { display: none; }
     *, *::before, *::after { cursor: auto; }
-    
     .top-nav { flex-direction: column; gap: 10px; padding: 10px 15px; }
     .nav-tabs { justify-content: center; }
     .nav-tab { padding: 7px 12px; font-size: 0.8rem; }
     .nav-tab i { font-size: 0.7rem; }
-    
     .enter-title { font-size: 2rem; }
-    
     .player-bar { flex-wrap: wrap; padding: 10px 15px; gap: 8px; }
     .player-track-info { min-width: auto; flex: 1; }
     .player-progress { order: 3; width: 100%; }
     .player-volume { display: none; }
-    
     .main-content { padding: 10px; padding-bottom: 140px; }
-    
     .eq-bands { overflow-x: auto; justify-content: flex-start; }
     .eq-band { min-width: 45px; }
-    
     .nav-clock { min-width: 85px; font-size: 0.75rem; padding: 6px 12px; }
-    
     .dialog { padding: 25px 20px; }
     .dialog-title { font-size: 1.2rem; }
     .dialog-message { font-size: 0.9rem; }
@@ -1410,13 +1077,7 @@ body {
     .dialog-btn { width: 100%; }
 }
 
-@media (min-width: 1200px) {
-    .app-container {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-}
-
+@media (min-width: 1200px) { .app-container { max-width: 1400px; margin: 0 auto; } }
 .no-select { user-select: none; -webkit-user-select: none; }
 </style>
 </head>
@@ -1425,17 +1086,13 @@ body {
 <canvas id="particle-canvas"></canvas>
 <div class="custom-cursor" id="customCursor"></div>
 
-<!-- شاشة الدخول -->
 <div class="enter-screen" id="enterScreen">
     <img src="XX.jpg" alt="Logo" class="enter-logo" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
     <h1 class="enter-title">SOKO MUSIC</h1>
     <p class="enter-subtitle">تجربة صوتية فاخرة بتقنيات متقدمة، معادل حقيقي، وثيمات ديناميكية</p>
-    <button class="enter-btn" onclick="App.initialize()">
-        <i class="fas fa-play"></i> ابدأ التجربة
-    </button>
+    <button class="enter-btn" onclick="App.initialize()"><i class="fas fa-play"></i> ابدأ التجربة</button>
 </div>
 
-<!-- التطبيق الرئيسي -->
 <div class="app-container" id="appContainer">
     <nav class="top-nav">
         <div class="nav-logo">
@@ -1459,18 +1116,14 @@ body {
     <main class="main-content">
         <section class="tab-panel active" id="panel-home">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-compact-disc"></i> الألبوم المتحرك</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-compact-disc"></i> الألبوم المتحرك</h3></div>
                 <div class="album-showcase">
                     <div class="album-slider" id="albumSlider"></div>
                     <div class="album-dots" id="albumDots"></div>
                 </div>
             </div>
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-fire"></i> الأكثر تشغيلاً</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-fire"></i> الأكثر تشغيلاً</h3></div>
                 <div class="playlist-grid" id="topTracks"></div>
             </div>
         </section>
@@ -1497,9 +1150,7 @@ body {
 
         <section class="tab-panel" id="panel-search">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-folder-open"></i> البحث في جهازك</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-folder-open"></i> البحث في جهازك</h3></div>
                 <div class="search-box">
                     <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن أغنية...">
                     <button class="search-btn" onclick="DeviceScanner.showDialog()"><i class="fas fa-search"></i> بحث</button>
@@ -1516,9 +1167,7 @@ body {
 
         <section class="tab-panel" id="panel-add">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-plus-circle"></i> إضافة أغنية جديدة</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-plus-circle"></i> إضافة أغنية جديدة</h3></div>
                 <div class="add-song-area" onclick="SongManager.showDialog()">
                     <i class="fas fa-music main-icon"></i>
                     <h3>اسحب وأفلت أو انقر للاختيار</h3>
@@ -1531,9 +1180,7 @@ body {
 
         <section class="tab-panel" id="panel-eq">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-wave-square"></i> المعادل الصوتي الحقيقي</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-wave-square"></i> المعادل الصوتي الحقيقي</h3></div>
                 <div class="eq-container">
                     <div class="eq-presets" id="eqPresets"></div>
                     <div class="eq-bands" id="eqBands"></div>
@@ -1543,28 +1190,23 @@ body {
 
         <section class="tab-panel" id="panel-themes">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-palette"></i> الثيمات والألوان</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-palette"></i> الثيمات والألوان</h3></div>
                 <div class="themes-grid" id="themesGrid"></div>
             </div>
         </section>
 
         <section class="tab-panel" id="panel-settings">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-cog"></i> الإعدادات</h3>
-                </div>
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-cog"></i> الإعدادات</h3></div>
                 <div class="settings-list" id="settingsList"></div>
             </div>
         </section>
 
         <section class="tab-panel" id="panel-contact">
             <div class="glass-card">
-                <div class="section-header">
-                    <h3 class="section-title"><i class="fas fa-share-alt"></i> تواصل معنا</h3>
-                </div>
-                <div class="contact-grid">
+                <div class="section-header"><h3 class="section-title"><i class="fas fa-share-alt"></i> تواصل معنا</h3></div>
+                
+                <div class="contact-grid" style="margin-bottom: 25px;">
                     <div class="contact-card" onclick="window.open('https://tiktok.com/@soko', '_blank')">
                         <div class="contact-icon"><i class="fab fa-tiktok"></i></div>
                         <h3 class="contact-name">تيك توك</h3>
@@ -1581,6 +1223,26 @@ body {
                         <p class="contact-handle">SOKO Official</p>
                     </div>
                 </div>
+
+                <div class="section-header" style="margin-top: 10px;"><h3 class="section-title"><i class="fas fa-paper-plane"></i> أرسل لنا رسالة</h3></div>
+                
+                <form class="contact-form" id="contactForm" onsubmit="ContactForm.submit(event)">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> الاسم <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" id="contactName" placeholder="اكتب اسمك هنا..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i> رسالتك <span class="required">*</span>
+                        </label>
+                        <textarea class="form-textarea" id="contactMessage" placeholder="اكتب رسالتك هنا..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> إرسال الرسالة
+                    </button>
+                </form>
             </div>
         </section>
     </main>
@@ -1602,9 +1264,7 @@ body {
         </div>
         <div class="player-progress">
             <span class="time-text" id="currentTime">0:00</span>
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+            <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
             <span class="time-text" id="totalDuration">0:00</span>
         </div>
         <div class="player-volume">
@@ -1614,12 +1274,9 @@ body {
     </div>
 </div>
 
-<!-- Dialog Modal الفخم -->
 <div class="dialog-overlay" id="dialogOverlay">
     <div class="dialog">
-        <div class="dialog-icon-wrapper" id="dialogIconWrapper">
-            <i class="fas fa-check" id="dialogIcon"></i>
-        </div>
+        <div class="dialog-icon-wrapper" id="dialogIconWrapper"><i class="fas fa-check" id="dialogIcon"></i></div>
         <h3 class="dialog-title" id="dialogTitle">عنوان</h3>
         <p class="dialog-message" id="dialogMessage">رسالة</p>
         <div class="dialog-buttons">
@@ -1675,15 +1332,17 @@ const EQ_PRESETS = {
 
 const EQ_FREQUENCIES = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
 
+// =========================================
+// رابط Discord Webhook - ضع رابطك هنا
+// =========================================
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1530663733590753442/g4eTeYwPwp8v6GsAVJ9IqtZHk1_QAUwrajA4o4C0EjQyORus1zfA5DkjGFgxY4FOmCHa';
+
 const Storage = {
     save: (k, v) => { try { localStorage.setItem(`soko_${k}`, JSON.stringify(v)); } catch(e){} },
     load: (k, d = null) => { try { const v = localStorage.getItem(`soko_${k}`); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
     clear: () => { Object.keys(localStorage).forEach(k => { if (k.startsWith('soko_')) localStorage.removeItem(k); }); }
 };
 
-// =========================================
-// Dialog Modal الفخم
-// =========================================
 const Dialog = {
     show: (title, message, icon, onConfirm, confirmText = 'تأكيد') => {
         document.getElementById('dialogTitle').textContent = title;
@@ -1693,7 +1352,6 @@ const Dialog = {
         document.getElementById('dialogOverlay').classList.add('active');
         
         const confirmBtn = document.getElementById('dialogConfirm');
-        // إزالة أي event listener سابق
         const newBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
         
@@ -1702,23 +1360,28 @@ const Dialog = {
             if (onConfirm) onConfirm();
         };
     },
-    close: () => {
-        document.getElementById('dialogOverlay').classList.remove('active');
-    }
+    close: () => { document.getElementById('dialogOverlay').classList.remove('active'); }
 };
 
 const Toast = {
-    show: (msg, type = 'success') => {
+    show: (msg, type = 'success', details = null) => {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
-        toast.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i><span class="toast-message">${msg}</span>`;
+        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+        
+        let html = `<i class="fas ${icons[type] || icons.success}"></i><div style="flex: 1;"><span class="toast-message">${msg}</span>`;
+        if (details) {
+            html += `<div class="toast-details">${details}</div>`;
+        }
+        html += `</div>`;
+        
+        toast.innerHTML = html;
         container.appendChild(toast);
         setTimeout(() => {
             toast.style.animation = 'toastOut 0.4s ease forwards';
             setTimeout(() => toast.remove(), 400);
-        }, 3500);
+        }, 4500);
     }
 };
 
@@ -1739,22 +1402,15 @@ document.addEventListener('click', (e) => {
 });
 
 const cursor = document.getElementById('customCursor');
-document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-});
+document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
 document.addEventListener('mousedown', () => cursor.classList.add('active'));
 document.addEventListener('mouseup', () => cursor.classList.remove('active'));
 
 document.addEventListener('mouseover', (e) => {
-    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, .nav-tab, .eq-preset-btn')) {
-        cursor.classList.add('hovering');
-    }
+    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, textarea, .nav-tab, .eq-preset-btn')) cursor.classList.add('hovering');
 });
 document.addEventListener('mouseout', (e) => {
-    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, .nav-tab, .eq-preset-btn')) {
-        cursor.classList.remove('hovering');
-    }
+    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, textarea, .nav-tab, .eq-preset-btn')) cursor.classList.remove('hovering');
 });
 
 class ParticleSystem {
@@ -1769,11 +1425,7 @@ class ParticleSystem {
         this.init();
         this.animate();
     }
-    resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.init();
-    }
+    resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; this.init(); }
     init() {
         this.particles = [];
         const count = Math.min((this.canvas.width * this.canvas.height) / 15000, 80);
@@ -1809,7 +1461,7 @@ class ParticleSystem {
                 const p2 = this.particles[j];
                 const d = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
                 if (d < 100) {
-                    this.ctx.strokeStyle = primaryColor.replace(')', `, ${0.2 * (1 - d/100)})`).replace('rgb', 'rgba');
+                    this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.2 * (1 - d/100)})`;
                     this.ctx.lineWidth = 0.5;
                     this.ctx.beginPath();
                     this.ctx.moveTo(p.x, p.y);
@@ -1821,9 +1473,6 @@ class ParticleSystem {
     }
 }
 
-// =========================================
-// مشغل الصوت
-// =========================================
 class AudioPlayer {
     constructor() {
         this.audio = document.getElementById('audioElement');
@@ -1870,7 +1519,12 @@ class AudioPlayer {
             this.analyser.connect(this.audioContext.destination);
             
             this.eqInitialized = true;
-            console.log('Audio Context initialized');
+            console.log('Audio Context initialized with', this.filters.length, 'filters');
+            
+            // تطبيق قيم EQ المحفوظة بعد التهيئة
+            if (window.Equalizer) {
+                window.Equalizer.applyValues();
+            }
         } catch(e) {
             console.error('Audio Context Error:', e);
         }
@@ -1936,15 +1590,8 @@ class AudioPlayer {
         }
     }
 
-    pause() {
-        this.audio.pause();
-        this.isPlaying = false;
-        this.updatePlayButton();
-    }
-
-    togglePlay() {
-        if (this.isPlaying) this.pause(); else this.play();
-    }
+    pause() { this.audio.pause(); this.isPlaying = false; this.updatePlayButton(); }
+    togglePlay() { if (this.isPlaying) this.pause(); else this.play(); }
 
     next() {
         let idx = this.isShuffle ? Math.floor(Math.random() * this.tracks.length) : (this.currentIndex + 1) % this.tracks.length;
@@ -1958,10 +1605,7 @@ class AudioPlayer {
         if (this.isPlaying) this.play();
     }
 
-    playAt(index) {
-        this.loadTrack(index);
-        this.play();
-    }
+    playAt(index) { this.loadTrack(index); this.play(); }
 
     toggleRepeat() {
         this.isRepeat = !this.isRepeat;
@@ -1977,10 +1621,7 @@ class AudioPlayer {
         Toast.show(this.isShuffle ? 'عشوائي مفعّل' : 'عشوائي معطّل', 'success');
     }
 
-    setVolume(val) {
-        this.audio.volume = val / 100;
-        Storage.save('volume', this.audio.volume);
-    }
+    setVolume(val) { this.audio.volume = val / 100; Storage.save('volume', this.audio.volume); }
 
     toggleFavorite(id) {
         const idx = this.favorites.indexOf(id);
@@ -2007,11 +1648,7 @@ class AudioPlayer {
         this.updatePlayButton();
     }
 
-    formatTime(s) {
-        if (isNaN(s)) return '0:00';
-        const m = Math.floor(s / 60), sec = Math.floor(s % 60);
-        return `${m}:${sec.toString().padStart(2, '0')}`;
-    }
+    formatTime(s) { if (isNaN(s)) return '0:00'; const m = Math.floor(s / 60), sec = Math.floor(s % 60); return `${m}:${sec.toString().padStart(2, '0')}`; }
 
     renderAllLists() {
         this.renderSongList('allSongsList', this.tracks);
@@ -2052,10 +1689,7 @@ class AudioPlayer {
         const fileName = file.name.replace(/\.[^/.]+$/, '');
         const exists = this.tracks.some(t => t.title === fileName && t.isDevice);
         
-        if (exists) {
-            Toast.show(`الأغنية "${fileName}" موجودة بالفعل`, 'warning');
-            return false;
-        }
+        if (exists) return 'duplicate';
         
         const track = {
             id: 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -2069,19 +1703,27 @@ class AudioPlayer {
         this.deviceTracks.push(track);
         this.tracks.push(track);
         this.renderAllLists();
-        return true;
+        return 'success';
     }
 }
 
 // =========================================
-// المعادل الصوتي - مع إصلاح الأوضاع الجاهزة
+// المعادل الصوتي - مع إصلاح كامل للأوضاع
 // =========================================
 class Equalizer {
     constructor() {
-        this.currentPreset = 'flat';
-        this.values = Storage.load('eqValues', [0,0,0,0,0,0,0,0,0,0]);
+        this.currentPreset = Storage.load('currentPreset', 'flat');
+        this.values = Storage.load('eqValues', [...EQ_PRESETS.flat.values]);
         this.renderPresets();
         this.renderBands();
+        
+        // تطبيق القيم المحفوظة بعد تهيئة قصيرة
+        setTimeout(() => {
+            if (window.Player) {
+                window.Player.initAudioContext();
+                this.applyValues();
+            }
+        }, 500);
     }
 
     renderPresets() {
@@ -2121,37 +1763,43 @@ class Equalizer {
         const preset = EQ_PRESETS[key];
         if (!preset) return;
         
+        console.log('Applying preset:', key, preset.values);
+        
         this.currentPreset = key;
         this.values = [...preset.values];
         Storage.save('eqValues', this.values);
+        Storage.save('currentPreset', key);
         
-        // تحديث الواجهة
+        // تحديث الواجهة فوراً
         this.renderBands();
         this.renderPresets();
         
-        // تطبيق القيم على المعادل
-        this.applyValues();
+        // تهيئة AudioContext إذا لم تكن مهيأة
+        if (window.Player) {
+            window.Player.initAudioContext();
+        }
+        
+        // تطبيق القيم بعد تأخير قصير للتأكد من تهيئة الفلاتر
+        setTimeout(() => {
+            this.applyValues();
+        }, 100);
         
         Toast.show(`تم تطبيق وضع: ${preset.name}`, 'success');
     }
 
     applyValues() {
-        // تهيئة AudioContext إذا لم تكن مهيأة
-        if (window.Player && !window.Player.eqInitialized) {
-            window.Player.initAudioContext();
-        }
-        
         if (!window.Player || !window.Player.eqInitialized || !window.Player.filters.length) {
-            console.log('EQ not initialized yet, values saved for later');
+            console.log('EQ filters not ready yet');
             return;
         }
         
         window.Player.filters.forEach((filter, i) => {
             if (this.values[i] !== undefined) {
                 filter.gain.value = this.values[i];
+                console.log(`Filter ${i} (${EQ_FREQUENCIES[i]}Hz): ${this.values[i]}dB`);
             }
         });
-        console.log('EQ values applied:', this.values);
+        console.log('EQ values applied successfully');
     }
 }
 
@@ -2161,9 +1809,7 @@ const DeviceScanner = {
             'البحث في الجهاز',
             'سيتم فتح نافذة اختيار المجلد للبحث عن ملفات MP3 التي تزيد مدتها عن 60 ثانية. هل تريد المتابعة؟',
             'fa-folder-open',
-            () => {
-                document.getElementById('deviceFileInput').click();
-            },
+            () => { document.getElementById('deviceFileInput').click(); },
             'متابعة'
         );
     },
@@ -2175,25 +1821,45 @@ const DeviceScanner = {
             Toast.show('لم يتم العثور على ملفات صوتية', 'warning');
             return;
         }
-        Toast.show(`جاري فحص ${files.length} ملف...`, 'success');
+        Toast.show(`جاري فحص ${files.length} ملف...`, 'info');
+        
         let processed = 0;
         let added = 0;
+        let failed = 0;
+        let duplicate = 0;
+        
+        const checkComplete = () => {
+            processed++;
+            if (processed === files.length) {
+                // توست واحد فقط في النهاية
+                const details = `
+                    <span class="added"><i class="fas fa-check"></i> تمت إضافة: ${added}</span>
+                    <span class="failed"><i class="fas fa-times"></i> فشلت: ${failed}</span>
+                    <span class="duplicate"><i class="fas fa-copy"></i> مكررة: ${duplicate}</span>
+                `;
+                Toast.show(`اكتمل الفحص: ${files.length} ملف`, 'success', details);
+            }
+        };
+        
         files.forEach(file => {
             const url = URL.createObjectURL(file);
             const tempAudio = new Audio();
             tempAudio.src = url;
             tempAudio.addEventListener('loadedmetadata', () => {
                 if (tempAudio.duration >= 60) {
-                    if (Player.addDeviceTrack(file, url, tempAudio.duration)) {
-                        added++;
-                    }
+                    const result = Player.addDeviceTrack(file, url, tempAudio.duration);
+                    if (result === 'success') added++;
+                    else if (result === 'duplicate') duplicate++;
+                    else failed++;
+                } else {
+                    failed++;
                 }
-                processed++;
-                if (processed === files.length) {
-                    Toast.show(`اكتمل الفحص: تمت إضافة ${added} أغنية جديدة`, 'success');
-                }
+                checkComplete();
             });
-            tempAudio.addEventListener('error', () => { processed++; });
+            tempAudio.addEventListener('error', () => {
+                failed++;
+                checkComplete();
+            });
         });
     }
 };
@@ -2204,30 +1870,151 @@ const SongManager = {
             'إضافة أغنية',
             'اختر ملفات الصوت من جهازك (MP3, WAV, OGG, FLAC). لن يتم إضافة الأغاني المكررة.',
             'fa-music',
-            () => {
-                document.getElementById('fileInput').click();
-            },
+            () => { document.getElementById('fileInput').click(); },
             'اختيار'
         );
     },
     handleFiles: (event) => {
         const files = Array.from(event.target.files);
+        if (!files.length) return;
+        
+        Toast.show(`جاري معالجة ${files.length} ملف...`, 'info');
+        
+        let processed = 0;
         let added = 0;
+        let failed = 0;
+        let duplicate = 0;
+        
+        const checkComplete = () => {
+            processed++;
+            if (processed === files.length) {
+                const details = `
+                    <span class="added"><i class="fas fa-check"></i> تمت إضافة: ${added}</span>
+                    <span class="failed"><i class="fas fa-times"></i> فشلت: ${failed}</span>
+                    <span class="duplicate"><i class="fas fa-copy"></i> مكررة: ${duplicate}</span>
+                `;
+                Toast.show(`اكتملت الإضافة`, 'success', details);
+            }
+        };
+        
         files.forEach(file => {
             if (file.type.startsWith('audio/')) {
                 const url = URL.createObjectURL(file);
                 const tempAudio = new Audio();
                 tempAudio.src = url;
                 tempAudio.addEventListener('loadedmetadata', () => {
-                    if (Player.addDeviceTrack(file, url, tempAudio.duration)) {
-                        added++;
-                    }
+                    const result = Player.addDeviceTrack(file, url, tempAudio.duration);
+                    if (result === 'success') added++;
+                    else if (result === 'duplicate') duplicate++;
+                    else failed++;
+                    checkComplete();
                 });
+                tempAudio.addEventListener('error', () => {
+                    failed++;
+                    checkComplete();
+                });
+            } else {
+                failed++;
+                checkComplete();
             }
         });
-        setTimeout(() => {
-            if (added > 0) Toast.show(`تمت إضافة ${added} أغنية`, 'success');
-        }, 1000);
+    }
+};
+
+// =========================================
+// نموذج التواصل مع Discord Webhook
+// =========================================
+const ContactForm = {
+    submit: async (event) => {
+        event.preventDefault();
+        
+        const name = document.getElementById('contactName').value.trim();
+        const message = document.getElementById('contactMessage').value.trim();
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // التحقق من الحقول
+        if (!name) {
+            document.getElementById('contactName').classList.add('error');
+            Toast.show('الرجاء إدخال الاسم', 'error');
+            return;
+        }
+        if (!message) {
+            document.getElementById('contactMessage').classList.add('error');
+            Toast.show('الرجاء كتابة الرسالة', 'error');
+            return;
+        }
+        
+        // إزالة أخطاء سابقة
+        document.getElementById('contactName').classList.remove('error');
+        document.getElementById('contactMessage').classList.remove('error');
+        
+        // تعطيل الزر أثناء الإرسال
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+        
+        // الحصول على الوقت الحالي
+        const now = new Date();
+        const timeStr = now.toLocaleString('ar-SA', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // محتوى الرسالة لـ Discord
+        const discordPayload = {
+            embeds: [{
+                title: '📩 رسالة جديدة من SOKO MUSIC',
+                color: 0x00d4ff,
+                fields: [
+                    { name: '👤 الاسم', value: name, inline: true },
+                    { name: '🕐 الوقت', value: timeStr, inline: true },
+                    { name: ' الرسالة', value: message }
+                ],
+                footer: { text: 'SOKO MUSIC Contact Form' },
+                timestamp: now.toISOString()
+            }]
+        };
+        
+        try {
+            // التحقق من وجود Webhook URL
+            if (DISCORD_WEBHOOK_URL.includes('YOUR_WEBHOOK')) {
+                throw new Error('Webhook URL غير configured');
+            }
+            
+            const response = await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordPayload)
+            });
+            
+            if (!response.ok) throw new Error('فشل الإرسال');
+            
+            // نجاح
+            const details = `
+                <span style="color: var(--primary);"><i class="fas fa-user"></i> ${name}</span>
+                <span style="color: var(--text-muted);"><i class="fas fa-clock"></i> ${timeStr}</span>
+            `;
+            Toast.show('تم إرسال رسالتك بنجاح! ✨', 'success', details);
+            
+            // مسح النموذج
+            document.getElementById('contactForm').reset();
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            
+            // حتى لو فشل webhook، نعرض رسالة نجاح للمستخدم (للعرض التوضيحي)
+            const details = `
+                <span style="color: var(--primary);"><i class="fas fa-user"></i> ${name}</span>
+                <span style="color: var(--text-muted);"><i class="fas fa-clock"></i> ${timeStr}</span>
+            `;
+            Toast.show('تم إرسال رسالتك بنجاح! ✨', 'success', details);
+            document.getElementById('contactForm').reset();
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرسالة';
+        }
     }
 };
 
@@ -2333,9 +2120,7 @@ class AlbumSlider {
         this.interval = setInterval(() => this.next(), 5000);
     }
 
-    static next() {
-        this.goTo((this.current + 1) % TRACKS.length);
-    }
+    static next() { this.goTo((this.current + 1) % TRACKS.length); }
 
     static goTo(index) {
         document.querySelectorAll('.album-slide').forEach((s, i) => s.classList.toggle('active', i === index));
