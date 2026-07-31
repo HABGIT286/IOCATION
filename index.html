@@ -1,1594 +1,2046 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="SOKO MUSIC - Luxury Advanced Web Audio Player with Glassmorphism and RGB Effects">
-    <meta name="theme-color" content="#050508">
-    <title>SOKO MUSIC | Luxury Audio Experience</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SOKO MUSIC | Ultimate Audio Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+    --primary: #00d4ff;
+    --secondary: #7b2cbf;
+    --accent: #ff006e;
+    --bg-dark: #050508;
+    --bg-darker: #020203;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-bg-hover: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0b0;
+    --text-muted: #606070;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+}
+
+/* خلفية الجسيمات */
+#particle-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+/* مؤشر الماوس المخصص */
+.custom-cursor {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.15s ease-out, background 0.2s ease;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+}
+.custom-cursor.active { transform: translate(-50%, -50%) scale(2.5); background: rgba(0, 212, 255, 0.2); }
+.custom-cursor.hovering { transform: translate(-50%, -50%) scale(1.5); background: rgba(0, 212, 255, 0.3); }
+
+/* تأثير الدخان عند النقر */
+.smoke-particle {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.6) 0%, rgba(123, 44, 191, 0.3) 50%, transparent 100%);
+    z-index: 99998;
+    animation: smokeRise 1.2s ease-out forwards;
+}
+
+@keyframes smokeRise {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+    50% { transform: translate(-50%, -80%) scale(2); opacity: 0.4; }
+    100% { transform: translate(-50%, -150%) scale(4); opacity: 0; }
+}
+
+/* شاشة الدخول */
+.enter-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0a0a12 0%, #020203 100%);
+    backdrop-filter: blur(30px);
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 1s ease, visibility 1s ease, transform 1s ease;
+}
+.enter-screen.hidden { opacity: 0; visibility: hidden; transform: scale(1.1); pointer-events: none; }
+
+.enter-logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid transparent;
+    background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+                linear-gradient(45deg, var(--primary), var(--secondary), var(--accent)) border-box;
+    animation: logoSpin 8s linear infinite, logoPulse 3s ease-in-out infinite;
+    margin-bottom: 40px;
+}
+@keyframes logoSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 80px rgba(123, 44, 191, 0.5); }
+}
+
+.enter-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+    letter-spacing: 4px;
+}
+
+.enter-subtitle { color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 50px; text-align: center; }
+
+.enter-btn {
+    padding: 18px 60px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: none;
+    transition: all var(--transition-normal);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+.enter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s ease;
+}
+.enter-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 20px 60px rgba(0, 212, 255, 0.5); }
+.enter-btn:hover::before { left: 100%; }
+
+/* التخطيط العام */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.app-container.visible { opacity: 1; }
+
+/* شريط التنقل العلوي */
+.top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: rgba(5, 5, 8, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 100;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+.nav-logo h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.nav-tab {
+    padding: 10px 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 25px;
+    color: var(--text-secondary);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: none;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-tab:hover {
+    background: var(--glass-bg-hover);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.nav-tab.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+}
+
+.nav-clock {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--primary);
+    background: var(--glass-bg);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
+.main-content::-webkit-scrollbar { width: 8px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--secondary)); border-radius: 10px; }
+
+.tab-panel { display: none; animation: fadeIn 0.5s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* الكارد الزجاجي مع حواف متدرجة متتابعة */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 25px;
+}
+
+/* حواف متدرجة متتابعة (لون يلحق لون) */
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    padding: 2px;
+    background: conic-gradient(from 0deg, 
+        var(--primary) 0deg, 
+        var(--secondary) 90deg, 
+        var(--accent) 180deg, 
+        var(--primary) 270deg, 
+        var(--primary) 360deg);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 2;
+    animation: rotateGradient 8s linear infinite;
+}
+
+@keyframes rotateGradient {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* تأثير السائل الشفاف بالداخل */
+.glass-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 60px var(--liquid-glow, rgba(0, 212, 255, 0.08)), inset 0 0 20px rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 212, 255, 0.15);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--glass-border);
+    position: relative;
+    z-index: 3;
+}
+
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 3;
+}
+.section-title i { color: var(--primary); font-size: 1.2rem; }
+
+/* ============ قسم الرئيسية - الألبوم المتحرك ============ */
+.album-showcase {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 30px;
+}
+
+.album-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.album-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: scale(1.1);
+}
+
+.album-slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.album-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.9) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30px;
+    z-index: 2;
+}
+
+.album-overlay h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+.album-overlay p {
+    color: var(--primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.album-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.album-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.album-dot.active {
+    background: var(--primary);
+    width: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+/* ============ قائمة الأغاني ============ */
+.playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    position: relative;
+    z-index: 3;
+}
+
+.song-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all var(--transition-fast);
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.song-card:hover {
+    background: var(--glass-bg-hover);
+    transform: translateY(-3px);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.song-card.playing {
+    border-color: var(--primary);
+    background: rgba(0, 212, 255, 0.08);
+}
+
+.song-card.playing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.song-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.song-info { flex: 1; min-width: 0; }
+.song-info h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.song-info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.song-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    cursor: none;
+    font-size: 0.9rem;
+}
+
+.song-btn:hover {
+    background: var(--primary);
+    color: #000;
+    transform: scale(1.1);
+}
+
+.song-btn.favorite.active {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ============ مشغل الموسيقى ============ */
+.player-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(5, 5, 8, 0.95);
+    backdrop-filter: blur(30px);
+    border-top: 2px solid var(--glass-border);
+    padding: 15px 30px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.player-track-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 200px;
+}
+
+.player-track-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.player-track-info .info h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 3px;
+}
+
+.player-track-info .info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    justify-content: center;
+}
+
+.player-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    cursor: none;
+    font-size: 1rem;
+}
+
+.player-btn:hover {
+    background: var(--glass-bg-hover);
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
+
+.player-btn.main {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+}
+
+.player-btn.main:hover {
+    transform: scale(1.15);
+    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+}
+
+.player-btn.active-mode {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.player-progress {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.1s linear;
+}
+
+.time-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    min-width: 40px;
+}
+
+.player-volume {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    outline: none;
+    cursor: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    cursor: none;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+/* ============ المعادل الصوتي ============ */
+.eq-container {
+    position: relative;
+    z-index: 3;
+}
+
+.eq-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.eq-preset-btn {
+    padding: 10px 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.eq-preset-btn:hover {
+    background: var(--glass-bg-hover);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.eq-preset-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+}
+
+.eq-bands {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 220px;
+    padding: 20px 10px;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.eq-band {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.eq-band-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.eq-slider-vertical {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 160px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    outline: none;
+    transform: rotate(-90deg);
+    cursor: none;
+    margin: 70px 0;
+}
+
+.eq-slider-vertical::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    cursor: none;
+    box-shadow: 0 0 10px var(--primary);
+    transition: transform var(--transition-fast);
+}
+
+.eq-slider-vertical::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    background: var(--accent);
+}
+
+.eq-band-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* ============ الثيمات ============ */
+.themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    position: relative;
+    z-index: 3;
+}
+
+.theme-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    cursor: none;
+    transition: all var(--transition-fast);
+    text-align: center;
+}
+
+.theme-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.theme-card.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.theme-preview {
+    width: 100%;
+    height: 100px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--t1), var(--t2));
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+    animation: themeShine 3s infinite;
+}
+
+@keyframes themeShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.theme-name {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* ============ الإعدادات ============ */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    z-index: 3;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.setting-item:hover {
+    background: var(--glass-bg-hover);
+    border-color: rgba(0, 212, 255, 0.2);
+}
+
+.setting-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.setting-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.setting-text h4 { font-size: 1rem; margin-bottom: 3px; }
+.setting-text p { font-size: 0.85rem; color: var(--text-muted); }
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    cursor: none;
+    transition: background var(--transition-fast);
+}
+
+.toggle-switch.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform var(--transition-fast);
+}
+
+.toggle-switch.active::after {
+    transform: translateX(-24px);
+}
+
+/* ============ التواصل ============ */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    position: relative;
+    z-index: 3;
+}
+
+.contact-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 30px;
+    text-align: center;
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.contact-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+.contact-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    animation: contactBounce 2s ease-in-out infinite;
+}
+
+@keyframes contactBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.contact-card:nth-child(2) .contact-icon { animation-delay: 0.3s; }
+.contact-card:nth-child(3) .contact-icon { animation-delay: 0.6s; }
+
+.contact-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.contact-handle { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ============ إضافة أغنية ============ */
+.add-song-area {
+    border: 2px dashed var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 60px 30px;
+    text-align: center;
+    cursor: none;
+    transition: all var(--transition-fast);
+    position: relative;
+    z-index: 3;
+}
+
+.add-song-area:hover {
+    border-color: var(--primary);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.add-song-area i {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.add-song-area h3 { font-size: 1.5rem; margin-bottom: 10px; }
+.add-song-area p { color: var(--text-muted); margin-bottom: 20px; }
+
+.add-btn {
+    padding: 12px 35px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.add-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4); }
+
+/* ============ البحث في الجهاز ============ */
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 3;
+}
+
+.search-input {
+    flex: 1;
+    padding: 14px 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 25px;
+    color: var(--text-primary);
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.search-btn {
+    padding: 14px 30px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.search-btn:hover { transform: scale(1.05); }
+
+/* ============ الإشعارات ============ */
+.toast-container {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100001;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(5, 5, 8, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-right: 4px solid var(--primary);
+    color: var(--text-primary);
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: toastIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    pointer-events: auto;
+    min-width: 280px;
+}
+
+.toast.success { border-right-color: var(--success, #22c55e); }
+.toast.success i { color: var(--success, #22c55e); }
+.toast.error { border-right-color: var(--danger, #ef4444); }
+.toast.error i { color: var(--danger, #ef4444); }
+.toast.warning { border-right-color: var(--warning, #f59e0b); }
+.toast.warning i { color: var(--warning, #f59e0b); }
+
+.toast i { font-size: 1.2rem; }
+.toast-message { font-size: 0.95rem; font-weight: 600; }
+
+@keyframes toastIn {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+    to { transform: translateY(-20px); opacity: 0; }
+}
+
+/* استجابة */
+@media (max-width: 768px) {
+    .custom-cursor { display: none; }
+    *, *::before, *::after { cursor: auto; }
     
-    <!-- خطوط متقدمة -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    .top-nav { flex-direction: column; gap: 15px; padding: 15px; }
+    .nav-tabs { justify-content: center; }
+    .nav-tab { padding: 8px 15px; font-size: 0.85rem; }
     
-    <style>
-        /* =========================================
-           1. المتغيرات الجذرية (Root Variables)
-           ========================================= */
-        :root {
-            /* الألوان الأساسية */
-            --primary: #00d4ff;
-            --primary-dark: #0099cc;
-            --secondary: #7b2cbf;
-            --accent: #ff006e;
-            --gold: #ffd700;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            
-            /* ألوان الخلفية والزجاج */
-            --bg-dark: #050508;
-            --bg-darker: #020203;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-bg-hover: rgba(255, 255, 255, 0.07);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-border-hover: rgba(0, 212, 255, 0.3);
-            --liquid-glow: rgba(0, 212, 255, 0.08);
-            
-            /* النصوص */
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            
-            /* الأبعاد والانتقالات */
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --radius-xl: 32px;
-            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-normal: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* =========================================
-           2. إعادة الضبط والأساسيات (Reset & Base)
-           ========================================= */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none; /* إخفاء الماوس الافتراضي لاستخدام المخصص */
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            font-size: 16px;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
-            line-height: 1.6;
-        }
-
-        /* =========================================
-           3. مؤشر الماوس المخصص (Custom Cursor)
-           ========================================= */
-        .custom-cursor {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 99999;
-            transition: transform 0.15s ease-out, background 0.2s ease, border-color 0.2s ease;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
-        }
-
-        .custom-cursor.active {
-            transform: translate(-50%, -50%) scale(2.5);
-            background: rgba(0, 212, 255, 0.15);
-            border-color: var(--accent);
-        }
-
-        .custom-cursor.hovering {
-            transform: translate(-50%, -50%) scale(1.5);
-            background: rgba(0, 212, 255, 0.3);
-        }
-
-        /* =========================================
-           4. خلفية الجسيمات (Particle Canvas)
-           ========================================= */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        /* =========================================
-           5. شاشة الدخول التفاعلية (Enter Screen)
-           ========================================= */
-        .enter-screen {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at center, #0a0a12 0%, #020203 100%);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: 100000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 1s ease, visibility 1s ease, transform 1s ease;
-        }
-
-        .enter-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(1.1);
-            pointer-events: none;
-        }
-
-        .enter-logo-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            margin-bottom: 40px;
-        }
-
-        .enter-logo {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid transparent;
-            background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
-                        linear-gradient(45deg, var(--primary), var(--secondary), var(--accent)) border-box;
-            animation: logoSpin 8s linear infinite, logoPulse 3s ease-in-out infinite;
-            box-shadow: 0 0 60px rgba(0, 212, 255, 0.3);
-        }
-
-        @keyframes logoSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes logoPulse {
-            0%, 100% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.3); }
-            50% { box-shadow: 0 0 80px rgba(123, 44, 191, 0.5); }
-        }
-
-        .enter-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 50%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .enter-subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 50px;
-            text-align: center;
-            max-width: 400px;
-        }
-
-        .enter-btn {
-            padding: 18px 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            border-radius: 50px;
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: none;
-            position: relative;
-            overflow: hidden;
-            transition: all var(--transition-normal);
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
-        }
-
-        .enter-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .enter-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.5);
-        }
-
-        .enter-btn:hover::before {
-            left: 100%;
-        }
-
-        .enter-btn:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-
-        /* =========================================
-           6. التخطيط العام (Main Layout)
-           ========================================= */
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 30px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-
-        .app-container.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .main-header {
-            text-align: center;
-            margin-bottom: 60px;
-            position: relative;
-        }
-
-        .glitch-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            position: relative;
-            color: var(--text-primary);
-            text-shadow: 3px 3px 0px var(--accent), -3px -3px 0px var(--primary);
-            letter-spacing: 3px;
-            display: inline-block;
-        }
-
-        .header-decoration {
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
-            margin: 20px auto 0;
-            border-radius: 2px;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 30px;
-            align-items: start;
-        }
-
-        /* =========================================
-           7. الكارد الزجاجي الفاخر (Luxury Glass Card)
-           ========================================= */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: var(--radius-lg);
-            padding: 35px;
-            position: relative;
-            overflow: hidden;
-            transition: all var(--transition-normal);
-            border: 1px solid var(--glass-border);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        /* إطار RGB متحرك على الحواف فقط */
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: var(--radius-lg);
-            padding: 2px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
-            background-size: 400% 400%;
-            animation: rgbBorderFlow 6s linear infinite;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.7;
-        }
-
-        /* تأثير السائل الشفاف بالداخل */
-        .glass-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: var(--radius-lg);
-            box-shadow: inset 0 0 60px var(--liquid-glow), inset 0 0 20px rgba(255, 255, 255, 0.03);
-            pointer-events: none;
-            z-index: 1;
-            transition: box-shadow var(--transition-normal);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 212, 255, 0.1);
-            border-color: var(--glass-border-hover);
-        }
-
-        .glass-card:hover::after {
-            box-shadow: inset 0 0 80px rgba(0, 212, 255, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.05);
-        }
-
-        @keyframes rgbBorderFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* =========================================
-           8. مشغل الموسيقى الرئيسي (Main Player)
-           ========================================= */
-        .player-section {
-            grid-column: span 5;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .album-art-wrapper {
-            position: relative;
-            width: 260px;
-            height: 260px;
-            margin-bottom: 35px;
-        }
-
-        .album-art-glow {
-            position: absolute;
-            inset: -20px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.4) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(30px);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-            z-index: 0;
-        }
-
-        .album-art-wrapper.playing .album-art-glow {
-            opacity: 1;
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.1); opacity: 0.9; }
-        }
-
-        .album-art {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-            animation: vinylSpin 12s linear infinite;
-            animation-play-state: paused;
-            position: relative;
-            z-index: 1;
-        }
-
-        .album-art.playing {
-            animation-play-state: running;
-        }
-
-        /* ثقب الأسطوانة في المنتصف */
-        .album-art::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: var(--bg-dark);
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-        }
-
-        @keyframes vinylSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .track-info {
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        .track-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .track-artist {
-            font-size: 1.1rem;
-            color: var(--primary);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        /* شريط التقدم المتقدم */
-        .progress-section {
-            width: 100%;
-            margin-bottom: 35px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            cursor: none;
-            position: relative;
-            overflow: hidden;
-            transition: height var(--transition-fast);
-        }
-
-        .progress-bar-container:hover {
-            height: 12px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            width: 0%;
-            border-radius: 10px;
-            position: relative;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 15px var(--primary);
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-
-        .progress-bar-container:hover .progress-fill::after {
-            opacity: 1;
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 500;
-        }
-
-        /* أزرار التحكم */
-        .controls-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .ctrl-btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all var(--transition-fast);
-            cursor: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ctrl-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-
-        .ctrl-btn:hover {
-            background: var(--glass-bg-hover);
-            border-color: var(--primary);
-            transform: scale(1.15);
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
-            color: var(--primary);
-        }
-
-        .ctrl-btn:hover::before {
-            opacity: 1;
-        }
-
-        .ctrl-btn:active {
-            transform: scale(0.95);
-        }
-
-        .ctrl-btn.play-pause {
-            width: 75px;
-            height: 75px;
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
-
-        .ctrl-btn.play-pause:hover {
-            color: #fff;
-            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
-        }
-
-        .ctrl-btn.active-mode {
-            color: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
-        }
-
-        /* =========================================
-           9. قائمة التشغيل (Playlist Section)
-           ========================================= */
-        .playlist-section {
-            grid-column: span 7;
-            max-height: 700px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .playlist-stats {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 15px;
-            border-radius: 20px;
-        }
-
-        .playlist-container {
-            overflow-y: auto;
-            flex: 1;
-            padding-left: 15px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) transparent;
-            padding-right: 5px;
-        }
-
-        .playlist-container::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .playlist-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .playlist-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            border-radius: 10px;
-        }
-
-        .playlist-item {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 15px;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-fast);
-            margin-bottom: 10px;
-            border: 1px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .playlist-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--primary);
-            transform: scaleY(0);
-            transition: transform var(--transition-fast);
-        }
-
-        .playlist-item:hover {
-            background: var(--glass-bg-hover);
-            border-color: rgba(255, 255, 255, 0.1);
-            transform: translateX(-5px);
-        }
-
-        .playlist-item:hover::before {
-            transform: scaleY(1);
-        }
-
-        .playlist-item.active {
-            background: rgba(0, 212, 255, 0.08);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-
-        .playlist-item.active::before {
-            transform: scaleY(1);
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-        }
-
-        .item-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            color: var(--text-muted);
-            width: 25px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .playlist-item.active .item-number {
-            color: var(--primary);
-        }
-
-        .item-thumbnail {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--radius-sm);
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: transform var(--transition-fast);
-        }
-
-        .playlist-item:hover .item-thumbnail {
-            transform: scale(1.1);
-            border-color: var(--primary);
-        }
-
-        .item-details {
-            flex: 1;
-            min-width: 0; /* لمنع تجاوز النص */
-        }
-
-        .item-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .item-artist {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .item-duration {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-left: 15px;
-        }
-
-        .item-play-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-            cursor: none;
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        .playlist-item:hover .item-play-btn {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .item-play-btn:hover {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-        }
-
-        /* =========================================
-           10. المعادل الصوتي (Equalizer Section)
-           ========================================= */
-        .equalizer-section {
-            grid-column: span 12;
-            margin-top: 10px;
-        }
-
-        .eq-bands-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 200px;
-            padding: 20px 10px;
-            gap: 8px;
-        }
-
-        .eq-band {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .eq-slider-wrapper {
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* تخصيص شريط التمرير العمودي للمعالج */
-        .eq-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 140px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            outline: none;
-            transform: rotate(-90deg);
-            cursor: none;
-        }
-
-        .eq-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--primary);
-            border-radius: 50%;
-            cursor: none;
-            box-shadow: 0 0 10px var(--primary);
-            transition: transform var(--transition-fast);
-        }
-
-        .eq-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
-            background: var(--accent);
-            box-shadow: 0 0 15px var(--accent);
-        }
-
-        .eq-label {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .eq-value {
-            font-size: 0.7rem;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        /* =========================================
-           11. نظام الإشعارات (Toast Notifications)
-           ========================================= */
-        .toast-container {
-            position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100001;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            pointer-events: none; /* للسماح بالنقر من خلاله */
-        }
-
-        .toast {
-            background: rgba(5, 5, 8, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-right: 4px solid var(--primary);
-            color: var(--text-primary);
-            padding: 16px 28px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            animation: toastSlideDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-            pointer-events: auto;
-            min-width: 300px;
-        }
-
-        .toast.success { border-right-color: var(--success); }
-        .toast.success i { color: var(--success); }
-        
-        .toast.error { border-right-color: var(--danger); }
-        .toast.error i { color: var(--danger); }
-        
-        .toast.warning { border-right-color: var(--warning); }
-        .toast.warning i { color: var(--warning); }
-
-        .toast i {
-            font-size: 1.3rem;
-        }
-
-        .toast-message {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        @keyframes toastSlideDown {
-            from { transform: translateY(-100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes toastFadeOut {
-            to { transform: translateY(-20px); opacity: 0; }
-        }
-
-        /* =========================================
-           12. الاستجابة للشاشات (Responsive Design)
-           ========================================= */
-        @media (max-width: 1200px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-            .player-section, .playlist-section, .equalizer-section {
-                grid-column: span 1;
-            }
-            .playlist-section {
-                max-height: 500px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .custom-cursor { display: none; }
-            *, *::before, *::after { cursor: auto; }
-            
-            .enter-title { font-size: 2.2rem; }
-            .glitch-title { font-size: 2rem; }
-            
-            .album-art-wrapper {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .controls-wrapper {
-                gap: 15px;
-            }
-            
-            .ctrl-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-            
-            .ctrl-btn.play-pause {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-
-            .eq-bands-container {
-                overflow-x: auto;
-                justify-content: flex-start;
-                padding-bottom: 20px;
-            }
-            
-            .eq-band {
-                min-width: 50px;
-            }
-        }
-
-        /* =========================================
-           13. تأثيرات إضافية (Utility Animations)
-           ========================================= */
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .slide-up { animation: slideUp 0.5s ease forwards; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* منع تحديد النص */
-        .no-select {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-    </style>
+    .enter-title { font-size: 2.2rem; }
+    
+    .player-bar { flex-wrap: wrap; padding: 10px 15px; gap: 10px; }
+    .player-track-info { min-width: auto; flex: 1; }
+    .player-progress { order: 3; width: 100%; }
+    .player-volume { display: none; }
+    
+    .main-content { padding: 15px; padding-bottom: 150px; }
+    
+    .eq-bands { overflow-x: auto; justify-content: flex-start; }
+    .eq-band { min-width: 50px; }
+}
+
+.no-select { user-select: none; -webkit-user-select: none; }
+</style>
 </head>
 <body class="no-select">
 
-    <!-- خلفية الجسيمات التفاعلية -->
-    <canvas id="particle-canvas"></canvas>
-    
-    <!-- مؤشر الماوس المخصص -->
-    <div class="custom-cursor" id="customCursor"></div>
+<canvas id="particle-canvas"></canvas>
+<div class="custom-cursor" id="customCursor"></div>
 
-    <!-- شاشة الدخول (مطلوبة لتفعيل صوت المتصفحات الحديثة) -->
-    <div class="enter-screen" id="enterScreen">
-        <div class="enter-logo-container">
-            <img src="XX.jpg" alt="SOKO Logo" class="enter-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBkNGZmIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNIDQwIDM1IEwgNzAgNTAgTCA0MCA2NSBaIiBmaWxsPSIjMDBkNGZmIi8+PC9zdmc+'">
+<!-- شاشة الدخول -->
+<div class="enter-screen" id="enterScreen">
+    <img src="XX.jpg" alt="Logo" class="enter-logo" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
+    <h1 class="enter-title">SOKO MUSIC</h1>
+    <p class="enter-subtitle">تجربة صوتية فاخرة بتقنيات متقدمة، معادل حقيقي، وثيمات ديناميكية</p>
+    <button class="enter-btn" onclick="App.initialize()">
+        <i class="fas fa-play" style="margin-left: 10px;"></i> ابدأ التجربة
+    </button>
+</div>
+
+<!-- التطبيق الرئيسي -->
+<div class="app-container" id="appContainer">
+    <!-- شريط التنقل -->
+    <nav class="top-nav">
+        <div class="nav-logo">
+            <img src="XX.jpg" alt="Logo" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
+            <h1>SOKO MUSIC</h1>
         </div>
-        <h1 class="enter-title">SOKO MUSIC</h1>
-        <p class="enter-subtitle">تجربة صوتية فاخرة بتقنيات متقدمة، تأثيرات زجاجية، وبيئة تفاعلية كاملة</p>
-        <button class="enter-btn" id="enterBtn" onclick="App.initialize()">
-            <i class="fas fa-play" style="margin-left: 10px;"></i> ابدأ التجربة
-        </button>
-    </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="home"><i class="fas fa-home"></i> الرئيسية</button>
+            <button class="nav-tab" data-tab="songs"><i class="fas fa-music"></i> الأغاني</button>
+            <button class="nav-tab" data-tab="favorites"><i class="fas fa-heart"></i> المفضلة</button>
+            <button class="nav-tab" data-tab="search"><i class="fas fa-search"></i> بحث جهاز</button>
+            <button class="nav-tab" data-tab="add"><i class="fas fa-plus"></i> إضافة</button>
+            <button class="nav-tab" data-tab="eq"><i class="fas fa-sliders-h"></i> المعادل</button>
+            <button class="nav-tab" data-tab="themes"><i class="fas fa-palette"></i> الثيمات</button>
+            <button class="nav-tab" data-tab="settings"><i class="fas fa-cog"></i> الإعدادات</button>
+            <button class="nav-tab" data-tab="contact"><i class="fas fa-address-card"></i> تواصل</button>
+        </div>
+        <div class="nav-clock" id="navClock">00:00</div>
+    </nav>
 
-    <!-- الحاوية الرئيسية للتطبيق -->
-    <div class="app-container" id="appContainer">
-        <header class="main-header">
-            <h1 class="glitch-title" data-text="SOKO AUDIO ENGINE">SOKO AUDIO ENGINE</h1>
-            <div class="header-decoration"></div>
-        </header>
-
-        <div class="grid-layout">
-            <!-- قسم المشغل الرئيسي -->
-            <section class="glass-card player-section">
-                <div class="album-art-wrapper" id="albumArtWrapper">
-                    <div class="album-art-glow"></div>
-                    <img src="1.jpg" alt="Album Art" class="album-art" id="albumArt" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzIyMiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzQ0NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9zdmc+'">
-                </div>
-                
-                <div class="track-info">
-                    <h2 class="track-title" id="trackTitle">جاري التحميل...</h2>
-                    <p class="track-artist" id="trackArtist">SOKO Production</p>
-                </div>
-
-                <div class="progress-section">
-                    <div class="progress-bar-container" id="progressBarContainer">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <div class="time-display">
-                        <span id="currentTime">0:00</span>
-                        <span id="totalDuration">0:00</span>
-                    </div>
-                </div>
-
-                <div class="controls-wrapper">
-                    <button class="ctrl-btn" id="shuffleBtn" onclick="Player.toggleShuffle()" title="تشغيل عشوائي">
-                        <i class="fas fa-random"></i>
-                    </button>
-                    <button class="ctrl-btn" onclick="Player.previous()" title="الأغنية السابقة">
-                        <i class="fas fa-step-backward"></i>
-                    </button>
-                    <button class="ctrl-btn play-pause" id="playPauseBtn" onclick="Player.togglePlay()" title="تشغيل / إيقاف">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="ctrl-btn" onclick="Player.next()" title="الأغنية التالية">
-                        <i class="fas fa-step-forward"></i>
-                    </button>
-                    <button class="ctrl-btn" id="repeatBtn" onclick="Player.toggleRepeat()" title="تكرار الأغنية">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                </div>
-            </section>
-
-            <!-- قسم قائمة التشغيل -->
-            <section class="glass-card playlist-section">
+    <!-- المحتوى -->
+    <main class="main-content">
+        
+        <!-- الرئيسية -->
+        <section class="tab-panel active" id="panel-home">
+            <div class="glass-card">
                 <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-list-ul"></i>
-                        قائمة التشغيل
-                    </h3>
-                    <span class="playlist-stats" id="playlistStats">0 أغنية</span>
+                    <h3 class="section-title"><i class="fas fa-compact-disc"></i> الألبوم المتحرك</h3>
                 </div>
-                <div class="playlist-container" id="playlistContainer">
-                    <!-- سيتم توليد العناصر هنا بواسطة JavaScript -->
+                <div class="album-showcase">
+                    <div class="album-slider" id="albumSlider"></div>
+                    <div class="album-dots" id="albumDots"></div>
                 </div>
-            </section>
-
-            <!-- قسم المعادل الصوتي (Equalizer) -->
-            <section class="glass-card equalizer-section">
+            </div>
+            
+            <div class="glass-card">
                 <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-sliders-h"></i>
-                        المعادل الصوتي المتقدم (16-Band EQ)
-                    </h3>
+                    <h3 class="section-title"><i class="fas fa-fire"></i> الأكثر تشغيلاً</h3>
                 </div>
-                <div class="eq-bands-container" id="eqContainer">
-                    <!-- سيتم توليد أشرطة المعادل هنا -->
+                <div class="playlist-grid" id="topTracks"></div>
+            </div>
+        </section>
+
+        <!-- الأغاني -->
+        <section class="tab-panel" id="panel-songs">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-list"></i> جميع الأغاني</h3>
+                    <span id="songsCount" style="color: var(--text-muted); font-size: 0.9rem;">0 أغنية</span>
                 </div>
-            </section>
+                <div class="playlist-grid" id="allSongsList"></div>
+            </div>
+        </section>
+
+        <!-- المفضلة -->
+        <section class="tab-panel" id="panel-favorites">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-heart" style="color: var(--accent);"></i> الأغاني المفضلة</h3>
+                    <span id="favCount" style="color: var(--text-muted); font-size: 0.9rem;">0 أغنية</span>
+                </div>
+                <div class="playlist-grid" id="favoritesList"></div>
+            </div>
+        </section>
+
+        <!-- بحث الجهاز -->
+        <section class="tab-panel" id="panel-search">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-folder-open"></i> البحث في جهازك</h3>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن أغنية...">
+                    <button class="search-btn" onclick="DeviceScanner.scan()"><i class="fas fa-search"></i> بحث</button>
+                </div>
+                <div class="add-song-area" onclick="DeviceScanner.scan()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>امسح جهازك للعثور على الأغاني</h3>
+                    <p>سيتم البحث عن ملفات MP3 التي تزيد مدتها عن 60 ثانية</p>
+                    <button class="add-btn"><i class="fas fa-folder-open"></i> اختيار مجلد</button>
+                </div>
+                <div class="playlist-grid" id="deviceSongsList" style="margin-top: 25px;"></div>
+            </div>
+        </section>
+
+        <!-- إضافة أغنية -->
+        <section class="tab-panel" id="panel-add">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-plus-circle"></i> إضافة أغنية جديدة</h3>
+                </div>
+                <div class="add-song-area" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-music"></i>
+                    <h3>اسحب وأفلت أو انقر للاختيار</h3>
+                    <p>يدعم MP3, WAV, OGG, FLAC</p>
+                    <button class="add-btn"><i class="fas fa-upload"></i> اختيار ملف</button>
+                </div>
+                <input type="file" id="fileInput" accept="audio/*" multiple style="display: none;" onchange="SongManager.handleFiles(event)">
+            </div>
+        </section>
+
+        <!-- المعادل -->
+        <section class="tab-panel" id="panel-eq">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-wave-square"></i> المعادل الصوتي الحقيقي</h3>
+                </div>
+                <div class="eq-container">
+                    <div class="eq-presets" id="eqPresets"></div>
+                    <div class="eq-bands" id="eqBands"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- الثيمات -->
+        <section class="tab-panel" id="panel-themes">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-palette"></i> الثيمات والألوان</h3>
+                </div>
+                <div class="themes-grid" id="themesGrid"></div>
+            </div>
+        </section>
+
+        <!-- الإعدادات -->
+        <section class="tab-panel" id="panel-settings">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-cog"></i> الإعدادات</h3>
+                </div>
+                <div class="settings-list" id="settingsList"></div>
+            </div>
+        </section>
+
+        <!-- التواصل -->
+        <section class="tab-panel" id="panel-contact">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="fas fa-share-alt"></i> تواصل معنا</h3>
+                </div>
+                <div class="contact-grid">
+                    <div class="contact-card" onclick="window.open('https://tiktok.com/@soko', '_blank')">
+                        <div class="contact-icon"><i class="fab fa-tiktok"></i></div>
+                        <h3 class="contact-name">تيك توك</h3>
+                        <p class="contact-handle">@soko</p>
+                    </div>
+                    <div class="contact-card" onclick="window.open('https://discord.com', '_blank')">
+                        <div class="contact-icon"><i class="fab fa-discord"></i></div>
+                        <h3 class="contact-name">ديسكورد</h3>
+                        <p class="contact-handle">SOKO#0001</p>
+                    </div>
+                    <div class="contact-card" onclick="window.open('https://spotify.com', '_blank')">
+                        <div class="contact-icon"><i class="fab fa-spotify"></i></div>
+                        <h3 class="contact-name">سبوتيفاي</h3>
+                        <p class="contact-handle">SOKO Official</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- شريط المشغل -->
+    <div class="player-bar">
+        <div class="player-track-info">
+            <img src="1.jpg" alt="Track" id="playerImg" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
+            <div class="info">
+                <h4 id="playerTitle">اختر أغنية</h4>
+                <p id="playerArtist">SOKO MUSIC</p>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button class="player-btn" id="shuffleBtn" onclick="Player.toggleShuffle()" title="عشوائي"><i class="fas fa-random"></i></button>
+            <button class="player-btn" onclick="Player.previous()" title="السابق"><i class="fas fa-step-backward"></i></button>
+            <button class="player-btn main" id="playPauseBtn" onclick="Player.togglePlay()" title="تشغيل/إيقاف"><i class="fas fa-play"></i></button>
+            <button class="player-btn" onclick="Player.next()" title="التالي"><i class="fas fa-step-forward"></i></button>
+            <button class="player-btn" id="repeatBtn" onclick="Player.toggleRepeat()" title="تكرار"><i class="fas fa-redo"></i></button>
+        </div>
+        
+        <div class="player-progress">
+            <span class="time-text" id="currentTime">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="time-text" id="totalDuration">0:00</span>
+        </div>
+        
+        <div class="player-volume">
+            <i class="fas fa-volume-up" style="color: var(--primary);"></i>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80" oninput="Player.setVolume(this.value)">
         </div>
     </div>
+</div>
 
-    <!-- حاوية الإشعارات المنبثقة -->
-    <div class="toast-container" id="toastContainer"></div>
+<div class="toast-container" id="toastContainer"></div>
+<audio id="audioElement" preload="auto"></audio>
+<input type="file" id="deviceFileInput" webkitdirectory directory multiple style="display: none;" onchange="DeviceScanner.processFiles(event)">
 
-    <!-- عنصر الصوت المخفي -->
-    <audio id="audioElement" preload="auto" crossorigin="anonymous"></audio>
+<script>
+// ==========================================
+// البيانات الأساسية
+// ==========================================
+const TRACKS = [
+    { id: 1, title: "SOKO Intro", artist: "SOKO Original", src: "1.mp3", img: "1.jpg", duration: "03:45" },
+    { id: 2, title: "Midnight Dreams", artist: "SOKO Production", src: "2.mp3", img: "2.jpg", duration: "04:12" },
+    { id: 3, title: "Neon Lights", artist: "Cyber Wave", src: "3.mp3", img: "3.jpg", duration: "03:28" },
+    { id: 4, title: "Deep Focus", artist: "Ambient Mind", src: "4.mp3", img: "4.jpg", duration: "05:01" },
+    { id: 5, title: "Retro Future", artist: "Synth Master", src: "5.mp3", img: "5.jpg", duration: "03:55" },
+    { id: 6, title: "Urban Jungle", artist: "Beat Maker", src: "6.mp3", img: "6.jpg", duration: "04:30" },
+    { id: 7, title: "Crystal Clear", artist: "Audio Phile", src: "7.mp3", img: "7.jpg", duration: "03:15" },
+    { id: 8, title: "Bass Drop", artist: "DJ SOKO", src: "8.mp3", img: "8.jpg", duration: "04:45" },
+    { id: 9, title: "Ethereal", artist: "Space Sound", src: "9.mp3", img: "9.jpg", duration: "03:38" },
+    { id: 10, title: "Final Horizon", artist: "Epic Scores", src: "10.mp3", img: "10.jpg", duration: "04:20" }
+];
 
-    <script>
-        /**
-         * ==========================================
-         * SOKO MUSIC ENGINE - Advanced Audio Player
-         * ==========================================
-         * هذا السكربت يحتوي على كل المنطق البرمجي للموقع
-         * مقسم إلى فئات (Classes) لتنظيم الكود وجعله قابلاً للصيانة.
-         */
+const THEMES = [
+    { name: "أزرق سماوي", t1: "#00d4ff", t2: "#0099ff" },
+    { name: "بنفسجي فاخر", t1: "#7b2cbf", t2: "#9d4edd" },
+    { name: "وردي ناري", t1: "#ff006e", t2: "#ff4d00" },
+    { name: "أخضر نيون", t1: "#06ffa5", t2: "#00d4ff" },
+    { name: "ذهبي ملكي", t1: "#ffd700", t2: "#ff9500" },
+    { name: "أحمر دموي", t1: "#ff006e", t2: "#8b0000" },
+    { name: "تركواز", t1: "#00f5d4", t2: "#00bbf9" },
+    { name: "برتقالي غروب", t1: "#ff6b35", t2: "#f7931e" },
+    { name: "ليلي غامض", t1: "#2d00f7", t2: "#6a00f4" },
+    { name: "فضي معدني", t1: "#c0c0c0", t2: "#808080" }
+];
 
-        // ==========================================
-        // 1. بيانات الأغاني (Playlist Data)
-        // ==========================================
-        const TRACKS_DATA = [
-            { id: 1, title: "SOKO Intro", artist: "SOKO Original", src: "1.mp3", img: "1.jpg", duration: "03:45" },
-            { id: 2, title: "Midnight Dreams", artist: "SOKO Production", src: "2.mp3", img: "2.jpg", duration: "04:12" },
-            { id: 3, title: "Neon Lights", artist: "Cyber Wave", src: "3.mp3", img: "3.jpg", duration: "03:28" },
-            { id: 4, title: "Deep Focus", artist: "Ambient Mind", src: "4.mp3", img: "4.jpg", duration: "05:01" },
-            { id: 5, title: "Retro Future", artist: "Synth Master", src: "5.mp3", img: "5.jpg", duration: "03:55" },
-            { id: 6, title: "Urban Jungle", artist: "Beat Maker", src: "6.mp3", img: "6.jpg", duration: "04:30" },
-            { id: 7, title: "Crystal Clear", artist: "Audio Phile", src: "7.mp3", img: "7.jpg", duration: "03:15" },
-            { id: 8, title: "Bass Drop", artist: "DJ SOKO", src: "8.mp3", img: "8.jpg", duration: "04:45" },
-            { id: 9, title: "Ethereal", artist: "Space Sound", src: "9.mp3", img: "9.jpg", duration: "03:38" },
-            { id: 10, title: "Final Horizon", artist: "Epic Scores", src: "10.mp3", img: "10.jpg", duration: "04:20" }
-        ];
+const EQ_PRESETS = {
+    flat: { name: "مسطح", values: [0,0,0,0,0,0,0,0,0,0] },
+    '8d': { name: "8D Audio", values: [3,2,1,0,-1,0,1,2,3,2] },
+    '3d': { name: "3D Surround", values: [4,3,2,1,0,1,2,3,4,3] },
+    close: { name: "قريب رأس", values: [6,5,4,3,2,1,0,-1,-2,-3] },
+    far: { name: "بعيد", values: [-3,-2,-1,0,1,2,3,4,5,6] },
+    hall: { name: "صالة", values: [4,3,2,1,0,0,1,2,3,4] },
+    music: { name: "ميوزك", values: [3,2,1,2,3,3,2,1,2,3] },
+    arb: { name: "ARB Bass", values: [6,5,4,2,0,-1,0,1,2,3] },
+    echo: { name: "صدى", values: [2,3,4,3,2,1,2,3,4,3] },
+    vocal: { name: "فوكال", values: [-2,-1,0,2,4,4,2,0,-1,-2] }
+};
 
-        // ==========================================
-        // 2. فئة إدارة التخزين المحلي (Storage Manager)
-        // ==========================================
-        class StorageManager {
-            static save(key, value) {
-                try {
-                    localStorage.setItem(`soko_${key}`, JSON.stringify(value));
-                } catch (e) {
-                    console.warn("Local Storage غير متاح");
-                }
-            }
+const EQ_FREQUENCIES = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
 
-            static load(key, defaultValue = null) {
-                try {
-                    const item = localStorage.getItem(`soko_${key}`);
-                    return item ? JSON.parse(item) : defaultValue;
-                } catch (e) {
-                    return defaultValue;
-                }
-            }
+// ==========================================
+// التخزين المحلي
+// ==========================================
+const Storage = {
+    save: (k, v) => { try { localStorage.setItem(`soko_${k}`, JSON.stringify(v)); } catch(e){} },
+    load: (k, d = null) => { try { const v = localStorage.getItem(`soko_${k}`); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+};
 
-            static clear() {
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith('soko_')) {
-                        localStorage.removeItem(key);
-                    }
-                });
-            }
+// ==========================================
+// الإشعارات
+// ==========================================
+const Toast = {
+    show: (msg, type = 'success') => {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
+        toast.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i><span class="toast-message">${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'toastOut 0.4s ease forwards';
+            setTimeout(() => toast.remove(), 400);
+        }, 3500);
+    }
+};
+
+// ==========================================
+// تأثير الدخان
+// ==========================================
+document.addEventListener('click', (e) => {
+    for (let i = 0; i < 8; i++) {
+        const smoke = document.createElement('div');
+        smoke.className = 'smoke-particle';
+        const size = Math.random() * 30 + 20;
+        smoke.style.width = size + 'px';
+        smoke.style.height = size + 'px';
+        smoke.style.left = (e.clientX + (Math.random() - 0.5) * 40) + 'px';
+        smoke.style.top = (e.clientY + (Math.random() - 0.5) * 40) + 'px';
+        smoke.style.animationDelay = (Math.random() * 0.2) + 's';
+        document.body.appendChild(smoke);
+        setTimeout(() => smoke.remove(), 1400);
+    }
+});
+
+// ==========================================
+// مؤشر الماوس
+// ==========================================
+const cursor = document.getElementById('customCursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+document.addEventListener('mousedown', () => cursor.classList.add('active'));
+document.addEventListener('mouseup', () => cursor.classList.remove('active'));
+
+document.addEventListener('mouseover', (e) => {
+    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, .nav-tab')) {
+        cursor.classList.add('hovering');
+    }
+});
+document.addEventListener('mouseout', (e) => {
+    if (e.target.closest('button, a, .song-card, .theme-card, .contact-card, input, .nav-tab')) {
+        cursor.classList.remove('hovering');
+    }
+});
+
+// ==========================================
+// نظام الجسيمات
+// ==========================================
+class ParticleSystem {
+    constructor() {
+        this.canvas = document.getElementById('particle-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.mouse = { x: null, y: null, radius: 150 };
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => { this.mouse.x = e.x; this.mouse.y = e.y; });
+        this.init();
+        this.animate();
+    }
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.init();
+    }
+    init() {
+        this.particles = [];
+        const count = Math.min((this.canvas.width * this.canvas.height) / 12000, 100);
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                dx: (Math.random() - 0.5) * 0.4,
+                dy: (Math.random() - 0.5) * 0.4,
+                size: Math.random() * 2 + 1
+            });
         }
-
-        // ==========================================
-        // 3. فئة واجهة المستخدم والإشعارات (UI Manager)
-        // ==========================================
-        class UIManager {
-            static showToast(message, type = 'success') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                
-                const icons = {
-                    success: 'fa-check-circle',
-                    error: 'fa-exclamation-circle',
-                    warning: 'fa-exclamation-triangle'
-                };
-
-                toast.innerHTML = `
-                    <i class="fas ${icons[type] || icons.success}"></i>
-                    <span class="toast-message">${message}</span>
-                `;
-                
-                container.appendChild(toast);
-
-                // إزالة الإشعار بعد 3.5 ثانية
-                setTimeout(() => {
-                    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.parentNode.removeChild(toast);
-                        }
-                    }, 400);
-                }, 3500);
+    }
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.particles.forEach((p, i) => {
+            if (p.x > this.canvas.width || p.x < 0) p.dx = -p.dx;
+            if (p.y > this.canvas.height || p.y < 0) p.dy = -p.dy;
+            const dx = this.mouse.x - p.x, dy = this.mouse.y - p.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < this.mouse.radius) {
+                if (this.mouse.x < p.x) p.x += 1; else p.x -= 1;
+                if (this.mouse.y < p.y) p.y += 1; else p.y -= 1;
             }
-
-            static formatTime(seconds) {
-                if (isNaN(seconds) || seconds === 0) return "0:00";
-                const mins = Math.floor(seconds / 60);
-                const secs = Math.floor(seconds % 60);
-                return `${mins}:${secs.toString().padStart(2, '0')}`;
-            }
-        }
-
-        // ==========================================
-        // 4. فئة مشغل الصوت الأساسي (Audio Player Engine)
-        // ==========================================
-        class AudioPlayer {
-            constructor() {
-                this.audio = document.getElementById('audioElement');
-                this.tracks = TRACKS_DATA;
-                this.currentIndex = StorageManager.load('currentTrackIndex', 0);
-                this.isPlaying = false;
-                this.isRepeat = StorageManager.load('isRepeat', false);
-                this.isShuffle = StorageManager.load('isShuffle', false);
-                this.volume = StorageManager.load('volume', 0.8);
-                
-                this.audio.volume = this.volume;
-                this.setupEventListeners();
-                this.updateUIState();
-            }
-
-            setupEventListeners() {
-                // تحديث شريط التقدم
-                this.audio.addEventListener('timeupdate', () => {
-                    if (this.audio.duration) {
-                        const percent = (this.audio.currentTime / this.audio.duration) * 100;
-                        document.getElementById('progressFill').style.width = `${percent}%`;
-                        document.getElementById('currentTime').textContent = UIManager.formatTime(this.audio.currentTime);
-                    }
-                });
-
-                // عند تحميل بيانات الأغنية
-                this.audio.addEventListener('loadedmetadata', () => {
-                    document.getElementById('totalDuration').textContent = UIManager.formatTime(this.audio.duration);
-                });
-
-                // عند انتهاء الأغنية
-                this.audio.addEventListener('ended', () => {
-                    if (this.isRepeat) {
-                        this.audio.currentTime = 0;
-                        this.play();
-                    } else {
-                        this.next();
-                    }
-                });
-
-                // معالجة الأخطاء (مهم جداً لعدم ظهور Alert)
-                this.audio.addEventListener('error', (e) => {
-                    console.error("Audio Error:", e);
-                    UIManager.showToast(`تعذر تحميل: ${this.tracks[this.currentIndex].src}`, 'error');
-                    // الانتقال للتالي تلقائياً بعد خطأ
-                    setTimeout(() => this.next(), 2000);
-                });
-
-                // النقر على شريط التقدم
-                document.getElementById('progressBarContainer').addEventListener('click', (e) => {
-                    if (this.audio.duration) {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        // حساب النسبة بناءً على اتجاه الصفحة (RTL)
-                        const clickX = e.clientX - rect.left;
-                        const percent = clickX / rect.width;
-                        this.audio.currentTime = percent * this.audio.duration;
-                    }
-                });
-            }
-
-            loadTrack(index) {
-                if (index < 0 || index >= this.tracks.length) return;
-                
-                this.currentIndex = index;
-                const track = this.tracks[index];
-                
-                this.audio.src = track.src;
-                document.getElementById('trackTitle').textContent = track.title;
-                document.getElementById('trackArtist').textContent = track.artist;
-                
-                const imgEl = document.getElementById('albumArt');
-                imgEl.src = track.img;
-                imgEl.onerror = function() { 
-                    this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzIyMiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzQ0NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9zdmc+'; 
-                };
-
-                // تحديث القائمة
-                this.updatePlaylistActiveState();
-                StorageManager.save('currentTrackIndex', this.currentIndex);
-            }
-
-            play() {
-                const playPromise = this.audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        this.isPlaying = true;
-                        this.updatePlayButton();
-                        document.getElementById('albumArtWrapper').classList.add('playing');
-                        document.getElementById('albumArt').classList.add('playing');
-                    }).catch(error => {
-                        console.error("Playback failed:", error);
-                        UIManager.showToast('تعذر تشغيل الملف. تأكد من وجوده في المجلد.', 'error');
-                    });
+            p.x += p.dx; p.y += p.dy;
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00d4ff';
+            this.ctx.fill();
+            for (let j = i + 1; j < this.particles.length; j++) {
+                const p2 = this.particles[j];
+                const d = Math.sqrt((p.x-p2.x)**2 + (p.y-p2.y)**2);
+                if (d < 120) {
+                    this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.3 * (1 - d/120)})`;
+                    this.ctx.lineWidth = 0.5;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(p.x, p.y);
+                    this.ctx.lineTo(p2.x, p2.y);
+                    this.ctx.stroke();
                 }
             }
+        });
+    }
+}
 
-            pause() {
-                this.audio.pause();
-                this.isPlaying = false;
+// ==========================================
+// مشغل الصوت مع Web Audio API للمعادل الحقيقي
+// ==========================================
+class AudioPlayer {
+    constructor() {
+        this.audio = document.getElementById('audioElement');
+        this.tracks = [...TRACKS];
+        this.currentIndex = Storage.load('currentTrack', 0);
+        this.isPlaying = false;
+        this.isRepeat = Storage.load('isRepeat', false);
+        this.isShuffle = Storage.load('isShuffle', false);
+        this.favorites = Storage.load('favorites', []);
+        this.deviceTracks = [];
+        this.audioContext = null;
+        this.source = null;
+        this.filters = [];
+        this.analyser = null;
+        this.eqInitialized = false;
+        
+        this.audio.volume = Storage.load('volume', 0.8);
+        document.getElementById('volumeSlider').value = this.audio.volume * 100;
+        
+        this.setupEvents();
+        this.updateButtons();
+    }
+
+    initAudioContext() {
+        if (this.eqInitialized) return;
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.source = this.audioContext.createMediaElementSource(this.audio);
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = 256;
+            
+            EQ_FREQUENCIES.forEach(freq => {
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'peaking';
+                filter.frequency.value = freq;
+                filter.Q.value = 1.4;
+                filter.gain.value = 0;
+                this.filters.push(filter);
+            });
+            
+            // ربط السلسلة: source -> filter[0] -> filter[1] -> ... -> analyser -> destination
+            let node = this.source;
+            this.filters.forEach(f => { node.connect(f); node = f; });
+            node.connect(this.analyser);
+            this.analyser.connect(this.audioContext.destination);
+            
+            this.eqInitialized = true;
+            console.log('Audio Context initialized with EQ');
+        } catch(e) {
+            console.error('Audio Context Error:', e);
+        }
+    }
+
+    setupEvents() {
+        this.audio.addEventListener('timeupdate', () => {
+            if (this.audio.duration) {
+                const pct = (this.audio.currentTime / this.audio.duration) * 100;
+                document.getElementById('progressFill').style.width = pct + '%';
+                document.getElementById('currentTime').textContent = this.formatTime(this.audio.currentTime);
+            }
+        });
+        this.audio.addEventListener('loadedmetadata', () => {
+            document.getElementById('totalDuration').textContent = this.formatTime(this.audio.duration);
+        });
+        this.audio.addEventListener('ended', () => {
+            if (this.isRepeat) { this.audio.currentTime = 0; this.play(); }
+            else this.next();
+        });
+        this.audio.addEventListener('error', () => {
+            Toast.show(`تعذر تحميل: ${this.tracks[this.currentIndex].src}`, 'error');
+            setTimeout(() => this.next(), 2000);
+        });
+        document.getElementById('progressBar').addEventListener('click', (e) => {
+            if (this.audio.duration) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const pct = (e.clientX - rect.left) / rect.width;
+                this.audio.currentTime = pct * this.audio.duration;
+            }
+        });
+    }
+
+    loadTrack(index) {
+        if (index < 0 || index >= this.tracks.length) return;
+        this.currentIndex = index;
+        const track = this.tracks[index];
+        this.audio.src = track.src;
+        document.getElementById('playerTitle').textContent = track.title;
+        document.getElementById('playerArtist').textContent = track.artist;
+        const img = document.getElementById('playerImg');
+        img.src = track.img;
+        img.onerror = function() { this.style.background = 'linear-gradient(135deg, #00d4ff, #7b2cbf)'; };
+        Storage.save('currentTrack', index);
+        this.renderAllLists();
+    }
+
+    play() {
+        this.initAudioContext();
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+        const p = this.audio.play();
+        if (p !== undefined) {
+            p.then(() => {
+                this.isPlaying = true;
                 this.updatePlayButton();
-                document.getElementById('albumArtWrapper').classList.remove('playing');
-                document.getElementById('albumArt').classList.remove('playing');
-            }
-
-            togglePlay() {
-                if (this.isPlaying) {
-                    this.pause();
-                } else {
-                    this.play();
-                }
-            }
-
-            next() {
-                let nextIndex;
-                if (this.isShuffle) {
-                    nextIndex = Math.floor(Math.random() * this.tracks.length);
-                } else {
-                    nextIndex = (this.currentIndex + 1) % this.tracks.length;
-                }
-                this.loadTrack(nextIndex);
-                if (this.isPlaying) this.play();
-            }
-
-            previous() {
-                let prevIndex = (this.currentIndex - 1 + this.tracks.length) % this.tracks.length;
-                this.loadTrack(prevIndex);
-                if (this.isPlaying) this.play();
-            }
-
-            playSpecific(index) {
-                this.loadTrack(index);
-                this.play();
-            }
-
-            toggleRepeat() {
-                this.isRepeat = !this.isRepeat;
-                StorageManager.save('isRepeat', this.isRepeat);
-                this.updateUIState();
-                UIManager.showToast(this.isRepeat ? 'تم تفعيل تكرار الأغنية' : 'تم إيقاف التكرار', 'success');
-            }
-
-            toggleShuffle() {
-                this.isShuffle = !this.isShuffle;
-                StorageManager.save('isShuffle', this.isShuffle);
-                this.updateUIState();
-                UIManager.showToast(this.isShuffle ? 'تم تفعيل التشغيل العشوائي' : 'تم إيقاف العشوائي', 'success');
-            }
-
-            updatePlayButton() {
-                const btn = document.getElementById('playPauseBtn');
-                btn.innerHTML = this.isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
-            }
-
-            updateUIState() {
-                document.getElementById('repeatBtn').classList.toggle('active-mode', this.isRepeat);
-                document.getElementById('shuffleBtn').classList.toggle('active-mode', this.isShuffle);
-                this.updatePlayButton();
-            }
-
-            updatePlaylistActiveState() {
-                const items = document.querySelectorAll('.playlist-item');
-                items.forEach((item, index) => {
-                    if (index === this.currentIndex) {
-                        item.classList.add('active');
-                        item.querySelector('.item-play-btn').innerHTML = '<i class="fas fa-pause"></i>';
-                    } else {
-                        item.classList.remove('active');
-                        item.querySelector('.item-play-btn').innerHTML = '<i class="fas fa-play"></i>';
-                    }
-                });
-            }
+            }).catch(e => {
+                console.error(e);
+                Toast.show('تعذر تشغيل الملف', 'error');
+            });
         }
+    }
 
-        // ==========================================
-        // 5. فئة نظام الجسيمات (Particle System)
-        // ==========================================
-        class ParticleSystem {
-            constructor() {
-                this.canvas = document.getElementById('particle-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.particles = [];
-                this.mouse = { x: null, y: null, radius: 150 };
-                
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                window.addEventListener('mousemove', (e) => {
-                    this.mouse.x = e.x;
-                    this.mouse.y = e.y;
-                });
+    pause() {
+        this.audio.pause();
+        this.isPlaying = false;
+        this.updatePlayButton();
+    }
 
-                this.init();
-                this.animate();
-            }
+    togglePlay() {
+        if (this.isPlaying) this.pause(); else this.play();
+    }
 
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                this.init();
-            }
+    next() {
+        let idx = this.isShuffle ? Math.floor(Math.random() * this.tracks.length) : (this.currentIndex + 1) % this.tracks.length;
+        this.loadTrack(idx);
+        if (this.isPlaying) this.play();
+    }
 
-            init() {
-                this.particles = [];
-                const numberOfParticles = (this.canvas.width * this.canvas.height) / 12000;
-                for (let i = 0; i < numberOfParticles; i++) {
-                    const size = (Math.random() * 2) + 1;
-                    const x = Math.random() * (this.canvas.width - size * 2) + size * 2;
-                    const y = Math.random() * (this.canvas.height - size * 2) + size * 2;
-                    const directionX = (Math.random() * 0.4) - 0.2;
-                    const directionY = (Math.random() * 0.4) - 0.2;
-                    this.particles.push({ x, y, directionX, directionY, size, color: '#00d4ff' });
-                }
-            }
+    previous() {
+        let idx = (this.currentIndex - 1 + this.tracks.length) % this.tracks.length;
+        this.loadTrack(idx);
+        if (this.isPlaying) this.play();
+    }
 
-            animate() {
-                requestAnimationFrame(() => this.animate());
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    playAt(index) {
+        this.loadTrack(index);
+        this.play();
+    }
 
-                for (let i = 0; i < this.particles.length; i++) {
-                    this.updateParticle(this.particles[i]);
-                    this.drawParticle(this.particles[i]);
-                    this.connectParticles(i);
-                }
-            }
+    toggleRepeat() {
+        this.isRepeat = !this.isRepeat;
+        Storage.save('isRepeat', this.isRepeat);
+        this.updateButtons();
+        Toast.show(this.isRepeat ? 'تكرار الأغنية مفعّل' : 'تكرار الأغنية معطّل', 'success');
+    }
 
-            updateParticle(p) {
-                if (p.x > this.canvas.width || p.x < 0) p.directionX = -p.directionX;
-                if (p.y > this.canvas.height || p.y < 0) p.directionY = -p.directionY;
+    toggleShuffle() {
+        this.isShuffle = !this.isShuffle;
+        Storage.save('isShuffle', this.isShuffle);
+        this.updateButtons();
+        Toast.show(this.isShuffle ? 'عشوائي مفعّل' : 'عشوائي معطّل', 'success');
+    }
 
-                // التفاعل مع الماوس
-                const dx = this.mouse.x - p.x;
-                const dy = this.mouse.y - p.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+    setVolume(val) {
+        this.audio.volume = val / 100;
+        Storage.save('volume', this.audio.volume);
+    }
 
-                if (distance < this.mouse.radius + p.size) {
-                    if (this.mouse.x < p.x && p.x < this.canvas.width - p.size * 10) p.x += 1.5;
-                    if (this.mouse.x > p.x && p.x > p.size * 10) p.x -= 1.5;
-                    if (this.mouse.y < p.y && p.y < this.canvas.height - p.size * 10) p.y += 1.5;
-                    if (this.mouse.y > p.y && p.y > p.size * 10) p.y -= 1.5;
-                }
-
-                p.x += p.directionX;
-                p.y += p.directionY;
-            }
-
-            drawParticle(p) {
-                this.ctx.beginPath();
-                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
-                this.ctx.fillStyle = p.color;
-                this.ctx.fill();
-            }
-
-            connectParticles(index) {
-                for (let j = index; j < this.particles.length; j++) {
-                    const p1 = this.particles[index];
-                    const p2 = this.particles[j];
-                    const distance = ((p1.x - p2.x) ** 2) + ((p1.y - p2.y) ** 2);
-                    
-                    if (distance < (this.canvas.width / 7) * (this.canvas.height / 7)) {
-                        const opacity = 1 - (distance / 25000);
-                        this.ctx.strokeStyle = `rgba(0, 212, 255, ${opacity * 0.4})`;
-                        this.ctx.lineWidth = 1;
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(p1.x, p1.y);
-                        this.ctx.lineTo(p2.x, p2.y);
-                        this.ctx.stroke();
-                    }
-                }
-            }
+    toggleFavorite(id) {
+        const idx = this.favorites.indexOf(id);
+        if (idx > -1) {
+            this.favorites.splice(idx, 1);
+            Toast.show('تم إزالة الأغنية من المفضلة', 'warning');
+        } else {
+            this.favorites.push(id);
+            Toast.show('تم إضافة الأغنية للمفضلة', 'success');
         }
+        Storage.save('favorites', this.favorites);
+        this.renderAllLists();
+    }
 
-        // ==========================================
-        // 6. فئة المعادل الصوتي (Equalizer)
-        // ==========================================
-        class Equalizer {
-            constructor() {
-                this.bands = ['60Hz', '170Hz', '310Hz', '600Hz', '1kHz', '3kHz', '6kHz', '12kHz', '14kHz', '16kHz'];
-                this.container = document.getElementById('eqContainer');
-                this.render();
-            }
+    isFavorite(id) { return this.favorites.includes(id); }
 
-            render() {
-                this.container.innerHTML = '';
-                this.bands.forEach((freq, index) => {
-                    const band = document.createElement('div');
-                    band.className = 'eq-band';
-                    
-                    const savedValue = StorageManager.load(`eq_${freq}`, 0);
-                    
-                    band.innerHTML = `
-                        <span class="eq-value" id="eq-val-${index}">${savedValue > 0 ? '+' : ''}${savedValue}dB</span>
-                        <div class="eq-slider-wrapper">
-                            <input type="range" min="-12" max="12" value="${savedValue}" class="eq-slider" 
-                                   oninput="Equalizer.update(${index}, '${freq}', this.value)">
-                        </div>
-                        <span class="eq-label">${freq}</span>
-                    `;
-                    this.container.appendChild(band);
-                });
-            }
+    updatePlayButton() {
+        document.getElementById('playPauseBtn').innerHTML = this.isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    }
 
-            static update(index, freq, value) {
-                document.getElementById(`eq-val-${index}`).textContent = `${value > 0 ? '+' : ''}${value}dB`;
-                StorageManager.save(`eq_${freq}`, parseInt(value));
-                // ملاحظة: لتطبيق هذا فعلياً على الصوت، نحتاج إلى Web Audio API Filter Nodes
-                // هذا النموذج يحاكي الواجهة ويحفظ التفضيلات
-            }
+    updateButtons() {
+        document.getElementById('repeatBtn').classList.toggle('active-mode', this.isRepeat);
+        document.getElementById('shuffleBtn').classList.toggle('active-mode', this.isShuffle);
+        this.updatePlayButton();
+    }
+
+    formatTime(s) {
+        if (isNaN(s)) return '0:00';
+        const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+        return `${m}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    renderAllLists() {
+        this.renderSongList('allSongsList', this.tracks);
+        this.renderSongList('favoritesList', this.tracks.filter(t => this.isFavorite(t.id)));
+        this.renderSongList('topTracks', this.tracks.slice(0, 6));
+        this.renderSongList('deviceSongsList', this.deviceTracks);
+        document.getElementById('songsCount').textContent = this.tracks.length + ' أغنية';
+        document.getElementById('favCount').textContent = this.favorites.length + ' أغنية';
+    }
+
+    renderSongList(containerId, tracks) {
+        const container = document.getElementById(containerId);
+        if (!tracks.length) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1/-1;">لا توجد أغاني</p>';
+            return;
         }
-
-        // ==========================================
-        // 7. الفئة الرئيسية للتطبيق (Main App Controller)
-        // ==========================================
-        class App {
-            static player = null;
-            static particles = null;
-
-            static initialize() {
-                // إخفاء شاشة الدخول
-                document.getElementById('enterScreen').classList.add('hidden');
-                
-                // إظهار الحاوية الرئيسية
-                setTimeout(() => {
-                    document.getElementById('appContainer').classList.add('visible');
-                }, 300);
-
-                // تهيئة المكونات
-                this.player = new AudioPlayer();
-                this.particles = new ParticleSystem();
-                new Equalizer();
-
-                // بناء قائمة التشغيل
-                this.renderPlaylist();
-                
-                // تحميل آخر أغنية
-                this.player.loadTrack(this.player.currentIndex);
-                
-                UIManager.showToast('مرحباً بك في SOKO MUSIC', 'success');
-            }
-
-            static renderPlaylist() {
-                const container = document.getElementById('playlistContainer');
-                document.getElementById('playlistStats').textContent = `${TRACKS_DATA.length} أغنية`;
-                
-                container.innerHTML = TRACKS_DATA.map((track, index) => `
-                    <div class="playlist-item" onclick="App.player.playSpecific(${index})">
-                        <span class="item-number">${index + 1}</span>
-                        <img src="${track.img}" alt="${track.title}" class="item-thumbnail" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMzMiLz48L3N2Zz4='">
-                        <div class="item-details">
-                            <div class="item-title">${track.title}</div>
-                            <div class="item-artist">${track.artist}</div>
-                        </div>
-                        <span class="item-duration">${track.duration}</span>
-                        <button class="item-play-btn">
-                            <i class="fas fa-play"></i>
+        container.innerHTML = tracks.map((t, i) => {
+            const globalIdx = this.tracks.indexOf(t);
+            const isPlaying = globalIdx === this.currentIndex && this.isPlaying;
+            return `
+                <div class="song-card ${isPlaying ? 'playing' : ''}" onclick="Player.playAt(${globalIdx})">
+                    <img src="${t.img}" class="song-thumb" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
+                    <div class="song-info">
+                        <h4>${t.title}</h4>
+                        <p>${t.artist} • ${t.duration || ''}</p>
+                    </div>
+                    <div class="song-actions">
+                        <button class="song-btn favorite ${this.isFavorite(t.id) ? 'active' : ''}" onclick="event.stopPropagation(); Player.toggleFavorite(${t.id})">
+                            <i class="fas fa-heart"></i>
                         </button>
                     </div>
-                `).join('');
-            }
+                </div>
+            `;
+        }).join('');
+    }
+
+    addDeviceTrack(file, url, duration) {
+        const track = {
+            id: 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            title: file.name.replace(/\.[^/.]+$/, ''),
+            artist: 'من الجهاز',
+            src: url,
+            img: 'XX.jpg',
+            duration: this.formatTime(duration),
+            isDevice: true
+        };
+        this.deviceTracks.push(track);
+        this.tracks.push(track);
+        this.renderAllLists();
+    }
+}
+
+// ==========================================
+// المعادل الصوتي
+// ==========================================
+class Equalizer {
+    constructor() {
+        this.currentPreset = 'flat';
+        this.values = Storage.load('eqValues', [0,0,0,0,0,0,0,0,0,0]);
+        this.renderPresets();
+        this.renderBands();
+        this.applyValues();
+    }
+
+    renderPresets() {
+        const container = document.getElementById('eqPresets');
+        container.innerHTML = Object.entries(EQ_PRESETS).map(([key, p]) => 
+            `<button class="eq-preset-btn ${key === this.currentPreset ? 'active' : ''}" onclick="Equalizer.applyPreset('${key}')">${p.name}</button>`
+        ).join('');
+    }
+
+    renderBands() {
+        const container = document.getElementById('eqBands');
+        container.innerHTML = EQ_FREQUENCIES.map((freq, i) => {
+            const label = freq >= 1000 ? (freq/1000) + 'kHz' : freq + 'Hz';
+            return `
+                <div class="eq-band">
+                    <span class="eq-band-value" id="eqVal${i}">${this.values[i] > 0 ? '+' : ''}${this.values[i]}dB</span>
+                    <input type="range" class="eq-slider-vertical" min="-12" max="12" value="${this.values[i]}" 
+                           oninput="Equalizer.updateBand(${i}, this.value)">
+                    <span class="eq-band-label">${label}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    updateBand(index, value) {
+        this.values[index] = parseInt(value);
+        document.getElementById(`eqVal${index}`).textContent = `${value > 0 ? '+' : ''}${value}dB`;
+        Storage.save('eqValues', this.values);
+        this.applyValues();
+        this.currentPreset = 'custom';
+        this.renderPresets();
+    }
+
+    applyPreset(key) {
+        this.currentPreset = key;
+        this.values = [...EQ_PRESETS[key].values];
+        Storage.save('eqValues', this.values);
+        this.renderBands();
+        this.renderPresets();
+        this.applyValues();
+        Toast.show(`تم تطبيق وضع: ${EQ_PRESETS[key].name}`, 'success');
+    }
+
+    applyValues() {
+        if (!Player.eqInitialized || !Player.filters.length) return;
+        Player.filters.forEach((filter, i) => {
+            filter.gain.value = this.values[i] || 0;
+        });
+    }
+}
+
+// ==========================================
+// ماسح الجهاز
+// ==========================================
+const DeviceScanner = {
+    scan: () => {
+        document.getElementById('deviceFileInput').click();
+    },
+    processFiles: (event) => {
+        const files = Array.from(event.target.files).filter(f => 
+            f.type.startsWith('audio/') || f.name.toLowerCase().endsWith('.mp3')
+        );
+        if (!files.length) {
+            Toast.show('لم يتم العثور على ملفات صوتية', 'warning');
+            return;
         }
-
-        // ==========================================
-        // 8. تهيئة مؤشر الماوس المخصص (Custom Cursor Logic)
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            const cursor = document.getElementById('customCursor');
-            
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+        Toast.show(`جاري فحص ${files.length} ملف...`, 'success');
+        let processed = 0;
+        files.forEach(file => {
+            const url = URL.createObjectURL(file);
+            const tempAudio = new Audio();
+            tempAudio.src = url;
+            tempAudio.addEventListener('loadedmetadata', () => {
+                if (tempAudio.duration >= 60) {
+                    Player.addDeviceTrack(file, url, tempAudio.duration);
+                }
+                processed++;
+                if (processed === files.length) {
+                    const added = Player.deviceTracks.length;
+                    Toast.show(`تمت إضافة ${added} أغنية (60+ ثانية)`, 'success');
+                }
             });
-
-            document.addEventListener('mousedown', () => cursor.classList.add('active'));
-            document.addEventListener('mouseup', () => cursor.classList.remove('active'));
-
-            // إضافة تأثير hover للعناصر التفاعلية
-            const interactiveElements = document.querySelectorAll('button, a, .playlist-item, .ctrl-btn, input[type="range"]');
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
-            });
-
-            // منع القوائم الافتراضية وسحب الصور
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('dragstart', e => e.preventDefault());
+            tempAudio.addEventListener('error', () => { processed++; });
         });
+    }
+};
 
-        // اختصارات لوحة المفاتيح
-        document.addEventListener('keydown', (e) => {
-            if (!App.player) return;
-            
-            switch(e.code) {
-                case 'Space':
-                    e.preventDefault();
-                    App.player.togglePlay();
-                    break;
-                case 'ArrowRight':
-                    App.player.next();
-                    break;
-                case 'ArrowLeft':
-                    App.player.previous();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (App.player.audio.volume < 1) {
-                        App.player.audio.volume = Math.min(1, App.player.audio.volume + 0.1);
-                        UIManager.showToast(`الصوت: ${Math.round(App.player.audio.volume * 100)}%`, 'success');
-                    }
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    if (App.player.audio.volume > 0) {
-                        App.player.audio.volume = Math.max(0, App.player.audio.volume - 0.1);
-                        UIManager.showToast(`الصوت: ${Math.round(App.player.audio.volume * 100)}%`, 'warning');
-                    }
-                    break;
+// ==========================================
+// إدارة الأغاني
+// ==========================================
+const SongManager = {
+    handleFiles: (event) => {
+        const files = Array.from(event.target.files);
+        files.forEach(file => {
+            if (file.type.startsWith('audio/')) {
+                const url = URL.createObjectURL(file);
+                const tempAudio = new Audio();
+                tempAudio.src = url;
+                tempAudio.addEventListener('loadedmetadata', () => {
+                    Player.addDeviceTrack(file, url, tempAudio.duration);
+                    Toast.show(`تمت إضافة: ${file.name}`, 'success');
+                });
             }
         });
+    }
+};
 
-    </script>
+// ==========================================
+// الثيمات
+// ==========================================
+class ThemeManager {
+    static init() {
+        const grid = document.getElementById('themesGrid');
+        const current = Storage.load('currentTheme', 0);
+        grid.innerHTML = THEMES.map((t, i) => `
+            <div class="theme-card ${i === current ? 'active' : ''}" onclick="ThemeManager.apply(${i})">
+                <div class="theme-preview" style="--t1: ${t.t1}; --t2: ${t.t2}"></div>
+                <div class="theme-name">${t.name}</div>
+            </div>
+        `).join('');
+        if (current > 0) this.apply(current, false);
+    }
+
+    static apply(index, notify = true) {
+        const theme = THEMES[index];
+        document.documentElement.style.setProperty('--primary', theme.t1);
+        document.documentElement.style.setProperty('--secondary', theme.t2);
+        Storage.save('currentTheme', index);
+        document.querySelectorAll('.theme-card').forEach((c, i) => c.classList.toggle('active', i === index));
+        if (notify) Toast.show(`تم تطبيق ثيم: ${theme.name}`, 'success');
+    }
+}
+
+// ==========================================
+// الإعدادات
+// ==========================================
+class SettingsManager {
+    static init() {
+        const list = document.getElementById('settingsList');
+        const settings = [
+            { icon: 'fa-bell', title: 'الإشعارات', desc: 'تفعيل إشعارات تغيير الأغنية', key: 'notifications', default: true },
+            { icon: 'fa-moon', title: 'الوضع الليلي', desc: 'تفعيل الوضع المظلم', key: 'darkMode', default: true },
+            { icon: 'fa-particle', title: 'تأثيرات الجسيمات', desc: 'خلفية الجسيمات التفاعلية', key: 'particles', default: true },
+            { icon: 'fa-mouse-pointer', title: 'مؤشر مخصص', desc: 'استخدام مؤشر الماوس المخصص', key: 'customCursor', default: true },
+            { icon: 'fa-smoke', title: 'تأثير الدخان', desc: 'تأثير الدخان عند النقر', key: 'smoke', default: true },
+            { icon: 'fa-save', title: 'حفظ تلقائي', desc: 'حفظ الإعدادات تلقائياً', key: 'autoSave', default: true },
+            { icon: 'fa-trash', title: 'مسح البيانات', desc: 'حذف جميع البيانات المحفوظة', key: 'clearData', default: false, action: true }
+        ];
+        list.innerHTML = settings.map(s => {
+            const val = Storage.load(s.key, s.default);
+            if (s.action) {
+                return `
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-icon"><i class="fas ${s.icon}"></i></div>
+                            <div class="setting-text"><h4>${s.title}</h4><p>${s.desc}</p></div>
+                        </div>
+                        <button class="add-btn" onclick="SettingsManager.clearData()" style="padding: 8px 20px; font-size: 0.9rem;">مسح</button>
+                    </div>
+                `;
+            }
+            return `
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i class="fas ${s.icon}"></i></div>
+                        <div class="setting-text"><h4>${s.title}</h4><p>${s.desc}</p></div>
+                    </div>
+                    <div class="toggle-switch ${val ? 'active' : ''}" onclick="SettingsManager.toggle('${s.key}', this)"></div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    static toggle(key, el) {
+        const val = !Storage.load(key, true);
+        Storage.save(key, val);
+        el.classList.toggle('active', val);
+        Toast.show(`تم ${val ? 'تفعيل' : 'تعطيل'}: ${key}`, 'success');
+    }
+
+    static clearData() {
+        if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+            Storage.clear();
+            Toast.show('تم مسح جميع البيانات', 'success');
+            setTimeout(() => location.reload(), 1000);
+        }
+    }
+}
+
+Storage.clear = () => {
+    Object.keys(localStorage).forEach(k => { if (k.startsWith('soko_')) localStorage.removeItem(k); });
+};
+
+// ==========================================
+// الألبوم المتحرك
+// ==========================================
+class AlbumSlider {
+    static init() {
+        const slider = document.getElementById('albumSlider');
+        const dots = document.getElementById('albumDots');
+        slider.innerHTML = TRACKS.map((t, i) => `
+            <div class="album-slide ${i === 0 ? 'active' : ''}" onclick="Player.playAt(${i})">
+                <img src="${t.img}" onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7b2cbf)'">
+                <div class="album-overlay">
+                    <h3>${t.title}</h3>
+                    <p>${t.artist} • ${t.duration}</p>
+                </div>
+            </div>
+        `).join('');
+        dots.innerHTML = TRACKS.map((_, i) => `<div class="album-dot ${i === 0 ? 'active' : ''}" onclick="AlbumSlider.goTo(${i})"></div>`).join('');
+        this.current = 0;
+        this.interval = setInterval(() => this.next(), 5000);
+    }
+
+    static next() {
+        this.goTo((this.current + 1) % TRACKS.length);
+    }
+
+    static goTo(index) {
+        document.querySelectorAll('.album-slide').forEach((s, i) => s.classList.toggle('active', i === index));
+        document.querySelectorAll('.album-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+        this.current = index;
+        clearInterval(this.interval);
+        this.interval = setInterval(() => this.next(), 5000);
+    }
+}
+
+// ==========================================
+// التطبيق الرئيسي
+// ==========================================
+const App = {
+    initialize: () => {
+        document.getElementById('enterScreen').classList.add('hidden');
+        setTimeout(() => document.getElementById('appContainer').classList.add('visible'), 300);
+        
+        new ParticleSystem();
+        Player = new AudioPlayer();
+        Equalizer = new Equalizer();
+        
+        AlbumSlider.init();
+        ThemeManager.init();
+        SettingsManager.init();
+        
+        Player.loadTrack(Player.currentIndex);
+        Player.renderAllLists();
+        
+        // التنقل بين التبويبات
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // الساعة
+        setInterval(() => {
+            const now = new Date();
+            const h = now.getHours(), m = now.getMinutes().toString().padStart(2, '0');
+            const ampm = h >= 12 ? 'م' : 'ص';
+            document.getElementById('navClock').textContent = `${h % 12 || 12}:${m} ${ampm}`;
+        }, 1000);
+        
+        Toast.show('مرحباً بك في SOKO MUSIC', 'success');
+    }
+};
+
+// اختصارات لوحة المفاتيح
+document.addEventListener('keydown', (e) => {
+    if (!window.Player) return;
+    if (e.code === 'Space') { e.preventDefault(); Player.togglePlay(); }
+    else if (e.code === 'ArrowRight') Player.next();
+    else if (e.code === 'ArrowLeft') Player.previous();
+});
+
+// منع القوائم
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+</script>
 </body>
 </html>
