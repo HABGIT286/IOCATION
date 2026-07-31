@@ -35,6 +35,7 @@ body {
     color: var(--text-primary);
     overflow: hidden;
     height: 100vh;
+    width: 100vw;
     position: relative;
 }
 
@@ -155,6 +156,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    width: 100vw;
     opacity: 0;
     transition: opacity 1s ease;
 }
@@ -170,6 +172,8 @@ body {
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
     z-index: 100;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .nav-logo {
@@ -200,6 +204,7 @@ body {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
+    flex: 1;
 }
 
 .nav-tab {
@@ -216,6 +221,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .nav-tab:hover {
@@ -236,29 +242,37 @@ body {
     font-size: 0.9rem;
     color: var(--primary);
     background: var(--glass-bg);
-    padding: 8px 15px;
+    padding: 10px 20px;
     border-radius: 20px;
     border: 1px solid var(--glass-border);
+    min-width: 120px;
+    text-align: center;
 }
 
 /* المحتوى الرئيسي */
 .main-content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     padding: 30px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) transparent;
+    position: relative;
 }
-.main-content::-webkit-scrollbar { width: 8px; }
-.main-content::-webkit-scrollbar-track { background: transparent; }
-.main-content::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--secondary)); border-radius: 10px; }
 
-.tab-panel { display: none; animation: fadeIn 0.5s ease; }
+.tab-panel { 
+    display: none; 
+    animation: fadeIn 0.5s ease;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 10px;
+}
 .tab-panel.active { display: block; }
+
+.tab-panel::-webkit-scrollbar { width: 8px; }
+.tab-panel::-webkit-scrollbar-track { background: transparent; }
+.tab-panel::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--secondary)); border-radius: 10px; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* الكارد الزجاجي مع حواف متدرجة متتابعة */
+/* الكارد الزجاجي مع حواف متدرجة متحركة دائرياً */
 .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -271,11 +285,11 @@ body {
     margin-bottom: 25px;
 }
 
-/* حواف متدرجة متتابعة (لون يلحق لون) */
+/* حواف متدرجة متحركة بشكل دائري حول الإطار */
 .glass-card::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -2px;
     border-radius: var(--radius-lg);
     padding: 2px;
     background: conic-gradient(from 0deg, 
@@ -303,7 +317,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: var(--radius-lg);
-    box-shadow: inset 0 0 60px var(--liquid-glow, rgba(0, 212, 255, 0.08)), inset 0 0 20px rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 0 60px rgba(0, 212, 255, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.03);
     pointer-events: none;
     z-index: 1;
 }
@@ -875,7 +889,6 @@ body {
 .setting-text h4 { font-size: 1rem; margin-bottom: 3px; }
 .setting-text p { font-size: 0.85rem; color: var(--text-muted); }
 
-/* Toggle Switch */
 .toggle-switch {
     position: relative;
     width: 50px;
@@ -1043,10 +1056,123 @@ body {
 
 .search-btn:hover { transform: scale(1.05); }
 
-/* ============ الإشعارات ============ */
+/* ============ Dialog Modal ============ */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 100002;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.dialog-overlay.active {
+    display: flex;
+}
+
+.dialog {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border-radius: 30px;
+    border: 2px solid var(--primary);
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    animation: dialogSlide 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dialog::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 30px;
+    padding: 2px;
+    background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: rotateGradient 6s linear infinite;
+    z-index: -1;
+}
+
+@keyframes dialogSlide {
+    from { transform: scale(0.8) translateY(-50px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.dialog-icon {
+    font-size: 60px;
+    color: var(--primary);
+    margin-bottom: 20px;
+    animation: iconShake 0.5s ease;
+}
+
+@keyframes iconShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+.dialog-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.dialog-message {
+    font-size: 16px;
+    opacity: 0.8;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.dialog-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: none;
+    transition: all var(--transition-fast);
+}
+
+.dialog-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.dialog-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+}
+
+.dialog-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+}
+
+.dialog-btn:active {
+    transform: scale(0.95);
+}
+
+/* ============ الإشعارات (Toast) ============ */
 .toast-container {
     position: fixed;
-    top: 30px;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100001;
@@ -1057,9 +1183,9 @@ body {
 }
 
 .toast {
-    background: rgba(5, 5, 8, 0.95);
+    background: rgba(5, 5, 8, 0.85);
     backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-right: 4px solid var(--primary);
     color: var(--text-primary);
     padding: 14px 24px;
@@ -1071,25 +1197,26 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     pointer-events: auto;
     min-width: 280px;
+    opacity: 0.9;
 }
 
-.toast.success { border-right-color: var(--success, #22c55e); }
-.toast.success i { color: var(--success, #22c55e); }
-.toast.error { border-right-color: var(--danger, #ef4444); }
-.toast.error i { color: var(--danger, #ef4444); }
-.toast.warning { border-right-color: var(--warning, #f59e0b); }
-.toast.warning i { color: var(--warning, #f59e0b); }
+.toast.success { border-right-color: #22c55e; }
+.toast.success i { color: #22c55e; }
+.toast.error { border-right-color: #ef4444; }
+.toast.error i { color: #ef4444; }
+.toast.warning { border-right-color: #f59e0b; }
+.toast.warning i { color: #f59e0b; }
 
 .toast i { font-size: 1.2rem; }
 .toast-message { font-size: 0.95rem; font-weight: 600; }
 
 @keyframes toastIn {
-    from { transform: translateY(-100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 0.9; }
 }
 
 @keyframes toastOut {
-    to { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(100px); opacity: 0; }
 }
 
 /* استجابة */
@@ -1112,6 +1239,15 @@ body {
     
     .eq-bands { overflow-x: auto; justify-content: flex-start; }
     .eq-band { min-width: 50px; }
+    
+    .nav-clock { min-width: 100px; font-size: 0.8rem; padding: 8px 15px; }
+}
+
+@media (min-width: 1200px) {
+    .app-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 }
 
 .no-select { user-select: none; -webkit-user-select: none; }
@@ -1151,7 +1287,7 @@ body {
             <button class="nav-tab" data-tab="settings"><i class="fas fa-cog"></i> الإعدادات</button>
             <button class="nav-tab" data-tab="contact"><i class="fas fa-address-card"></i> تواصل</button>
         </div>
-        <div class="nav-clock" id="navClock">00:00</div>
+        <div class="nav-clock" id="navClock">00:00 م</div>
     </nav>
 
     <!-- المحتوى -->
@@ -1207,9 +1343,9 @@ body {
                 </div>
                 <div class="search-box">
                     <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن أغنية...">
-                    <button class="search-btn" onclick="DeviceScanner.scan()"><i class="fas fa-search"></i> بحث</button>
+                    <button class="search-btn" onclick="DeviceScanner.showDialog()"><i class="fas fa-search"></i> بحث</button>
                 </div>
-                <div class="add-song-area" onclick="DeviceScanner.scan()">
+                <div class="add-song-area" onclick="DeviceScanner.showDialog()">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <h3>امسح جهازك للعثور على الأغاني</h3>
                     <p>سيتم البحث عن ملفات MP3 التي تزيد مدتها عن 60 ثانية</p>
@@ -1225,7 +1361,7 @@ body {
                 <div class="section-header">
                     <h3 class="section-title"><i class="fas fa-plus-circle"></i> إضافة أغنية جديدة</h3>
                 </div>
-                <div class="add-song-area" onclick="document.getElementById('fileInput').click()">
+                <div class="add-song-area" onclick="SongManager.showDialog()">
                     <i class="fas fa-music"></i>
                     <h3>اسحب وأفلت أو انقر للاختيار</h3>
                     <p>يدعم MP3, WAV, OGG, FLAC</p>
@@ -1328,6 +1464,19 @@ body {
     </div>
 </div>
 
+<!-- Dialog Modal -->
+<div class="dialog-overlay" id="dialogOverlay">
+    <div class="dialog">
+        <div class="dialog-icon" id="dialogIcon"><i class="fas fa-folder-open"></i></div>
+        <h3 class="dialog-title" id="dialogTitle">عنوان</h3>
+        <p class="dialog-message" id="dialogMessage">رسالة</p>
+        <div class="dialog-buttons">
+            <button class="dialog-btn primary" id="dialogConfirm">تأكيد</button>
+            <button class="dialog-btn secondary" onclick="Dialog.close()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 <audio id="audioElement" preload="auto"></audio>
 <input type="file" id="deviceFileInput" webkitdirectory directory multiple style="display: none;" onchange="DeviceScanner.processFiles(event)">
@@ -1382,7 +1531,29 @@ const EQ_FREQUENCIES = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000
 // ==========================================
 const Storage = {
     save: (k, v) => { try { localStorage.setItem(`soko_${k}`, JSON.stringify(v)); } catch(e){} },
-    load: (k, d = null) => { try { const v = localStorage.getItem(`soko_${k}`); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+    load: (k, d = null) => { try { const v = localStorage.getItem(`soko_${k}`); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+    clear: () => { Object.keys(localStorage).forEach(k => { if (k.startsWith('soko_')) localStorage.removeItem(k); }); }
+};
+
+// ==========================================
+// Dialog Modal
+// ==========================================
+const Dialog = {
+    show: (title, message, icon, onConfirm) => {
+        document.getElementById('dialogTitle').textContent = title;
+        document.getElementById('dialogMessage').textContent = message;
+        document.getElementById('dialogIcon').innerHTML = `<i class="fas ${icon}"></i>`;
+        document.getElementById('dialogOverlay').classList.add('active');
+        
+        const confirmBtn = document.getElementById('dialogConfirm');
+        confirmBtn.onclick = () => {
+            Dialog.close();
+            if (onConfirm) onConfirm();
+        };
+    },
+    close: () => {
+        document.getElementById('dialogOverlay').classList.remove('active');
+    }
 };
 
 // ==========================================
@@ -1552,14 +1723,12 @@ class AudioPlayer {
                 this.filters.push(filter);
             });
             
-            // ربط السلسلة: source -> filter[0] -> filter[1] -> ... -> analyser -> destination
             let node = this.source;
             this.filters.forEach(f => { node.connect(f); node = f; });
             node.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
             
             this.eqInitialized = true;
-            console.log('Audio Context initialized with EQ');
         } catch(e) {
             console.error('Audio Context Error:', e);
         }
@@ -1581,7 +1750,7 @@ class AudioPlayer {
             else this.next();
         });
         this.audio.addEventListener('error', () => {
-            Toast.show(`تعذر تحميل: ${this.tracks[this.currentIndex].src}`, 'error');
+            Toast.show(`تعذر تحميل: ${this.tracks[this.currentIndex]?.src || 'ملف غير معروف'}`, 'error');
             setTimeout(() => this.next(), 2000);
         });
         document.getElementById('progressBar').addEventListener('click', (e) => {
@@ -1737,9 +1906,18 @@ class AudioPlayer {
     }
 
     addDeviceTrack(file, url, duration) {
+        // منع التكرار بناءً على اسم الملف
+        const fileName = file.name.replace(/\.[^/.]+$/, '');
+        const exists = this.tracks.some(t => t.title === fileName && t.isDevice);
+        
+        if (exists) {
+            Toast.show(`الأغنية "${fileName}" موجودة بالفعل`, 'warning');
+            return;
+        }
+        
         const track = {
             id: 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-            title: file.name.replace(/\.[^/.]+$/, ''),
+            title: fileName,
             artist: 'من الجهاز',
             src: url,
             img: 'XX.jpg',
@@ -1749,6 +1927,7 @@ class AudioPlayer {
         this.deviceTracks.push(track);
         this.tracks.push(track);
         this.renderAllLists();
+        Toast.show(`تمت إضافة: ${fileName}`, 'success');
     }
 }
 
@@ -1817,8 +1996,15 @@ class Equalizer {
 // ماسح الجهاز
 // ==========================================
 const DeviceScanner = {
-    scan: () => {
-        document.getElementById('deviceFileInput').click();
+    showDialog: () => {
+        Dialog.show(
+            'البحث في الجهاز',
+            'سيتم فتح نافذة اختيار المجلد للبحث عن ملفات MP3 التي تزيد مدتها عن 60 ثانية. هل تريد المتابعة؟',
+            'fa-folder-open',
+            () => {
+                document.getElementById('deviceFileInput').click();
+            }
+        );
     },
     processFiles: (event) => {
         const files = Array.from(event.target.files).filter(f => 
@@ -1837,11 +2023,12 @@ const DeviceScanner = {
             tempAudio.addEventListener('loadedmetadata', () => {
                 if (tempAudio.duration >= 60) {
                     Player.addDeviceTrack(file, url, tempAudio.duration);
+                } else {
+                    Toast.show(`تم تخطي ${file.name} (أقل من 60 ثانية)`, 'warning');
                 }
                 processed++;
                 if (processed === files.length) {
-                    const added = Player.deviceTracks.length;
-                    Toast.show(`تمت إضافة ${added} أغنية (60+ ثانية)`, 'success');
+                    Toast.show(`اكتمل الفحص: تمت إضافة ${Player.deviceTracks.length} أغنية`, 'success');
                 }
             });
             tempAudio.addEventListener('error', () => { processed++; });
@@ -1853,6 +2040,16 @@ const DeviceScanner = {
 // إدارة الأغاني
 // ==========================================
 const SongManager = {
+    showDialog: () => {
+        Dialog.show(
+            'إضافة أغنية',
+            'اختر ملفات الصوت من جهازك (MP3, WAV, OGG, FLAC). لن يتم إضافة الأغاني المكررة.',
+            'fa-music',
+            () => {
+                document.getElementById('fileInput').click();
+            }
+        );
+    },
     handleFiles: (event) => {
         const files = Array.from(event.target.files);
         files.forEach(file => {
@@ -1862,7 +2059,6 @@ const SongManager = {
                 tempAudio.src = url;
                 tempAudio.addEventListener('loadedmetadata', () => {
                     Player.addDeviceTrack(file, url, tempAudio.duration);
-                    Toast.show(`تمت إضافة: ${file.name}`, 'success');
                 });
             }
         });
@@ -1904,9 +2100,9 @@ class SettingsManager {
         const settings = [
             { icon: 'fa-bell', title: 'الإشعارات', desc: 'تفعيل إشعارات تغيير الأغنية', key: 'notifications', default: true },
             { icon: 'fa-moon', title: 'الوضع الليلي', desc: 'تفعيل الوضع المظلم', key: 'darkMode', default: true },
-            { icon: 'fa-particle', title: 'تأثيرات الجسيمات', desc: 'خلفية الجسيمات التفاعلية', key: 'particles', default: true },
+            { icon: 'fa-atom', title: 'تأثيرات الجسيمات', desc: 'خلفية الجسيمات التفاعلية', key: 'particles', default: true },
             { icon: 'fa-mouse-pointer', title: 'مؤشر مخصص', desc: 'استخدام مؤشر الماوس المخصص', key: 'customCursor', default: true },
-            { icon: 'fa-smoke', title: 'تأثير الدخان', desc: 'تأثير الدخان عند النقر', key: 'smoke', default: true },
+            { icon: 'fa-smog', title: 'تأثير الدخان', desc: 'تأثير الدخان عند النقر', key: 'smoke', default: true },
             { icon: 'fa-save', title: 'حفظ تلقائي', desc: 'حفظ الإعدادات تلقائياً', key: 'autoSave', default: true },
             { icon: 'fa-trash', title: 'مسح البيانات', desc: 'حذف جميع البيانات المحفوظة', key: 'clearData', default: false, action: true }
         ];
@@ -1943,17 +2139,18 @@ class SettingsManager {
     }
 
     static clearData() {
-        if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
-            Storage.clear();
-            Toast.show('تم مسح جميع البيانات', 'success');
-            setTimeout(() => location.reload(), 1000);
-        }
+        Dialog.show(
+            'مسح البيانات',
+            'هل أنت متأكد من مسح جميع البيانات المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.',
+            'fa-exclamation-triangle',
+            () => {
+                Storage.clear();
+                Toast.show('تم مسح جميع البيانات', 'success');
+                setTimeout(() => location.reload(), 1000);
+            }
+        );
     }
 }
-
-Storage.clear = () => {
-    Object.keys(localStorage).forEach(k => { if (k.startsWith('soko_')) localStorage.removeItem(k); });
-};
 
 // ==========================================
 // الألبوم المتحرك
@@ -1998,8 +2195,8 @@ const App = {
         setTimeout(() => document.getElementById('appContainer').classList.add('visible'), 300);
         
         new ParticleSystem();
-        Player = new AudioPlayer();
-        Equalizer = new Equalizer();
+        window.Player = new AudioPlayer();
+        window.Equalizer = new Equalizer();
         
         AlbumSlider.init();
         ThemeManager.init();
@@ -2019,12 +2216,14 @@ const App = {
         });
         
         // الساعة
-        setInterval(() => {
+        const updateClock = () => {
             const now = new Date();
             const h = now.getHours(), m = now.getMinutes().toString().padStart(2, '0');
             const ampm = h >= 12 ? 'م' : 'ص';
             document.getElementById('navClock').textContent = `${h % 12 || 12}:${m} ${ampm}`;
-        }, 1000);
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
         
         Toast.show('مرحباً بك في SOKO MUSIC', 'success');
     }
