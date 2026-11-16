@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المتوسط المتحرك البسيط - SMA | محمد عباس كامل</title>
+
+<!-- خطوط فاخرة -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+:root {
+    --gold: #c9a961;
+    --gold-light: #e8d5a3;
+    --gold-dark: #8b7340;
+    --cream: #f5e6c8;
+    --cream-dark: #e8d5a3;
+    --parchment: #faf3e0;
+    --brown: #6b4423;
+    --brown-light: #8b6f47;
+    --dark: #2c1810;
+    --glass-bg: rgba(250, 243, 224, 0.75);
+    --glass-border: rgba(201, 169, 97, 0.4);
+}
+
+html, body {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    min-height: 100vh;
+    background: 
+        radial-gradient(ellipse at top left, rgba(201, 169, 97, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(139, 111, 71, 0.15) 0%, transparent 50%),
+        linear-gradient(135deg, #f5e6c8 0%, #faf3e0 25%, #f0e0b8 50%, #faf3e0 75%, #f5e6c8 100%);
+    background-attachment: fixed;
+    color: var(--dark);
+    position: relative;
+    padding: 30px 20px;
+}
+
+/* زخرفة كلاسيكية في الخلفية */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(201, 169, 97, 0.03) 35px, rgba(201, 169, 97, 0.03) 70px),
+        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(139, 111, 71, 0.03) 35px, rgba(139, 111, 71, 0.03) 70px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpath fill='%238b6f47' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* منع السحب على الصور */
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid var(--glass-border);
+    border-radius: 30px;
+    padding: 50px 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 
+        0 20px 60px rgba(139, 111, 71, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(139, 111, 71, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.header-ornament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.ornament-line {
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.ornament-icon {
+    color: var(--gold);
+    font-size: 1.8rem;
+    text-shadow: 0 0 15px rgba(201, 169, 97, 0.6);
+}
+
+.header h1 {
+    font-family: 'Reem Kufi', 'Cairo', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(139, 111, 71, 0.2);
+    letter-spacing: 2px;
+}
+
+.header h2 {
+    font-family: 'Amiri', serif;
+    font-size: 2rem;
+    color: var(--gold-dark);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.header .subtitle {
+    font-size: 1.2rem;
+    color: var(--brown-light);
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+/* ===== GLASS CARD ===== */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid var(--glass-border);
+    border-radius: 25px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 
+        0 15px 40px rgba(139, 111, 71, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 
+        0 20px 50px rgba(139, 111, 71, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transform: translateY(-3px);
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+    font-family: 'Reem Kufi', 'Cairo', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(201, 169, 97, 0.3);
+}
+
+.section-title i {
+    color: var(--gold);
+    font-size: 1.8rem;
+    text-shadow: 0 0 15px rgba(201, 169, 97, 0.5);
+}
+
+.section-title .title-text {
+    flex: 1;
+}
+
+.section-title .title-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+/* ===== UNIVERSITY INFO ===== */
+.university-info {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.15), rgba(139, 111, 71, 0.1));
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.university-info .uni-title {
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 1.8rem;
+    color: var(--brown);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.university-info .uni-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.uni-item {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 12px 20px;
+    border-radius: 12px;
+    border-right: 4px solid var(--gold);
+    text-align: right;
+}
+
+.uni-item .label {
+    font-size: 0.9rem;
+    color: var(--brown-light);
+    margin-bottom: 5px;
+}
+
+.uni-item .value {
+    font-size: 1.1rem;
+    color: var(--brown);
+    font-weight: 700;
+}
+
+/* ===== DATA TABLE ===== */
+.data-table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+}
+
+.data-table thead th {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: white;
+    padding: 18px 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.data-table thead th:first-child {
+    border-left: none;
+}
+
+.data-table tbody td {
+    padding: 15px 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--brown);
+    border-left: 1px solid rgba(201, 169, 97, 0.2);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+    transition: all 0.3s ease;
+}
+
+.data-table tbody td:last-child {
+    border-left: none;
+}
+
+.data-table tbody tr:hover td {
+    background: rgba(201, 169, 97, 0.15);
+}
+
+.data-table tbody td.month-label {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.3), rgba(139, 111, 71, 0.2));
+    color: var(--brown);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.data-table tbody td.highlight {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.4), rgba(232, 213, 163, 0.4));
+    color: var(--brown);
+    font-weight: 900;
+    font-size: 1.3rem;
+    position: relative;
+}
+
+.data-table tbody td.highlight::after {
+    content: '⭐';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 1rem;
+}
+
+/* ===== FORMULA BOX ===== */
+.formula-box {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.2), rgba(139, 111, 71, 0.15));
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+    padding: 35px;
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(201, 169, 97, 0.3);
+}
+
+.formula-box::before {
+    content: '📐';
+    position: absolute;
+    top: -20px;
+    right: 30px;
+    font-size: 2.5rem;
+    background: var(--cream);
+    padding: 0 10px;
+}
+
+.formula-box .formula {
+    font-family: 'Amiri', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--brown);
+    direction: ltr;
+    display: inline-block;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.formula-box .formula-desc {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--brown-light);
+    line-height: 1.8;
+}
+
+.formula-box .formula-desc strong {
+    color: var(--gold-dark);
+}
+
+/* ===== STEPS GRID ===== */
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.step-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(245, 230, 200, 0.5));
+    border: 2px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 25px;
+    position: relative;
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(139, 111, 71, 0.25);
+    border-color: var(--gold);
+}
+
+.step-card.featured {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.25), rgba(139, 111, 71, 0.2));
+    border: 3px solid var(--gold);
+    box-shadow: 0 10px 30px rgba(201, 169, 97, 0.3);
+}
+
+.step-card.featured::before {
+    width: 8px;
+    background: linear-gradient(180deg, var(--gold), #ff6b6b, var(--gold));
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: white;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 20px rgba(201, 169, 97, 0.5);
+    font-family: 'Cairo', sans-serif;
+}
+
+.step-card.featured .step-number {
+    background: linear-gradient(135deg, #ff6b6b, var(--gold));
+    box-shadow: 0 5px 25px rgba(255, 107, 107, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 5px 25px rgba(255, 107, 107, 0.5); }
+    50% { box-shadow: 0 5px 35px rgba(255, 107, 107, 0.8); }
+}
+
+.step-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-title i {
+    color: var(--gold);
+}
+
+.step-formula {
+    background: rgba(139, 111, 71, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-family: 'Amiri', serif;
+    font-size: 1.2rem;
+    color: var(--brown);
+    direction: ltr;
+    text-align: center;
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    line-height: 1.8;
+}
+
+.step-result {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.3), rgba(139, 111, 71, 0.2));
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--brown);
+    margin-top: 15px;
+    border: 2px solid var(--gold);
+    font-family: 'Cairo', sans-serif;
+}
+
+.step-card.featured .step-result {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: white;
+    font-size: 1.7rem;
+    box-shadow: 0 5px 20px rgba(201, 169, 97, 0.5);
+}
+
+/* ===== FINAL RESULT ===== */
+.final-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.final-card {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.3), rgba(139, 111, 71, 0.2));
+    border: 3px solid var(--gold);
+    border-radius: 25px;
+    padding: 35px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(201, 169, 97, 0.4);
+}
+
+.final-card::before {
+    content: '🏆';
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2.5rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.final-card .month-name {
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 1.5rem;
+    color: var(--brown);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.final-card .result-value {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-dark), var(--brown));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 15px 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+.final-card .result-desc {
+    color: var(--brown-light);
+    font-size: 1.1rem;
+}
+
+/* ===== CHART ===== */
+.chart-container {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    border: 2px solid var(--glass-border);
+    height: 500px;
+    position: relative;
+}
+
+/* ===== ALBUM ===== */
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.album-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 3px solid var(--gold);
+    box-shadow: 0 15px 40px rgba(139, 111, 71, 0.3);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.album-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(201, 169, 97, 0.5);
+}
+
+.album-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.album-item:hover img {
+    transform: scale(1.05);
+}
+
+.album-item .album-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(44, 24, 16, 0.9));
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.album-item .album-label i {
+    color: var(--gold);
+    margin-left: 8px;
+}
+
+/* ===== LIGHTBOX ===== */
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 20px;
+    border: 3px solid var(--gold);
+    box-shadow: 0 20px 60px rgba(201, 169, 97, 0.5);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    color: var(--gold);
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.lightbox-close:hover {
+    transform: rotate(90deg);
+}
+
+/* ===== ICON BUTTONS ===== */
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 50%;
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(201, 169, 97, 0.4);
+}
+
+.icon-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.icon-btn:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
+.icon-btn:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(201, 169, 97, 0.6);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+.icon-btn i {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--glass-border);
+    border-radius: 25px;
+    padding: 35px;
+    margin-top: 30px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(139, 111, 71, 0.2);
+}
+
+.footer .copyright {
+    font-size: 1.1rem;
+    color: var(--brown);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.telegram-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #0088cc, #005f8f);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0, 136, 204, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.telegram-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.telegram-link:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.telegram-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 136, 204, 0.6);
+}
+
+.telegram-link i, .telegram-link span {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== NOTE BOX ===== */
+.note-box {
+    background: linear-gradient(135deg, rgba(201, 169, 97, 0.15), rgba(139, 111, 71, 0.1));
+    border-right: 5px solid var(--gold);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--brown);
+}
+
+.note-box i {
+    color: var(--gold);
+    margin-left: 10px;
+}
+
+.note-box strong {
+    color: var(--gold-dark);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .header h1 { font-size: 2.2rem; }
+    .header h2 { font-size: 1.5rem; }
+    .section-title { font-size: 1.5rem; }
+    .formula-box .formula { font-size: 1.8rem; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .final-card .result-value { font-size: 2.5rem; }
+    .album-grid { grid-template-columns: 1fr; }
+    .glass-card { padding: 25px; }
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Shine effect on click */
+.shine-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: shine 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header fade-in">
+        <div class="header-ornament">
+            <div class="ornament-line"></div>
+            <i class="fas fa-star ornament-icon"></i>
+            <i class="fas fa-graduation-cap ornament-icon"></i>
+            <i class="fas fa-star ornament-icon"></i>
+            <div class="ornament-line"></div>
+        </div>
+        <h1>المتوسط المتحرك البسيط</h1>
+        <h2>Simple Moving Average (SMA)</h2>
+        <div class="subtitle">
+            <i class="fas fa-chart-line" style="color:var(--gold);"></i>
+            أساليب كمية في إدارة الأعمال
+            <i class="fas fa-chart-line" style="color:var(--gold);"></i>
+        </div>
+    </div>
+
+    <!-- UNIVERSITY INFO -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-university"></i>
+            <span class="title-text">البيانات الأكاديمية</span>
+            <span class="title-line"></span>
+        </div>
+        
+        <div class="university-info">
+            <div class="uni-title">
+                <i class="fas fa-landmark" style="color:var(--gold);"></i>
+                جمهورية العراق
+            </div>
+            <div class="uni-details">
+                <div class="uni-item">
+                    <div class="label"><i class="fas fa-building" style="color:var(--gold);"></i> الوزارة</div>
+                    <div class="value">وزارة التعليم العالي والبحث العلمي</div>
+                </div>
+                <div class="uni-item">
+                    <div class="label"><i class="fas fa-school" style="color:var(--gold);"></i> الجامعة</div>
+                    <div class="value">جامعة الحلة</div>
+                </div>
+                <div class="uni-item">
+                    <div class="label"><i class="fas fa-book-open" style="color:var(--gold);"></i> الكلية</div>
+                    <div class="value">كلية الإدارة والاقتصاد</div>
+                </div>
+                <div class="uni-item">
+                    <div class="label"><i class="fas fa-briefcase" style="color:var(--gold);"></i> القسم</div>
+                    <div class="value">قسم إدارة الأعمال</div>
+                </div>
+                <div class="uni-item">
+                    <div class="label"><i class="fas fa-layer-group" style="color:var(--gold);"></i> المرحلة</div>
+                    <div class="value">الثالثة - B - مسائي</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:15px; margin-top:20px;">
+            <div class="uni-item">
+                <div class="label"><i class="fas fa-user-graduate" style="color:var(--gold);"></i> اسم الطالب</div>
+                <div class="value">محمد عباس كامل</div>
+            </div>
+            <div class="uni-item">
+                <div class="label"><i class="fas fa-chalkboard-teacher" style="color:var(--gold);"></i> مقدم إلى</div>
+                <div class="value">م.د ياسر محمود</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-clipboard-question"></i>
+            <span class="title-text">نص السؤال</span>
+            <span class="title-line"></span>
+        </div>
+        
+        <div class="note-box">
+            <i class="fas fa-quote-right"></i>
+            <strong>السؤال:</strong> استخدم بيانات الطلب في الجدول المرفق أدناه خلال <strong>12 شهر</strong> لعام <strong>2025</strong>.
+            <br><br>
+            <i class="fas fa-bullseye"></i>
+            <strong>المطلوب:</strong> احتسب الطلب المتوقع لشهري <strong>(11, 12)</strong> لعام <strong>2026</strong>، باستخدام فترتين متوسط متحرك، علماً أن الأرقام بالألاف.
+        </div>
+
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar"></i> الشهر</th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="month-label"><i class="fas fa-shopping-cart"></i> الطلب</td>
+                        <td>20</td>
+                        <td>30</td>
+                        <td>20</td>
+                        <td>40</td>
+                        <td>20</td>
+                        <td>30</td>
+                        <td>10</td>
+                        <td>50</td>
+                        <td>20</td>
+                        <td>80</td>
+                        <td class="highlight">120</td>
+                        <td class="highlight">20</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FORMULA -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-square-root-variable"></i>
+            <span class="title-text">القانون المستخدم</span>
+            <span class="title-line"></span>
+        </div>
+        
+        <div class="formula-box">
+            <div class="formula">SMA = (D<sub>t-1</sub> + D<sub>t-2</sub>) ÷ 2</div>
+            <div class="formula-desc">
+                <i class="fas fa-info-circle" style="color:var(--gold);"></i>
+                حيث: <strong>SMA</strong> = المتوسط المتحرك البسيط | 
+                <strong>D<sub>t-1</sub></strong> = الطلب الفعلي للفترة السابقة | 
+                <strong>D<sub>t-2</sub></strong> = الطلب الفعلي للفترة التي قبلها | 
+                <strong>n = 2</strong> (فترتين)
+            </div>
+        </div>
+
+        <div class="note-box">
+            <i class="fas fa-lightbulb"></i>
+            <strong>طريقة الحل:</strong> نبدأ بحساب شهر <strong>1/2026</strong> باستخدام آخر شهرين فعليين من 2025 (شهر 11 وشهر 12)، ثم نستمر شهراً بشهر حتى نصل إلى الشهرين المطلوبين (11 و 12) من عام 2026.
+        </div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-list-ol"></i>
+            <span class="title-text">خطوات الحل التفصيلية</span>
+            <span class="title-line"></span>
+        </div>
+
+        <div class="steps-grid">
+
+            <!-- شهر 1 -->
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر يناير 2026</div>
+                <div class="step-formula">
+                    SMA = (D₁₂ + D₁₁) ÷ 2<br>
+                    = (20 + 120) ÷ 2<br>
+                    = 140 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 70 ألف</div>
+            </div>
+
+            <!-- شهر 2 -->
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر فبراير 2026</div>
+                <div class="step-formula">
+                    SMA = (D₁ + D₁₂) ÷ 2<br>
+                    = (70 + 20) ÷ 2<br>
+                    = 90 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 45 ألف</div>
+            </div>
+
+            <!-- شهر 3 -->
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر مارس 2026</div>
+                <div class="step-formula">
+                    SMA = (F₂ + F₁) ÷ 2<br>
+                    = (45 + 70) ÷ 2<br>
+                    = 115 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 57.5 ألف</div>
+            </div>
+
+            <!-- شهر 4 -->
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر أبريل 2026</div>
+                <div class="step-formula">
+                    SMA = (F₃ + F₂) ÷ 2<br>
+                    = (57.5 + 45) ÷ 2<br>
+                    = 102.5 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 51.25 ألف</div>
+            </div>
+
+            <!-- شهر 5 -->
+            <div class="step-card">
+                <div class="step-number">5</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر مايو 2026</div>
+                <div class="step-formula">
+                    SMA = (F₄ + F₃) ÷ 2<br>
+                    = (51.25 + 57.5) ÷ 2<br>
+                    = 108.75 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 54.375 ألف</div>
+            </div>
+
+            <!-- شهر 6 -->
+            <div class="step-card">
+                <div class="step-number">6</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر يونيو 2026</div>
+                <div class="step-formula">
+                    SMA = (F₅ + F₄) ÷ 2<br>
+                    = (54.375 + 51.25) ÷ 2<br>
+                    = 105.625 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 52.8125 ألف</div>
+            </div>
+
+            <!-- شهر 7 -->
+            <div class="step-card">
+                <div class="step-number">7</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر يوليو 2026</div>
+                <div class="step-formula">
+                    SMA = (F₆ + F₅) ÷ 2<br>
+                    = (52.8125 + 54.375) ÷ 2<br>
+                    = 107.1875 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 53.59375 ألف</div>
+            </div>
+
+            <!-- شهر 8 -->
+            <div class="step-card">
+                <div class="step-number">8</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر أغسطس 2026</div>
+                <div class="step-formula">
+                    SMA = (F₇ + F₆) ÷ 2<br>
+                    = (53.59375 + 52.8125) ÷ 2<br>
+                    = 106.40625 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 53.203125 ألف</div>
+            </div>
+
+            <!-- شهر 9 -->
+            <div class="step-card">
+                <div class="step-number">9</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر سبتمبر 2026</div>
+                <div class="step-formula">
+                    SMA = (F₈ + F₇) ÷ 2<br>
+                    = (53.203125 + 53.59375) ÷ 2<br>
+                    = 106.796875 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 53.3984375 ألف</div>
+            </div>
+
+            <!-- شهر 10 -->
+            <div class="step-card">
+                <div class="step-number">10</div>
+                <div class="step-title"><i class="fas fa-calendar-day"></i> شهر أكتوبر 2026</div>
+                <div class="step-formula">
+                    SMA = (F₉ + F₈) ÷ 2<br>
+                    = (53.3984375 + 53.203125) ÷ 2<br>
+                    = 106.6015625 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-equals"></i> 53.30078125 ألف</div>
+            </div>
+
+            <!-- شهر 11 - المطلوب -->
+            <div class="step-card featured">
+                <div class="step-number">11</div>
+                <div class="step-title"><i class="fas fa-star"></i> شهر نوفمبر 2026 ⭐ المطلوب</div>
+                <div class="step-formula">
+                    SMA = (F₁₀ + F₉) ÷ 2<br>
+                    = (53.30078125 + 53.3984375) ÷ 2<br>
+                    = 106.69921875 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-trophy"></i> ≈ 53.35 ألف</div>
+            </div>
+
+            <!-- شهر 12 - المطلوب -->
+            <div class="step-card featured">
+                <div class="step-number">12</div>
+                <div class="step-title"><i class="fas fa-star"></i> شهر ديسمبر 2026 ⭐ المطلوب</div>
+                <div class="step-formula">
+                    SMA = (F₁₁ + F₁₀) ÷ 2<br>
+                    = (53.349609375 + 53.30078125) ÷ 2<br>
+                    = 106.650390625 ÷ 2
+                </div>
+                <div class="step-result"><i class="fas fa-trophy"></i> ≈ 53.33 ألف</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FINAL RESULTS -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-award"></i>
+            <span class="title-text">النتائج النهائية</span>
+            <span class="title-line"></span>
+        </div>
+
+        <div class="final-results">
+            <div class="final-card">
+                <div class="month-name"><i class="fas fa-calendar-check" style="color:var(--gold);"></i> شهر نوفمبر 2026</div>
+                <div class="result-value">53.35</div>
+                <div class="result-desc">ألف وحدة طلب متوقعة</div>
+                <div style="margin-top:15px; color:var(--brown-light); font-size:0.95rem;">
+                    ≈ 53,350 وحدة
+                </div>
+            </div>
+
+            <div class="final-card">
+                <div class="month-name"><i class="fas fa-calendar-check" style="color:var(--gold);"></i> شهر ديسمبر 2026</div>
+                <div class="result-value">53.33</div>
+                <div class="result-desc">ألف وحدة طلب متوقعة</div>
+                <div style="margin-top:15px; color:var(--brown-light); font-size:0.95rem;">
+                    ≈ 53,330 وحدة
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-chart-line"></i>
+            <span class="title-text">الرسم البياني التفاعلي — الطلب الفعلي vs التوقعات</span>
+            <span class="title-line"></span>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:15px; margin-bottom:20px; flex-wrap:wrap;">
+            <button class="icon-btn" onclick="animateChart()" title="تحريك الرسم البياني">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="icon-btn" onclick="resetChart()" title="إعادة تعيين">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button class="icon-btn" onclick="toggleActual()" title="إظهار/إخفاء الفعلي">
+                <i class="fas fa-eye"></i>
+            </button>
+            <button class="icon-btn" onclick="toggleForecast()" title="إظهار/إخفاء التوقعات">
+                <i class="fas fa-chart-area"></i>
+            </button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="smaChart"></canvas>
+        </div>
+
+        <div class="note-box" style="margin-top:20px;">
+            <i class="fas fa-chart-line"></i>
+            <strong>ملاحظة:</strong> نلاحظ أن القيم تتقارب تدريجياً نحو <strong>53.33</strong>، وهذا من خصائص طريقة المتوسط المتحرك البسيط — فهي تفقد حساسيتها للتغيرات مع مرور الوقت وتستقر حول القيمة المستقرة (Steady State).
+        </div>
+    </div>
+
+    <!-- ALBUM -->
+    <div class="glass-card fade-in">
+        <div class="section-title">
+            <i class="fas fa-images"></i>
+            <span class="title-text">ألبوم صور — حل مثال الواجب</span>
+            <span class="title-line"></span>
+        </div>
+
+        <div class="album-grid">
+            <div class="album-item" onclick="openLightbox('1.jpg')">
+                <img src="1.jpg" alt="حل الواجب - صورة 1" onerror="this.src='https://via.placeholder.com/600x400/c9a961/ffffff?text=صورة+1'">
+                <div class="album-label">
+                    <i class="fas fa-image"></i>
+                    صورة الحل الأولى
+                </div>
+            </div>
+            <div class="album-item" onclick="openLightbox('2.jpg')">
+                <img src="2.jpg" alt="حل الواجب - صورة 2" onerror="this.src='https://via.placeholder.com/600x400/8b6f47/ffffff?text=صورة+2'">
+                <div class="album-label">
+                    <i class="fas fa-image"></i>
+                    صورة الحل الثانية
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer fade-in">
+        <div class="copyright">
+            <i class="fas fa-copyright" style="color:var(--gold);"></i>
+            جميع الحقوق محفوظة © 2026 — محمد عباس كامل
+        </div>
+        <div style="margin-top:15px;">
+            <a href="https://t.me/ONX40" target="_blank" class="telegram-link">
+                <i class="fab fa-telegram"></i>
+                <span>@ONX40</span>
+            </a>
+        </div>
+        <div style="margin-top:20px; color:var(--brown-light); font-size:0.95rem;">
+            <i class="fas fa-graduation-cap" style="color:var(--gold);"></i>
+            جامعة الحلة — كلية الإدارة والاقتصاد — قسم إدارة الأعمال
+        </div>
+    </div>
+
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-close"><i class="fas fa-times-circle"></i></div>
+    <img id="lightbox-img" src="" alt="صورة مكبرة">
+</div>
+
+<script>
+// منع النسخ والسحب
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+
+// Scroll Animation
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Shine effect on icon buttons
+document.querySelectorAll('.icon-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        const shine = document.createElement('span');
+        shine.className = 'shine-effect';
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        shine.style.width = shine.style.height = size + 'px';
+        shine.style.left = (e.clientX - rect.left - size/2) + 'px';
+        shine.style.top = (e.clientY - rect.top - size/2) + 'px';
+        this.appendChild(shine);
+        setTimeout(() => shine.remove(), 600);
+    });
+});
+
+// Chart Data
+const months = ['يناير 25', 'فبراير 25', 'مارس 25', 'أبريل 25', 'مايو 25', 'يونيو 25', 'يوليو 25', 'أغسطس 25', 'سبتمبر 25', 'أكتوبر 25', 'نوفمبر 25', 'ديسمبر 25', 'يناير 26', 'فبراير 26', 'مارس 26', 'أبريل 26', 'مايو 26', 'يونيو 26', 'يوليو 26', 'أغسطس 26', 'سبتمبر 26', 'أكتوبر 26', 'نوفمبر 26', 'ديسمبر 26'];
+
+const actualData = [20, 30, 20, 40, 20, 30, 10, 50, 20, 80, 120, 20, null, null, null, null, null, null, null, null, null, null, null, null];
+const forecastData = [null, null, null, null, null, null, null, null, null, null, null, null, 70, 45, 57.5, 51.25, 54.375, 52.8125, 53.59375, 53.203125, 53.3984375, 53.30078125, 53.35, 53.33];
+
+const ctx = document.getElementById('smaChart').getContext('2d');
+
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: months,
+        datasets: [
+            {
+                label: 'الطلب الفعلي 2025',
+                data: [...actualData],
+                borderColor: '#c9a961',
+                backgroundColor: 'rgba(201, 169, 97, 0.2)',
+                borderWidth: 4,
+                pointBackgroundColor: '#c9a961',
+                pointBorderColor: '#fff',
+                pointRadius: 7,
+                pointHoverRadius: 12,
+                tension: 0.4,
+                fill: true
+            },
+            {
+                label: 'التوقعات SMA 2026',
+                data: [...forecastData],
+                borderColor: '#8b6f47',
+                backgroundColor: 'rgba(139, 111, 71, 0.2)',
+                borderWidth: 4,
+                pointBackgroundColor: '#8b6f47',
+                pointBorderColor: '#fff',
+                pointRadius: 7,
+                pointHoverRadius: 12,
+                tension: 0.4,
+                fill: true,
+                borderDash: [5, 5]
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#2c1810',
+                    font: { family: 'Cairo', size: 14, weight: 'bold' }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(44, 24, 16, 0.9)',
+                titleFont: { family: 'Cairo', size: 14 },
+                bodyFont: { family: 'Cairo', size: 13 },
+                borderColor: '#c9a961',
+                borderWidth: 2,
+                titleColor: '#c9a961',
+                bodyColor: '#fff'
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#6b4423', font: { family: 'Cairo', size: 11 } },
+                grid: { color: 'rgba(201, 169, 97, 0.2)' }
+            },
+            y: {
+                ticks: { color: '#6b4423', font: { family: 'Cairo', size: 12 } },
+                grid: { color: 'rgba(201, 169, 97, 0.2)' },
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'الطلب (ألف وحدة)',
+                    color: '#6b4423',
+                    font: { family: 'Cairo', size: 13, weight: 'bold' }
+                }
+            }
+        },
+        animation: {
+            duration: 2500,
+            easing: 'easeOutQuart'
+        }
+    }
+});
+
+// Chart Controls
+function animateChart() {
+    chart.reset();
+    chart.update();
+}
+
+function resetChart() {
+    chart.data.datasets[0].data = [...actualData];
+    chart.data.datasets[1].data = [...forecastData];
+    chart.data.datasets[0].hidden = false;
+    chart.data.datasets[1].hidden = false;
+    chart.update();
+}
+
+function toggleActual() {
+    chart.data.datasets[0].hidden = !chart.data.datasets[0].hidden;
+    chart.update();
+}
+
+function toggleForecast() {
+    chart.data.datasets[1].hidden = !chart.data.datasets[1].hidden;
+    chart.update();
+}
+
+// Lightbox
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('active');
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+}
+
+// Keyboard close lightbox
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+});
+</script>
+
+</body>
+</html>
