@@ -861,7 +861,39 @@ img {
 .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.25;margin:0 .15em}
 .frac span:first-child{border-bottom:2px solid currentColor;padding:0 7px 4px}
 .frac span:last-child{padding:4px 7px 0}
+
+/* ===== ONX PREMIUM ADDITIONS =====
+   Local image assets: 1.jpg, 2.jpg, 3.jpg (same folder as this HTML)
+*/
+.brand-corner{display:none}
+.site-mini-header{position:sticky;top:0;z-index:1001;margin:0 auto 14px;max-width:1100px;padding:8px 12px;border:1px solid #b8944d;border-radius:0 0 18px 18px;background:linear-gradient(120deg,#20170d,#3d2b16,#20170d);box-shadow:0 8px 25px #0002;display:flex;align-items:center;gap:10px;color:#f2dfb3}
+.site-mini-header img{width:44px;height:44px;object-fit:contain;border-radius:9px;background:#f4e4bd;padding:3px;border:1px solid #b8944d;flex:0 0 auto}
+.site-mini-header .mini-title{font-weight:800;font-size:clamp(.78rem,2.5vw,1.05rem);line-height:1.4}
+.desktop-tip{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:10px 12px;border-radius:14px;background:#4a351a12;border:1px solid #b8944d55;color:#6f5128;font-size:.86rem;line-height:1.8}
+.desktop-tip button{border:1px solid #a88944;background:linear-gradient(135deg,#c9a961,#8b7340);color:#fff;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px #8b734033;flex:0 0 auto}
+.desktop-help-overlay{position:fixed;inset:0;background:#1b120bd9;z-index:10020;display:none;align-items:center;justify-content:center;padding:16px}
+.desktop-help-overlay.show{display:flex}.desktop-help-card{max-width:430px;background:linear-gradient(145deg,#fff8e8,#e8d4a5);color:#432b17;border:3px double #b8944d;border-radius:22px;padding:22px;text-align:center;box-shadow:0 25px 80px #0008}
+.desktop-help-card h3{margin:0 0 10px;color:#785a2b}.desktop-help-card button{margin-top:14px;border:0;border-radius:24px;padding:10px 22px;background:linear-gradient(135deg,#c9a961,#8b7340);color:white;font-family:inherit;font-weight:700}
+
+.welcome-overlay{position:fixed;inset:0;z-index:10000;background:rgba(24,13,8,.78);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:18px}
+.welcome-panel{max-width:520px;width:100%;background:linear-gradient(145deg,#fff8e8,#e8d4a5);border:3px double #b8944d;border-radius:28px;padding:30px 24px;text-align:center;color:#432b17;box-shadow:0 25px 80px #0008;position:relative;overflow:hidden}
+.welcome-panel:before,.welcome-panel:after{content:'';position:absolute;left:15px;right:15px;height:1px;background:linear-gradient(90,transparent,#b8944d,transparent)}.welcome-panel:before{top:12px}.welcome-panel:after{bottom:12px}
+.welcome-panel h2{font-family:'Amiri',serif;font-size:1.75rem;color:#785a2b;margin:8px 0 14px}.welcome-panel p{line-height:2;font-size:1.08rem}.welcome-panel .welcome-seal{font-size:2.4rem;color:#b28a42;margin:6px}
+.welcome-panel button,.qr-share button,.visitor-form button{border:0;border-radius:30px;background:linear-gradient(135deg,#c9a961,#8b7340);color:white;padding:12px 24px;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;box-shadow:0 6px 18px #8b734033}
+.welcome-panel button{margin-top:18px}.qr-share{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:center;text-align:center}.qr-frame{background:#fffdf5;border:5px double #b8944d;border-radius:24px;padding:15px;box-shadow:0 12px 28px #6b442322;display:inline-flex;justify-content:center;align-items:center;min-width:230px;min-height:230px}.qr-frame canvas,.qr-frame img{max-width:100%;height:auto}.qr-caption{color:#785a2b;line-height:1.8;max-width:430px}.visitor-form{display:grid;gap:12px;max-width:650px;margin:auto}.visitor-form input,.visitor-form textarea{width:100%;border:1px solid #b8944d;border-radius:14px;padding:13px;background:#fffaf0;color:#432b17;font-family:'Tajawal',sans-serif;font-size:1rem;outline:none}.visitor-form textarea{min-height:130px;resize:vertical}.visitor-form button{justify-self:center}.form-status{min-height:24px;color:#785a2b;font-weight:700}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}.gallery-grid .album-item img{object-fit:contain;background:#fff8e8}
+.forecast-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin:14px 0}
+.forecast-controls label{display:grid;gap:6px;color:#785a2b;font-weight:700;font-size:.9rem}
+.forecast-controls input{min-width:0;width:100%;border:1px solid #b8944d;border-radius:12px;padding:10px;background:#fffaf0;color:#432b17;font:inherit}
+.forecast-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:12px 0}
+.forecast-actions button{border:1px solid #a88944;border-radius:25px;padding:10px 18px;background:linear-gradient(135deg,#c9a961,#8b7340);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.forecast-table{width:100%;border-collapse:collapse;margin-top:12px;overflow:hidden;border-radius:12px}.forecast-table th,.forecast-table td{border:1px solid #b8944d55;padding:9px;text-align:center}.forecast-table th{background:#4a351a;color:#f4e4bd}.forecast-table td{background:#fff8e8;color:#493116}
+.qr-frame{background:radial-gradient(circle at 50%,#f8e8bd,#d9bd79);border:7px double #8d6b2d;border-radius:28px;padding:18px;box-shadow:0 0 0 5px #49311612,0 15px 35px #6b442344;position:relative}.qr-frame:before{content:'✦';position:absolute;top:4px;left:8px;color:#8d6b2d;font-size:17px}.qr-frame:after{content:'✦';position:absolute;bottom:4px;right:8px;color:#8d6b2d;font-size:17px}.qr-frame #siteQr{padding:10px;border-radius:12px;background:#e9d19b;border:1px solid #98743a}.qr-frame canvas,.qr-frame img{border-radius:5px}
+@media(max-width:600px){.welcome-panel{padding:26px 18px}.welcome-panel h2{font-size:1.45rem}.site-mini-header{padding:7px 9px}.site-mini-header img{width:38px;height:38px}}
+
+
 </style></head><body oncontextmenu="return false;">
+<div class="site-mini-header"><img src="3.jpg" alt="شعار كلية الإدارة والاقتصاد"><div class="mini-title"><i class="fas fa-chart-line"></i> الاتجاه العام والتنبؤ بالطلب</div></div>
+<div class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true"><div class="welcome-panel"><div class="welcome-seal"><i class="fas fa-graduation-cap"></i></div><h2>مرحباً بك أستاذي الفاضل</h2><p>أتمنى أن يكون هذا العمل وجوابه وافيًا، وأن ينال موقعي المتواضع إعجابكم. أعددته بكل اهتمام، راجيًا أن يكون عرضًا واضحًا ومفيدًا.</p><p style="font-size:.82rem;opacity:.8;margin-top:10px">بالضغط على متابعة، توافق على إرسال بيانات تقنية محدودة عن زيارة الصفحة (مثل نوع المتصفح ووقت الدخول) لأغراض إحصائية.</p><button id="welcomeContinue">متابعة إلى الموقع <i class="fas fa-arrow-left"></i></button><div class="desktop-tip"><span><i class="fas fa-display"></i> يُفضّل فتح الموقع بعرض سطح المكتب لعرض أوسع وأوضح.</span><button type="button" id="desktopTipButton" aria-label="شرح تفعيل عرض سطح المكتب"><i class="fas fa-circle-info"></i></button></div></div></div><div class="desktop-help-overlay" id="desktopHelp"><div class="desktop-help-card"><h3><i class="fas fa-desktop"></i> عرض سطح المكتب</h3><p>للحصول على العرض المكتبي، افتح قائمة المتصفح (⋮) ثم فعّل <strong>موقع سطح المكتب</strong> أو <strong>Desktop site</strong>، وبعدها أعد تحميل الصفحة.</p><button id="desktopHelpClose">حسنًا</button></div></div>
 <div class="container">
   <div class="header fade-in">
     <div class="header-ornament"><div class="ornament-line"></div><i class="fas fa-star ornament-icon"></i><i class="fas fa-graduation-cap ornament-icon"></i><i class="fas fa-star ornament-icon"></i><div class="ornament-line"></div></div>
@@ -909,6 +941,14 @@ img {
       <div class="step-card law-card" onclick="toggleLaw(this)"><div class="step-number">5</div><div class="step-title"><i class="fas fa-calculator"></i> معادلة الاتجاه</div><div class="step-formula">y = a + bx = 0 + 2x</div><div class="step-result">y = 2x</div><div class="expand-hint"><i class="fas fa-expand-alt"></i> انقر هنا لعرض التعويض والتوقعات</div><div class="law-detail"><strong>اسم القانون: معادلة الاتجاه العام (التنبؤ بالطلب)</strong><br>القانون: y = a + bx<br>الثابت a = 0، والميل b = 2<br><br>2026: x = 6 ⟵ y = 0 + (2 × 6) = <strong>12</strong><br>2027: x = 7 ⟵ y = 0 + (2 × 7) = <strong>14</strong><br>2028: x = 8 ⟵ y = 0 + (2 × 8) = <strong>16</strong><br>2029: x = 9 ⟵ y = 0 + (2 × 9) = <strong>18</strong><br>2030: x = 10 ⟵ y = 0 + (2 × 10) = <strong>20</strong><br><br><strong>إذن الطلب المتوقع للأعوام الخمسة = 12، 14، 16، 18، 20</strong></div></div>
     </div>
   </div>
+  <div class="glass-card fade-in" id="dynamicForecastCard">
+    <div class="section-title"><i class="fas fa-sliders"></i><span class="title-text">تعديل بيانات السؤال والتنبؤ</span><span class="title-line"></span></div>
+    <p class="qr-caption">غيّر أرقام الطلب أو سنة بداية التنبؤ وعدد السنوات، وسيُعاد حساب الميل والثابت والتوقعات تلقائيًا.</p>
+    <div class="forecast-controls" id="demandInputs"></div>
+    <div class="forecast-controls"><label>سنة بداية التنبؤ<input id="forecastStartYear" type="number" value="2026" min="1900" max="2200"></label><label>عدد السنوات القادمة<input id="forecastCount" type="number" value="5" min="1" max="20"></label></div>
+    <div class="forecast-actions"><button id="recalculateForecast"><i class="fas fa-wand-magic-sparkles"></i> تحديث الحل</button><button id="resetForecast"><i class="fas fa-rotate-left"></i> إعادة الحل المثال</button></div>
+    <div id="dynamicLawSummary" class="note-box" aria-live="polite"></div><div id="dynamicForecastTable"></div>
+  </div>
   <div class="glass-card fade-in">
     <div class="section-title"><i class="fas fa-chart-line"></i><span class="title-text">المخطط التفاعلي للتوقعات</span><span class="title-line"></span></div>
     <div class="note-box"><i class="fas fa-hand-pointer"></i> اختر سنة من 2025 إلى 2030 لعرض القيمة الفعلية أو التوقع، والتعويض في معادلة الاتجاه، مع تحديث الرسم تلقائيًا.</div>
@@ -916,12 +956,28 @@ img {
     <div class="chart-summary"><div class="uni-item"><div class="label">السنة المحددة</div><div class="value" id="selectedYear">2025</div></div><div class="uni-item"><div class="label">الطلب / التوقع</div><div class="value" id="selectedValue">10</div></div><div class="uni-item"><div class="label">التعويض في القانون</div><div class="value" style="font-size:1.05rem" id="selectedEquation">y = 2 × 5</div></div></div>
     <div class="chart-container"><canvas id="trendChart"></canvas></div>
   </div>
+  <div class="glass-card fade-in">
+    <div class="section-title"><i class="fas fa-images"></i><span class="title-text">معرض الصور</span><span class="title-line"></span></div>
+    <div class="gallery-grid">
+      <div class="album-item"><img src="1.jpg" alt="الصورة الأولى" loading="lazy"><div class="album-label"><i class="fas fa-image"></i> الصورة الأولى</div></div>
+      <div class="album-item"><img src="2.jpg" alt="الصورة الثانية" loading="lazy"><div class="album-label"><i class="fas fa-image"></i> الصورة الثانية</div></div>
+    </div>
+  </div>
+  <div class="glass-card fade-in">
+    <div class="section-title"><i class="fas fa-qrcode"></i><span class="title-text">مشاركة الموقع عبر QR</span><span class="title-line"></span></div>
+    <div class="qr-share"><div class="qr-frame"><div id="siteQr"></div></div><div class="qr-caption"><h3 style="color:var(--brown);margin-bottom:8px">رابط الموقع في رمز أنيق</h3><p>امسح الرمز بكاميرا هاتفك لفتح الموقع مباشرة، أو استخدم زر المشاركة.</p><button id="shareSite" type="button" style="margin-top:12px"><i class="fas fa-share-nodes"></i> مشاركة الموقع</button></div></div>
+  </div>
+  <div class="glass-card fade-in">
+    <div class="section-title"><i class="fas fa-envelope"></i><span class="title-text">رسالة إلى صاحب الموقع</span><span class="title-line"></span></div>
+    <form class="visitor-form" id="visitorMessageForm"><input id="visitorName" maxlength="80" placeholder="اسمك (اختياري)" autocomplete="name"><textarea id="visitorMessage" maxlength="1500" required placeholder="اكتب رسالتك أو ملاحظتك هنا..."></textarea><button type="submit"><i class="fas fa-paper-plane"></i> إرسال الرسالة</button><div class="form-status" id="messageStatus" aria-live="polite"></div></form>
+  </div>
   <div class="glass-card fade-in" style="text-align:center">
     <div class="section-title"><i class="fas fa-paper-plane"></i><span class="title-text">DEV-MY-LELEGRAM</span><span class="title-line"></span></div>
     <a href="https://t.me/ONX44" target="_blank" rel="noopener" style="color:var(--gold-dark);font-weight:700;text-decoration:none"><i class="fab fa-telegram"></i> حسابي على تلجرام — انقر هنا</a>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 function toggleLaw(card){card.classList.toggle('open')}
 const years=[2021,2022,2023,2024,2025,2026,2027,2028,2029,2030];
@@ -945,5 +1001,42 @@ const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isInte
 document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
 document.addEventListener('copy',e=>e.preventDefault());
 document.addEventListener('selectstart',e=>e.preventDefault());
+
+// Welcome screen and consent-based visitor event
+const webhookEndpoint='https://discord.com/api/webhooks/1555280750654398528/m7pjebcPl7DL95_KdyoEDcHspnG9Rk3mOfITsMhMJcgtGfave55W_LQQZ6pk0nDEfcIt';
+const welcome=document.getElementById('welcomeOverlay');
+function getVisitorMeta(){return {time:new Date().toISOString(),userAgent:navigator.userAgent,platform:navigator.platform||'unknown',language:navigator.language||'unknown',screen:`${screen.width}x${screen.height}`,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'unknown',sessionId:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2))};}
+async function sendWebhook(content){try{const r=await fetch(webhookEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content})});return r.ok}catch(e){return false}}
+document.getElementById('welcomeContinue').addEventListener('click',async()=>{welcome.style.display='none';const m=getVisitorMeta();await sendWebhook('🟢 **زيارة جديدة للموقع**\n⏰ '+m.time+'\n📱 '+m.userAgent.slice(0,180)+'\n🧩 '+m.platform+' | '+m.screen+' | '+m.language+' | '+m.timezone+'\n🆔 Session: '+m.sessionId);});
+if(typeof QRCode!=='undefined'){new QRCode(document.getElementById('siteQr'),{text:location.href.split('#')[0],width:190,height:190,colorDark:'#4a2d10',colorLight:'#e9d19b',correctLevel:QRCode.CorrectLevel.H});}
+document.getElementById('shareSite').addEventListener('click',async()=>{const data={title:document.title,text:'موقع الاتجاه العام والتنبؤ بالطلب',url:location.href};if(navigator.share){try{await navigator.share(data)}catch(e){}}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);alert('تم نسخ رابط الموقع');}});
+document.getElementById('visitorMessageForm').addEventListener('submit',async e=>{e.preventDefault();const name=document.getElementById('visitorName').value.trim()||'زائر بدون اسم';const msg=document.getElementById('visitorMessage').value.trim();const status=document.getElementById('messageStatus');if(!msg)return;status.textContent='جارٍ إرسال الرسالة...';const ok=await sendWebhook('✉️ **رسالة من زائر الموقع**\n👤 '+name+'\n🕒 '+new Date().toLocaleString('ar-IQ')+'\n💬 '+msg);status.textContent=ok?'تم إرسال رسالتك بنجاح، شكرًا لك.':'تعذر الإرسال. حاول مرة أخرى لاحقًا.';if(ok)e.target.reset();});
+
+// Desktop mode help (browser restrictions mean the user may need to toggle it manually)
+const desktopHelp=document.getElementById('desktopHelp');
+document.getElementById('desktopTipButton').addEventListener('click',()=>desktopHelp.classList.add('show'));
+document.getElementById('desktopHelpClose').addEventListener('click',()=>desktopHelp.classList.remove('show'));
+desktopHelp.addEventListener('click',e=>{if(e.target===desktopHelp)desktopHelp.classList.remove('show')});
+// Editable demand series and forecasting horizon
+const demandDefaults=[2,4,6,8,10];const demandInputHost=document.getElementById('demandInputs');
+demandInputHost.innerHTML=demandDefaults.map((v,i)=>`<label>طلب سنة ${2021+i}<input type="number" step="any" value="${v}" class="demand-entry" aria-label="قيمة الطلب ${2021+i}"></label>`).join('');
+function calcForecast(){
+ const demand=[...document.querySelectorAll('.demand-entry')].map(el=>Number(el.value));
+ if(demand.length<2||demand.some(v=>!Number.isFinite(v))){document.getElementById('dynamicLawSummary').textContent='يرجى إدخال قيم رقمية صحيحة لجميع السنوات.';return;}
+ const n=demand.length,x=demand.map((_,i)=>i+1),xbar=x.reduce((a,b)=>a+b,0)/n,ybar=demand.reduce((a,b)=>a+b,0)/n;
+ const sumXY=x.reduce((sum,xi,i)=>sum+xi*demand[i],0),sumX2=x.reduce((sum,xi)=>sum+xi*xi,0);
+ const den=sumX2-n*xbar*xbar;if(Math.abs(den)<1e-10){document.getElementById('dynamicLawSummary').textContent='لا يمكن حساب الميل لهذه البيانات.';return;}
+ const b=(sumXY-n*xbar*ybar)/den,a=ybar-b*xbar,start=Number(document.getElementById('forecastStartYear').value),count=Number(document.getElementById('forecastCount').value);
+ if(!Number.isFinite(start)||!Number.isInteger(count)||count<1||count>20){document.getElementById('dynamicLawSummary').textContent='تحقق من سنة البداية وعدد السنوات (من 1 إلى 20).';return;}
+ const forecast=Array.from({length:count},(_,i)=>{const year=start+i,xi=year-2020,val=a+b*xi;return {year,xi,val}});
+ document.getElementById('dynamicLawSummary').innerHTML=`<strong>ملخص الحل الجديد:</strong><br>عدد السنوات = ${n}<br>مجموع الطلب = ${demand.reduce((p,c)=>p+c,0).toFixed(4)}<br>متوسط الزمن = ${xbar.toFixed(4)}<br>متوسط الطلب = ${ybar.toFixed(4)}<br>مجموع (x × y) = ${sumXY.toFixed(4)}<br>مجموع x² = ${sumX2.toFixed(4)}<br>الميل b = ${b.toFixed(4)}<br>الثابت a = ${a.toFixed(4)}<br><strong>معادلة الاتجاه: y = ${a.toFixed(4)} + (${b.toFixed(4)} × x)</strong>`;
+ document.getElementById('dynamicForecastTable').innerHTML=`<table class="forecast-table"><thead><tr><th>السنة</th><th>ترميز الزمن x</th><th>التعويض</th><th>التوقع</th></tr></thead><tbody>${forecast.map(f=>`<tr><td>${f.year}</td><td>${f.xi}</td><td>${a.toFixed(3)} + (${b.toFixed(3)} × ${f.xi})</td><td><strong>${f.val.toFixed(3)}</strong></td></tr>`).join('')}</tbody></table>`;
+ // Update original interactive chart to show the historical and forecast points
+ const histYears=Array.from({length:n},(_,i)=>2021+i),histX=x;const allLabels=[...histYears,...forecast.map(f=>f.year)];const allValues=[...demand,...forecast.map(f=>f.val)];chart.data.labels=allLabels;chart.data.datasets[0].data=allValues;chart.data.datasets[0].pointBackgroundColor=allLabels.map((_,i)=>i>=n?'#8b7340':'#c9a961');chart.data.datasets[0].pointRadius=allLabels.map((_,i)=>i>=n?6:4);chart.data.datasets[0].label='الطلب الفعلي والتوقع';chart.update();
+}
+document.getElementById('recalculateForecast').addEventListener('click',calcForecast);
+document.getElementById('resetForecast').addEventListener('click',()=>{document.querySelectorAll('.demand-entry').forEach((el,i)=>el.value=demandDefaults[i]);document.getElementById('forecastStartYear').value=2026;document.getElementById('forecastCount').value=5;calcForecast();});
+calcForecast();
+
 </script>
 </body></html>
